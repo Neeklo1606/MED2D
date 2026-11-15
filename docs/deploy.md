@@ -2,7 +2,13 @@
 
 Факт на 15.11.2026: DNS `med.neeklo.ru → 31.192.111.33` уже есть. На сервере работает nginx, для `med.neeklo.ru` нет сертификата (TLS: `unrecognized name`), сайт не открывается.
 
-## Первичная установка (один раз, на сервере)
+## Автоматически (рекомендуется)
+1. GitHub → репозиторий → Settings → Secrets and variables → Actions → New repository secret:
+   `STAGING_SSH_HOST=31.192.111.33`, `STAGING_SSH_USER=<пользователь с sudo или root>`, `STAGING_SSH_KEY=<приватный ключ>`, при нестандартном порте `STAGING_SSH_PORT`.
+2. Actions → "Deploy staging" → Re-run (или любой пуш в `main` / рабочую ветку).
+Workflow собирает образ на GitHub, копирует его на сервер в `/opt/medform` и запускает `deploy/bootstrap.sh`: ставит Docker при отсутствии, поднимает приложение на 127.0.0.1:3010, создаёт nginx-конфиг, выпускает сертификат Let's Encrypt, проверяет `https://med.neeklo.ru/api/health`. При ошибке `nginx -t` конфиг откатывается.
+
+## Вручную (один раз, на сервере)
 ```bash
 # 1. Docker и код
 sudo mkdir -p /opt/medform && sudo chown $USER /opt/medform

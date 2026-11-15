@@ -1,30 +1,70 @@
 name: Deploy staging (med.neeklo.ru)
-# Нужны секреты репозитория: STAGING_SSH_HOST, STAGING_SSH_USER, STAGING_SSH_KEY.
-# Без них job пропускается, ничего не ломается.
+# Секреты репозитория (Settings -> Secrets and variables -> Actions):
+#   STAGING_SSH_HOST  = 31.192.111.33
+#   STAGING_SSH_USER  = пользователь с sudo (или root)
+#   STAGING_SSH_KEY   = приватный SSH-ключ этого пользователя
+#   STAGING_SSH_PORT  = необязательно, по умолчанию 22
+# Без секретов job пропускается.
+# Образ собирается здесь и передаётся на сервер файлом: серверу не нужен
+# доступ к Docker Hub и npm (из РФ они могут быть недоступны).
 on:
   push:
-    branches: [main]
+    branches: [main, claude/festive-clarke-rnf8vy]
   workflow_dispatch:
-    inputs:
-      branch: { description: "Ветка для выкладки", default: "main" }
 concurrency: deploy-staging
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HAS_SECRETS: ${{ secrets.STAGING_SSH_KEY != '' }}
+      HAS_SECRETS: ${{ secrets.STAGING_SSH_KEY != '' && secrets.STAGING_SSH_HOST != '' }}
     steps:
       - name: Skip without secrets
         if: env.HAS_SECRETS != 'true'
-        run: echo "STAGING_SSH_* secrets are not set, skipping deploy"
-      - name: Deploy over SSH
+        run: echo "::warning::STAGING_SSH_HOST / STAGING_SSH_USER / STAGING_SSH_KEY are not set, deploy skipped"
+      - uses: actions/checkout@v4
+        if: env.HAS_SECRETS == 'true'
+      - name: Build image
+        if: env.HAS_SECRETS == 'true'
+        run: |
+          docker build -t medform-app .
+          docker save medform-app | gzip > medform-app.tar.gz
+          mkdir -p bundle/deploy
+          cp medform-app.tar.gz docker-compose.yml .env.example bundle/
+          cp deploy/* bundle/deploy/
+      - name: Prepare target dir
         if: env.HAS_SECRETS == 'true'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
           key: ${{ secrets.STAGING_SSH_KEY }}
-          script: BRANCH=${{ inputs.branch || 'main' }} bash /opt/medform/deploy/deploy.sh
-      - name: Smoke
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            S=""; [ "$(id -u)" -ne 0 ] && S="sudo"
+            $S mkdir -p /opt/medform && $S chown "$(id -u):$(id -g)" /opt/medform
+      - name: Upload bundle
         if: env.HAS_SECRETS == 'true'
-        run: curl -fsS https://med.neeklo.ru/api/health
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          source: "bundle/*"
+          target: /opt/medform
+          strip_components: 1
+      - name: Bootstrap and start
+        if: env.HAS_SECRETS == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          command_timeout: 20m
+          script: APP_VERSION=${{ github.sha }} bash /opt/medform/deploy/bootstrap.sh
+      - name: Smoke from outside
+        if: env.HAS_SECRETS == 'true'
+        run: |
+          curl -fsS https://med.neeklo.ru/api/health
+          curl -sI https://med.neeklo.ru | grep -i x-robots-tag
