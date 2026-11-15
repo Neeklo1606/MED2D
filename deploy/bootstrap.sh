@@ -23,8 +23,13 @@ if $SUDO docker compose version >/dev/null 2>&1; then COMPOSE="$SUDO docker comp
 
 # 2. Образ и запуск
 [ -f .env ] || { log "Creating .env from .env.example"; cp .env.example .env; }
-log "Loading image"
-$SUDO docker load -i medform-app.tar.gz
+if [ -f medform-app.tar.gz ]; then
+  log "Loading prebuilt image"
+  $SUDO docker load -i medform-app.tar.gz
+else
+  log "No prebuilt image, building on the server"
+  $COMPOSE build
+fi
 export APP_VERSION="${APP_VERSION:-manual}" APP_PORT
 $COMPOSE up -d --no-build --remove-orphans
 for i in $(seq 1 30); do
