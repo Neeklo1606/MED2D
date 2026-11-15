@@ -1,0 +1,26 @@
+/* Дизайн-токены MEDFORM. Значения ПРИБЛИЗИТЕЛЬНЫЕ (сняты по описанию макета
+   "Конфигуратор итог" без доступа к Figma Dev Mode). См. docs/design-tokens.md */
+@font-face { font-family: "Display"; src: url("/fonts/unbounded-cyrillic.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Display"; src: url("/fonts/unbounded-latin.woff2") format("woff2"); font-weight: 200 900; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20BD; }
+@font-face { font-family: "Body"; src: url("/fonts/inter-cyrillic.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Body"; src: url("/fonts/inter-latin.woff2") format("woff2"); font-weight: 100 900; font-display: swap; unicode-range: U+0000-00FF, U+2000-206F, U+20BD; }
+
+:root {
+  --color-bg: #ededef;
+  --color-surface: #ffffff;
+  --color-text: #0b0b0c;
+  --color-muted: #6b6d73;
+  --color-line: #dcdde1;
+  --color-accent: #1a3cff;
+  --color-accent-contrast: #ffffff;
+  --color-brandmark: #e3e4e8;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --space-gutter: 16px;
+  --font-display: "Display", system-ui, sans-serif;
+  --font-body: "Body", system-ui, sans-serif;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04);
+  --tap-min: 44px;
+}

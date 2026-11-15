@@ -1,0 +1,12 @@
+# Этап 0-1: только приложение. postgres добавляется на этапе 1 (см. docs/plan.md).
+services:
+  app:
+    build: .
+    image: medform-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      APP_VERSION: ${APP_VERSION:-dev}
+    # Слушаем только localhost: наружу отдаёт reverse proxy (nginx или Caddy)
+    ports:
+      - "127.0.0.1:${APP_PORT:-3010}:3000"

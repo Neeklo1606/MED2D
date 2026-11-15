@@ -1,0 +1,7 @@
+# Альтернатива nginx (по стеку из мастер-промпта), если 80/443 свободны.
+med.neeklo.ru {
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    header X-Robots-Tag "noindex, nofollow"
+    reverse_proxy 127.0.0.1:3010
+}

@@ -1,0 +1,30 @@
+name: Deploy staging (med.neeklo.ru)
+# Нужны секреты репозитория: STAGING_SSH_HOST, STAGING_SSH_USER, STAGING_SSH_KEY.
+# Без них job пропускается, ничего не ломается.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch: { description: "Ветка для выкладки", default: "main" }
+concurrency: deploy-staging
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_SECRETS: ${{ secrets.STAGING_SSH_KEY != '' }}
+    steps:
+      - name: Skip without secrets
+        if: env.HAS_SECRETS != 'true'
+        run: echo "STAGING_SSH_* secrets are not set, skipping deploy"
+      - name: Deploy over SSH
+        if: env.HAS_SECRETS == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: BRANCH=${{ inputs.branch || 'main' }} bash /opt/medform/deploy/deploy.sh
+      - name: Smoke
+        if: env.HAS_SECRETS == 'true'
+        run: curl -fsS https://med.neeklo.ru/api/health
