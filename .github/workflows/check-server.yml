@@ -21,8 +21,11 @@ jobs:
           timeout 8 bash -c 'exec 3<>/dev/tcp/31.192.111.33/22; head -c 80 <&3' || echo "no ssh banner"
           echo; ssh-keyscan -T 8 31.192.111.33 2>/dev/null | awk '{print $1, $2}' || true
       - name: HTTP med.neeklo.ru
-        run: curl -sS -m 10 -o /dev/null -w "http: %{http_code} -> %{redirect_url}\n" http://med.neeklo.ru || true
+        run: |
+          curl -sS -m 10 -o /dev/null -w "http %{http_code} -> %{redirect_url}\n" http://med.neeklo.ru || true
       - name: HTTPS med.neeklo.ru
-        run: curl -sS -m 10 -o /dev/null -w "https: %{http_code}\n" https://med.neeklo.ru 2>&1 || true
+        run: |
+          curl -sS -m 10 -o /dev/null -w "https %{http_code}\n" https://med.neeklo.ru 2>&1 || true
       - name: TLS certificate names on 443
-        run: echo | timeout 8 openssl s_client -connect 31.192.111.33:443 -servername med.neeklo.ru 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName 2>/dev/null || echo "no certificate for med.neeklo.ru"
+        run: |
+          echo | timeout 8 openssl s_client -connect 31.192.111.33:443 -servername med.neeklo.ru 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName 2>/dev/null || echo "no certificate for med.neeklo.ru"
