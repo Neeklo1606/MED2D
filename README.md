@@ -30,4 +30,4 @@ curl localhost:3010/api/health   # {"status":"ok","database":"ok"}
 - `artifacts/<этап>/` скриншоты 375/1440
 
 ## Документы
-[ТЗ](docs/tz.md) · [План](docs/plan.md) · [Конфигуратор](docs/configurator-spec.md) · [Токены](docs/design-tokens.md) · [Блокеры](docs/blockers.md) · [Аудит](docs/audit.md) · [Деплой](docs/deploy.md)
+[ТЗ](docs/tz.md) · [План](docs/plan.md) · [Конфигуратор](docs/configurator-spec.md) · [Токены](docs/design-tokens.md) · [Блокеры](docs/blockers.md) · [Аудит](docs/audit.md) · [Деплой этапа 1](docs/deploy-stage1.md) · [Передача Сергею](docs/handoff-sergey.md)

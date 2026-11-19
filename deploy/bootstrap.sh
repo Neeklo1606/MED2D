@@ -12,6 +12,20 @@ cd "$(dirname "$0")/.."
 
 log() { echo "==> $*"; }
 
+# 0. Предпроверка: ничего не трогаем, если сервер устроен не так, как ожидаем
+log "Preflight"
+if ! command -v nginx >/dev/null 2>&1; then
+  echo "nginx не установлен на хосте. Порты 80/443 занимает:" >&2
+  ($SUDO ss -ltnp 2>/dev/null || true) | grep -E ':(80|443) ' >&2 || true
+  echo "Остановлено: нужен ручной разбор (возможно, nginx в Docker). См. docs/deploy-stage1.md, шаг 2." >&2
+  exit 2
+fi
+if ($SUDO ss -ltnp 2>/dev/null || true) | grep -q ":${APP_PORT} " && ! $SUDO docker ps --format '{{.Names}}' 2>/dev/null | grep -q medform; then
+  echo "Порт ${APP_PORT} уже занят другим процессом. Задайте APP_PORT=другой_порт." >&2
+  exit 2
+fi
+df -h / | tail -1 | awk '{print "disk free: "$4}'
+
 # 1. Docker
 if ! command -v docker >/dev/null 2>&1; then
   log "Installing Docker"
@@ -22,7 +36,12 @@ fi
 if $SUDO docker compose version >/dev/null 2>&1; then COMPOSE="$SUDO docker compose"; else COMPOSE="$SUDO docker-compose"; fi
 
 # 2. Образ и запуск
-[ -f .env ] || { log "Creating .env from .env.example"; cp .env.example .env; }
+if [ ! -f .env ]; then
+  log "Creating .env from .env.example with a random database password"
+  cp .env.example .env
+  sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 24)/" .env
+  chmod 600 .env
+fi
 if [ -f medform-app.tar.gz ]; then
   log "Loading prebuilt image"
   $SUDO docker load -i medform-app.tar.gz

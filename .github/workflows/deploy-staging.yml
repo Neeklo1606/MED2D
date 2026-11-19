@@ -63,7 +63,7 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || 22 }}
           command_timeout: 20m
-          script: APP_VERSION=${{ github.sha }} bash /opt/medform/deploy/bootstrap.sh
+          script: APP_VERSION=${{ github.sha }} APP_PORT=${{ secrets.APP_PORT || 3010 }} bash /opt/medform/deploy/bootstrap.sh
       - name: Smoke from outside
         if: env.HAS_SECRETS == 'true'
         run: |
