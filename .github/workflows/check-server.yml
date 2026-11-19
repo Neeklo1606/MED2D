@@ -1,0 +1,28 @@
+name: Check staging server
+# Диагностика без секретов: доступность SSH, ключ хоста, ответ nginx на med.neeklo.ru.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/festive-clarke-rnf8vy]
+    paths: [.github/workflows/check-server.yml]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: DNS
+        run: getent hosts med.neeklo.ru neeklo.ru || true
+      - name: Ports
+        run: |
+          for p in 22 80 443; do
+            if timeout 6 bash -c "echo > /dev/tcp/31.192.111.33/$p"; then echo "port $p: open"; else echo "port $p: closed"; fi
+          done
+      - name: SSH banner and host keys
+        run: |
+          timeout 8 bash -c 'exec 3<>/dev/tcp/31.192.111.33/22; head -c 80 <&3' || echo "no ssh banner"
+          echo; ssh-keyscan -T 8 31.192.111.33 2>/dev/null | awk '{print $1, $2}' || true
+      - name: HTTP med.neeklo.ru
+        run: curl -sS -m 10 -o /dev/null -w "http: %{http_code} -> %{redirect_url}\n" http://med.neeklo.ru || true
+      - name: HTTPS med.neeklo.ru
+        run: curl -sS -m 10 -o /dev/null -w "https: %{http_code}\n" https://med.neeklo.ru 2>&1 || true
+      - name: TLS certificate names on 443
+        run: echo | timeout 8 openssl s_client -connect 31.192.111.33:443 -servername med.neeklo.ru 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName 2>/dev/null || echo "no certificate for med.neeklo.ru"
