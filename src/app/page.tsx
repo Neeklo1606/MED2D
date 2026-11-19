@@ -1,22 +1,9 @@
+import Link from "next/link";
 import { getField } from "@/content/registry";
+import Header from "@/components/Header";
 import { demoItems, formatRub } from "@/lib/demo-items";
 
 export const dynamic = "force-static";
-
-function Header() {
-  return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-4 md:px-10">
-      <span className="hidden text-sm text-muted sm:block">{getField("global.header.tagline")}</span>
-      <span className="col-start-2 text-center font-display text-xl font-black tracking-tight md:text-2xl">MEDFORM</span>
-      <span className="col-start-3 justify-self-end">
-        <span className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-accent px-4 text-sm font-semibold">
-          {getField("global.header.cart")}
-          <span className="inline-grid size-6 place-items-center rounded-full bg-accent text-xs text-white" aria-label="Товаров в корзине: 0">0</span>
-        </span>
-      </span>
-    </header>
-  );
-}
 
 function Swatches({ colors }: { colors: string[] }) {
   return (
@@ -85,7 +72,7 @@ export default function Home() {
             <span className="mt-4 flex min-h-11 items-center justify-center rounded-full bg-white text-sm font-semibold text-ink">{getField("home.total.addAll")}</span>
           </div>
           <div>
-            <span className="inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-white">{getField("home.hero.cta")}</span>
+            <Link href="/catalog" className="inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-white">{getField("home.hero.cta")}</Link>
             <p className="mt-2 text-xs text-muted">{getField("home.hero.ctaNote")}</p>
           </div>
         </section>
