@@ -1,0 +1,19 @@
+/* App-feel: отклик на нажатие, вход страниц. Цвета через CSS-переменные проекта. */
+html { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+.press { transition: transform 160ms ease-out, filter 160ms ease-out; }
+.press:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97); filter: brightness(0.94); transition-duration: 80ms; }
+.press-lg:active { transform: scale(0.985); }
+button:not(.no-press), [role="radio"], [role="tab"] { transition: transform 160ms ease-out, filter 160ms ease-out; }
+button:not(.no-press):active:not(:disabled), [role="radio"]:active, [role="tab"]:active { transform: scale(0.97); filter: brightness(0.94); transition-duration: 80ms; }
+@media (hover: hover) and (pointer: fine) { .press:hover { filter: brightness(0.97); } }
+
+@keyframes page-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes page-fade { from { opacity: 0; } to { opacity: 1; } }
+.page-enter { animation: page-enter 180ms ease-out both; }
+@media (prefers-reduced-motion: reduce) { .page-enter { animation: page-fade 120ms linear both; } }
+
+.nav-progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 60; pointer-events: none; will-change: transform; transform-origin: 0 50%; background: var(--color-accent); }
+.nav-progress[data-state="loading"] { animation: nav-grow 8s cubic-bezier(.1,.7,.2,1) forwards; }
+.nav-progress[data-state="done"] { transform: scaleX(1); opacity: 0; transition: opacity 200ms 100ms; }
+@keyframes nav-grow { from { transform: scaleX(0.08); } to { transform: scaleX(0.9); } }

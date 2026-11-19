@@ -6,12 +6,23 @@
 ```bash
 pnpm install
 cp .env.example .env
-pnpm dev            # http://localhost:3000
+# локальная БД (или docker compose up postgres)
+export DATABASE_URL=postgres://medform:medform@localhost:5432/medform
+pnpm dev            # http://localhost:3000, миграции и сиды применятся при старте
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
+```
+
+## Как в docker
+```bash
+cp .env.example .env   # задать POSTGRES_PASSWORD
+docker compose up -d --build
+curl localhost:3010/api/health   # {"status":"ok","database":"ok"}
 ```
 
 ## Структура
 - `src/app` страницы (App Router), `src/app/api/health` health-check
+- `src/configurator/` 3D-конфигуратор, `src/shop/` корзина и оформление, `src/server/` БД, заявки, провайдеры
+- `src/features/app-feel/` отклик, переходы, PWA (см. `docs/adr/0001-app-feel-pwa.md`)
 - `src/content/registry.ts` реестр редактируемых полей (`getField`)
 - `src/styles/tokens.css` дизайн-токены
 - `docs/` план, спецификация конфигуратора, токены, блокеры, аудит, деплой

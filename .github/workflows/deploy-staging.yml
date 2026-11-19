@@ -27,7 +27,8 @@ jobs:
         if: env.HAS_SECRETS == 'true'
         run: |
           docker build -t medform-app .
-          docker save medform-app | gzip > medform-app.tar.gz
+          docker pull postgres:16-alpine
+          docker save medform-app postgres:16-alpine | gzip > medform-app.tar.gz
           mkdir -p bundle/deploy
           cp medform-app.tar.gz docker-compose.yml .env.example bundle/
           cp deploy/* bundle/deploy/

@@ -79,7 +79,9 @@ interface CartState {
   items: CartItem[];
   add: (items: Omit<CartItem, "qty">[]) => void;
   setQty: (i: number, qty: number) => void;
+  setSize: (i: number, size: string) => void;
   removeAt: (i: number) => void;
+  clear: () => void;
 }
 
 const safeStorage = createJSONStorage(() => {
@@ -99,8 +101,18 @@ export const useCart = create<CartState>()(
         }
         set({ items });
       },
-      setQty: (i, qty) => set({ items: get().items.map((x, j) => (j === i ? { ...x, qty: Math.max(1, qty) } : x)) }),
+      setQty: (i, qty) => set({ items: get().items.map((x, j) => (j === i ? { ...x, qty: Math.min(20, Math.max(1, qty)) } : x)) }),
+      setSize: (i, size) => {
+        const items = [...get().items];
+        const cur = items[i];
+        if (!cur) return;
+        const dup = items.findIndex((x, j) => j !== i && x.slug === cur.slug && x.color === cur.color && x.size === size);
+        if (dup >= 0) { items[dup] = { ...items[dup], qty: Math.min(20, items[dup].qty + cur.qty) }; items.splice(i, 1); }
+        else items[i] = { ...cur, size };
+        set({ items });
+      },
       removeAt: (i) => set({ items: get().items.filter((_, j) => j !== i) }),
+      clear: () => set({ items: [] }),
     }),
     { name: "medform-cart", storage: safeStorage, skipHydration: true },
   ),

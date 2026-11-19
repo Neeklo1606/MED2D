@@ -1,5 +1,19 @@
-# Этап 0-1: только приложение. postgres добавляется на этапе 1 (см. docs/plan.md).
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: medform
+      POSTGRES_USER: medform
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medform -d medform"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   app:
     build: .
     image: medform-app
@@ -7,6 +21,16 @@ services:
     env_file: .env
     environment:
       APP_VERSION: ${APP_VERSION:-dev}
-    # Слушаем только localhost: наружу отдаёт reverse proxy (nginx или Caddy)
+      DATABASE_URL: postgres://medform:${POSTGRES_PASSWORD:-change-me}@postgres:5432/medform
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - media:/app/media
+    # Наружу отдаёт reverse proxy (nginx или Caddy); миграции и сиды применяются при старте
     ports:
       - "127.0.0.1:${APP_PORT:-3010}:3000"
+
+volumes:
+  pgdata:
+  media:

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getField } from "@/content/registry";
-import Header from "@/components/Header";
 import { demoItems, formatRub } from "@/lib/demo-items";
 
 export const dynamic = "force-static";
@@ -48,8 +47,6 @@ export default function Home() {
   const total = worn.reduce((s, i) => s + i.priceRub, 0);
   return (
     <>
-      <div role="status" className="bg-ink px-4 py-2 text-center text-xs text-white">{getField("global.staging.notice")}</div>
-      <Header />
       <main className="mx-auto grid max-w-[1440px] gap-6 px-4 pb-16 md:px-10 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)_minmax(0,340px)]">
         <section className="space-y-6">
           <h1 className="font-display text-3xl font-black uppercase leading-[1.05] md:text-5xl lg:text-[44px]">

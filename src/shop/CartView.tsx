@@ -1,0 +1,115 @@
+"use client";
+import Link from "next/link";
+import { COLORS, bySlug } from "@/catalog/data";
+import { getField as t } from "@/content/registry";
+import { rub } from "@/lib/checkout";
+import { useCart } from "@/configurator/store";
+import { useCartHydrated, useQuote } from "./hooks";
+
+export function Stepper({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) {
+  return (
+    <div className="inline-flex items-center rounded-full border border-line" role="group" aria-label={label}>
+      <button type="button" className="press grid size-11 place-items-center text-lg" aria-label="Меньше" disabled={value <= 1} onClick={() => onChange(value - 1)}>−</button>
+      <span className="min-w-6 text-center text-sm font-semibold tabular-nums" aria-live="polite">{value}</span>
+      <button type="button" className="press grid size-11 place-items-center text-lg" aria-label="Больше" disabled={value >= 20} onClick={() => onChange(value + 1)}>+</button>
+    </div>
+  );
+}
+
+function CartSkeleton() {
+  return (
+    <div className="space-y-3" aria-hidden>
+      {[0, 1].map((i) => <div key={i} className="h-36 animate-pulse rounded-[var(--radius-lg)] bg-surface" />)}
+    </div>
+  );
+}
+
+export default function CartView() {
+  const hydrated = useCartHydrated();
+  const items = useCart((s) => s.items);
+  const { setQty, setSize, removeAt } = useCart.getState();
+  const { quote, error } = useQuote(items, hydrated && items.length > 0);
+  const lines = quote && quote.lines.length === items.length ? quote.lines : null;
+  const hasErrors = !!lines?.some((l) => l.error);
+  const count = items.reduce((n, i) => n + i.qty, 0);
+
+  if (!hydrated) return <CartSkeleton />;
+  if (!items.length) {
+    return (
+      <div className="rounded-[var(--radius-lg)] bg-surface p-8 text-center">
+        <h2 className="font-display text-lg font-bold uppercase">{t("cart.empty.title")}</h2>
+        <p className="mt-2 text-sm text-muted">{t("cart.empty.text")}</p>
+        <Link href="/catalog" className="press mt-5 inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-white">{t("cart.empty.cta")}</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6">
+      <ul className="space-y-3">
+        {items.map((it, i) => {
+          const p = bySlug.get(it.slug);
+          const q = lines?.[i];
+          const sizes = q?.sizes.length ? q.sizes : p?.sizes ?? [];
+          return (
+            <li key={`${it.slug}-${it.color}-${it.size}`} className="rounded-[var(--radius-lg)] bg-surface p-4">
+              <div className="flex gap-3">
+                <div className="grid size-16 shrink-0 place-items-center rounded-[var(--radius-md)] bg-bg" aria-hidden>
+                  <span className="size-9 rounded-full border border-line" style={{ background: COLORS[it.color]?.hex }} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-display text-[11px] font-bold uppercase leading-snug">{q?.title ?? p?.title}</h3>
+                  <p className="mt-0.5 text-xs text-muted">{COLORS[it.color]?.name}</p>
+                  <p className="mt-1 text-sm font-semibold tabular-nums">
+                    {q ? (q.priceKop === null ? "—" : rub(q.priceKop * it.qty)) : <span className="inline-block h-4 w-16 animate-pulse rounded bg-bg align-middle" />}
+                  </p>
+                </div>
+                <button type="button" onClick={() => removeAt(i)} className="press -mr-2 -mt-2 grid size-11 shrink-0 place-items-center rounded-full text-muted" aria-label={`${t("cart.line.remove")}: ${q?.title ?? p?.title}`}>
+                  <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+                </button>
+              </div>
+              <div className="mt-3 flex flex-wrap items-end justify-between gap-3 border-t border-line pt-3">
+                {sizes.length > 0 ? (
+                  <div>
+                    <p className="text-xs text-muted">{t("cart.line.size")}</p>
+                    <div role="radiogroup" aria-label={`${t("cart.line.size")}: ${q?.title ?? p?.title}`} className="mt-1 flex flex-wrap gap-1.5">
+                      {sizes.map((s) => (
+                        <button key={s} type="button" role="radio" aria-checked={it.size === s} onClick={() => setSize(i, s)}
+                          className={`press grid min-h-11 min-w-11 place-items-center rounded-[var(--radius-sm)] px-2 text-xs font-semibold ${it.size === s ? "bg-ink text-white" : "border border-line"}`}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                ) : <span />}
+                <Stepper value={it.qty} onChange={(v) => setQty(i, v)} label={`Количество: ${q?.title ?? p?.title}`} />
+              </div>
+              {q?.error && <p role="alert" className="mt-2 text-sm font-semibold text-red-700">{q.error}</p>}
+            </li>
+          );
+        })}
+      </ul>
+
+      <aside className="mt-4 lg:mt-0">
+        <div className="rounded-[var(--radius-lg)] bg-surface p-5 lg:sticky lg:top-4">
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between"><dt>{t("cart.summary.items")}, {count} шт.</dt><dd className="tabular-nums">{lines ? rub(quote!.itemsTotalKop) : "…"}</dd></div>
+            <div className="flex justify-between"><dt>{t("cart.summary.delivery")}</dt><dd className="text-muted">по тарифу СДЭК</dd></div>
+          </dl>
+          <p className="mt-2 text-xs text-muted">{t("cart.summary.deliveryNote")}</p>
+          <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
+            <span className="font-display text-sm font-bold uppercase">{t("cart.summary.total")}</span>
+            <span className="font-display text-2xl font-black tabular-nums">{lines ? rub(quote!.itemsTotalKop) : "…"}</span>
+          </div>
+          <p className="mt-2 text-xs text-muted">{t("cart.summary.payNote")}</p>
+          {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+          {hasErrors && <p className="mt-3 text-sm font-semibold text-red-700">{t("cart.summary.fix")}</p>}
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface px-4 pt-3 lg:static lg:mt-4 lg:border-0 lg:p-0" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}>
+            <Link href="/checkout" aria-disabled={hasErrors || !lines} onClick={(e) => (hasErrors || !lines) && e.preventDefault()}
+              className={`press flex min-h-12 w-full items-center justify-center gap-2 rounded-full text-base font-semibold text-white ${hasErrors || !lines ? "bg-muted" : "bg-accent"}`}>
+              {t("cart.summary.cta")}{lines && !hasErrors && <span className="tabular-nums opacity-90">· {rub(quote!.itemsTotalKop)}</span>}
+            </Link>
+          </div>
+        </div>
+      </aside>
+    </div>
+  );
+}
