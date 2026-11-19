@@ -19,4 +19,4 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build
 - `artifacts/<этап>/` скриншоты 375/1440
 
 ## Документы
-[ТЗ](https://claude.ai/artifact/MAzQxt1B4s3sKxoPceaKHK) · [План](docs/plan.md) · [Конфигуратор](docs/configurator-spec.md) · [Токены](docs/design-tokens.md) · [Блокеры](docs/blockers.md) · [Аудит](docs/audit.md) · [Деплой](docs/deploy.md)
+[ТЗ](docs/tz.md) · [План](docs/plan.md) · [Конфигуратор](docs/configurator-spec.md) · [Токены](docs/design-tokens.md) · [Блокеры](docs/blockers.md) · [Аудит](docs/audit.md) · [Деплой](docs/deploy.md)
