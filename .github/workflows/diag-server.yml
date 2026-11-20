@@ -37,3 +37,7 @@ jobs:
             echo "== nginx med site config =="; grep -nE "proxy_pass|include|listen|sub_filter" /etc/nginx/sites-enabled/med.neeklo.ru
             echo "== app log (last 40) =="; docker logs --tail 40 medform-app-1 2>&1 | cut -c1-200
             echo "== load =="; uptime; free -h | head -2
+            echo "== disk =="; df -h / /opt | tail -2
+            echo "== /opt/medform =="; ls -la /opt/medform | head -20
+            echo "== scp leftovers =="; ls -la /opt/medform/*.tar.gz 2>/dev/null; ps aux | grep -E "scp|sftp" | grep -v grep | head
+            echo "== network from server =="; curl -s -o /dev/null -m 15 -w "github %{http_code} %{time_total}s\n" https://github.com; curl -s -o /dev/null -m 15 -w "ghcr %{http_code} %{time_total}s\n" https://ghcr.io/v2/
