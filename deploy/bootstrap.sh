@@ -20,9 +20,8 @@ if ! command -v nginx >/dev/null 2>&1; then
   echo "Остановлено: нужен ручной разбор (возможно, nginx в Docker). См. docs/deploy-stage1.md, шаг 2." >&2
   exit 2
 fi
-if ($SUDO ss -ltnp 2>/dev/null || true) | grep -q ":${APP_PORT} " && ! $SUDO docker ps --format '{{.Names}}' 2>/dev/null | grep -q medform; then
-  echo "Порт ${APP_PORT} уже занят другим процессом. Задайте APP_PORT=другой_порт." >&2
-  exit 2
+if $SUDO grep -rls "server_name[^;]*\b${DOMAIN}\b" /etc/nginx 2>/dev/null | grep -v "/${DOMAIN}" ; then
+  echo "Внимание: ${DOMAIN} уже упоминается в конфигах nginx выше, проверьте конфликт server_name" >&2
 fi
 df -h / | tail -1 | awk '{print "disk free: "$4}'
 
@@ -42,6 +41,22 @@ if [ ! -f .env ]; then
   sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 24)/" .env
   chmod 600 .env
 fi
+
+# Порт приложения: сохранённый в .env важнее переданного; занятый чужим процессом заменяем свободным
+port_busy() { ($SUDO ss -ltn 2>/dev/null || true) | awk '{print $4}' | grep -qE "[:.]$1\$"; }
+port_ours() { $SUDO docker ps --filter "name=medform-app" --format '{{.Ports}}' 2>/dev/null | grep -q "127.0.0.1:$1->"; }
+SAVED_PORT=$(grep -E '^APP_PORT=' .env | tail -1 | cut -d= -f2 || true)
+APP_PORT="${SAVED_PORT:-$APP_PORT}"
+if port_busy "$APP_PORT" && ! port_ours "$APP_PORT"; then
+  log "Port $APP_PORT is used by another process, picking a free one"
+  NEW=""
+  for p in $(seq 3040 3099); do port_busy "$p" || { NEW=$p; break; }; done
+  [ -n "$NEW" ] || { echo "Нет свободного порта в 3040-3099" >&2; exit 2; }
+  APP_PORT=$NEW
+fi
+if grep -qE '^APP_PORT=' .env; then sed -i "s/^APP_PORT=.*/APP_PORT=${APP_PORT}/" .env; else echo "APP_PORT=${APP_PORT}" >> .env; fi
+log "App port: ${APP_PORT}"
+
 if [ -f medform-app.tar.gz ]; then
   log "Loading prebuilt image"
   $SUDO docker load -i medform-app.tar.gz
