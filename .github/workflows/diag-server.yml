@@ -17,7 +17,7 @@ jobs:
           done
       - name: 60 parallel requests (как браузер на странице)
         run: |
-          urls=""; for f in front.webp back.webp front-top-mask.png front-bottom-mask.png front-feet-mask.png front-top-shade.webp; do for i in 1 2 3 4 5 6 7 8 9 10; do urls="$urls https://med.neeklo.ru/photo-model/f/$f?n=$i"; done; done
+          urls=""; for f in front.webp back.webp front-top-mask.png front-bottom-mask.png front-feet-mask.png front-top-shade.webp; do for i in 1 2 3 4 5 6 7 8 9 10; do urls="$urls -o /dev/null https://med.neeklo.ru/photo-model/f/$f?n=$i"; done; done
           curl -s -Z --parallel-max 30 -o /dev/null -w "%{http_code}\n" $urls | sort | uniq -c
   server:
     runs-on: ubuntu-latest
