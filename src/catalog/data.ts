@@ -7,11 +7,11 @@ export type Gender = "f" | "m";
 
 export const COLORS: Record<string, { name: string; hex: string }> = {
   white: { name: "белый", hex: "#F4F4F2" },
-  lightblue: { name: "голубой", hex: "#9EC3E6" },
-  navy: { name: "тёмно-синий", hex: "#1F2D55" },
-  emerald: { name: "изумрудный", hex: "#1E6B5C" },
-  blue: { name: "синий", hex: "#2F55C8" },
-  pink: { name: "розовый", hex: "#E8B4C4" },
+  lightblue: { name: "голубой", hex: "#81A1D2" },
+  navy: { name: "тёмно-синий", hex: "#1F2B5F" },
+  emerald: { name: "изумрудный", hex: "#244F56" },
+  blue: { name: "синий", hex: "#2738A2" },
+  pink: { name: "розовый", hex: "#E5B2BB" },
   grey: { name: "серый", hex: "#9A9DA3" },
   black: { name: "чёрный", hex: "#1B1B1D" },
   silver: { name: "серебристый", hex: "#C9CCD1" },
@@ -30,13 +30,14 @@ export interface Product {
   category: "top" | "bottom" | "coat" | "head" | "feet" | "accessory";
 }
 
-const SCRUB = ["lightblue", "navy", "emerald", "blue", "pink", "white"];
+// порядок как в макете: тёмно-синий, синий, изумрудный, голубой, розовый, белый
+const SCRUB = ["navy", "blue", "emerald", "lightblue", "pink", "white"];
 const CLOTH = ["XS", "S", "M", "L", "XL"];
 
 export const PRODUCTS: Product[] = [
-  { slug: "anorak", model: "top_anorak", slot: "top", category: "top", title: "Рубашка-анорак хирургическая", short: "Свободный крой, карман на груди, дышащая ткань.", priceRub: 3200, colors: SCRUB, sizes: CLOTH },
+  { slug: "anorak", model: "top_anorak", slot: "top", category: "top", title: "Медицинский верх", short: "Оверсайз, V-вырез, карман-кенгуру", priceRub: 3200, colors: SCRUB, sizes: CLOTH },
   { slug: "tshirt", model: "top_tshirt", slot: "top", category: "top", title: "Футболка оверсайз", short: "Хлопок, свободная посадка, под халат или анорак.", priceRub: 2200, colors: ["white", "grey", "blue"], sizes: CLOTH },
-  { slug: "joggers", model: "bottom_joggers", slot: "bottom", category: "bottom", title: "Брюки-джоггеры хирургические", short: "Резинка на поясе и манжетах, боковые карманы.", priceRub: 3000, colors: SCRUB, sizes: CLOTH },
+  { slug: "joggers", model: "bottom_joggers", slot: "bottom", category: "bottom", title: "Медицинские брюки", short: "Свободный крой, карманы-карго, пояс на резинке", priceRub: 3000, colors: SCRUB, sizes: CLOTH },
   { slug: "halat", model: "coat_halat", slot: "coat", category: "coat", title: "Халат медицинский унисекс", short: "Классический белый халат, надевается поверх верха.", priceRub: null, colors: ["white"], sizes: CLOTH },
   { slug: "cap", model: "head_cap", slot: "head", category: "head", title: "Шапочка медицинская", short: "Регулируемая завязка, одна посадка.", priceRub: null, colors: SCRUB, sizes: [] },
   { slug: "dokerka", model: "head_dokerka", slot: "head", category: "head", title: "Головной убор докерка", short: "Мягкая трикотажная шапка.", priceRub: null, colors: SCRUB, sizes: [] },

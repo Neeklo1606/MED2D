@@ -10,7 +10,7 @@ import type { LookRendererHandle, LookRendererProps } from "./types";
  * Для каждой части есть слой тени и маска (tools/photo-model/segment.py):
  * фото → серая тень части → цвет через mask-image + multiply. Складки и свет сохраняются.
  */
-type Part = "top" | "bottom" | "feet";
+export type Part = "top" | "bottom" | "feet";
 type View = "front" | "back";
 const BASE = "/photo-model/f";
 const NEUTRAL = "#D9DADD";
@@ -77,30 +77,13 @@ const PhotoRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
       <div
         role="img"
         aria-label={`${label}. ${view === "front" ? "Вид спереди" : "Вид сзади"}`}
-        className="absolute inset-x-0 bottom-16 top-14 flex justify-center transition-transform duration-200 ease-out motion-reduce:transition-none"
+        className="absolute inset-x-0 -bottom-1 top-0 flex justify-center transition-transform duration-200 ease-out motion-reduce:transition-none"
         style={{ transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`, transformOrigin: origin }}
       >
-        <div className="relative isolate h-full" style={{ aspectRatio: "448 / 1200" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${BASE}/${view}.webp`} alt="" draggable={false} className="absolute inset-0 h-full w-full" />
-          {PARTS.map((part) => {
-            const color = partColor(look, part) ?? NEUTRAL;
-            const mask = `url(${BASE}/${view}-${part}-mask.png)`;
-            return (
-              <div key={`${view}-${part}`} className="absolute inset-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${BASE}/${view}-${part}-shade.webp`} alt="" draggable={false} className="absolute inset-0 h-full w-full" />
-                <div
-                  className="absolute inset-0 transition-[background-color] duration-200 motion-reduce:transition-none"
-                  style={{ backgroundColor: color, mixBlendMode: "multiply", WebkitMaskImage: mask, maskImage: mask, WebkitMaskSize: "100% 100%", maskSize: "100% 100%" }}
-                />
-              </div>
-            );
-          })}
-        </div>
+        <PhotoFigure look={look} view={view} />
       </div>
       {(hidden.length > 0 || male) && (
-        <p className="pointer-events-none absolute inset-x-3 top-16 mx-auto max-w-xs rounded-[var(--radius-md)] bg-surface/90 px-3 py-2 text-center text-xs text-muted lg:top-4">
+        <p className="pointer-events-none absolute inset-x-3 top-2 mx-auto max-w-xs rounded-[var(--radius-md)] bg-surface/90 px-3 py-2 text-center text-xs text-muted lg:top-4">
           {male ? t("catalog.photo.maleSoon") : t("catalog.photo.notShown")}
         </p>
       )}
@@ -109,3 +92,46 @@ const PhotoRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
 });
 
 export default PhotoRenderer;
+
+/** Фото-фигура со слоями перекраски. Высота задаётся родителем, ширина по пропорции листа. */
+export function PhotoFigure({ look, view, only, className = "h-full" }: { look: Look; view: View; only?: Part; className?: string }) {
+  return (
+    <div className={`relative isolate ${className}`} style={{ aspectRatio: "448 / 1200" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`${BASE}/${view}.webp`} alt="" draggable={false} className="absolute inset-0 h-full w-full" />
+      {PARTS.map((part) => {
+        const color = (only && part !== only ? null : partColor(look, part)) ?? NEUTRAL;
+        const mask = `url(${BASE}/${view}-${part}-mask.png)`;
+        return (
+          <div key={`${view}-${part}`} className="absolute inset-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`${BASE}/${view}-${part}-shade.webp`} alt="" draggable={false} className="absolute inset-0 h-full w-full" />
+            <div
+              className="absolute inset-0 transition-[background-color] duration-200 motion-reduce:transition-none"
+              style={{ backgroundColor: color, mixBlendMode: "multiply", WebkitMaskImage: mask, maskImage: mask, WebkitMaskSize: "100% 100%", maskSize: "100% 100%" }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Какой фрагмент фото показывать в миниатюре вещи (в долях высоты листа). */
+const CROP: Record<Part, { y0: number; y1: number }> = { top: { y0: 0.19, y1: 0.5 }, bottom: { y0: 0.47, y1: 0.93 }, feet: { y0: 0.89, y1: 0.99 } };
+export const PHOTO_PART: Partial<Record<Slot, Part>> = { top: "top", bottom: "bottom", feet: "feet" };
+
+/** Миниатюра вещи из фото-модели в выбранном цвете. */
+export function PhotoThumb({ part, color, size = 64 }: { part: Part; color: string; size?: number }) {
+  const c = CROP[part];
+  const H = size / (c.y1 - c.y0);
+  const look: Look = { gender: "f", slots: { [part === "top" ? "top" : part === "bottom" ? "bottom" : "feet"]: { slug: "x", color, size: null } } };
+  return (
+    <div className="relative shrink-0 overflow-hidden rounded-[10px] bg-bg" style={{ width: size, height: size }} aria-hidden>
+      <div className="absolute left-1/2 -translate-x-1/2" style={{ top: -c.y0 * H, height: H }}>
+        <PhotoFigure look={look} view="front" only={part} />
+      </div>
+    </div>
+  );
+}
+

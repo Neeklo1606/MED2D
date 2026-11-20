@@ -4,7 +4,8 @@ import { db, schema } from "./index";
 
 /** Идемпотентные сиды: временный каталог из src/catalog/data.ts (см. docs/blockers.md). */
 export async function seed() {
-  await db.insert(schema.color).values(Object.entries(COLORS).map(([slug, c]) => ({ slug, name: c.name, hex: c.hex }))).onConflictDoNothing();
+  await db.insert(schema.color).values(Object.entries(COLORS).map(([slug, c]) => ({ slug, name: c.name, hex: c.hex })))
+    .onConflictDoUpdate({ target: schema.color.slug, set: { name: sql`excluded.name`, hex: sql`excluded.hex` } });
   const [chart] = await db.select().from(schema.sizeChart).limit(1);
   const chartId = chart?.id ?? (await db.insert(schema.sizeChart).values({
     title: "Одежда унисекс",
@@ -16,7 +17,7 @@ export async function seed() {
     const [row] = await db.insert(schema.product).values({
       slug: p.slug, type: p.category, slot: p.slot, model: p.model, title: p.title, short: p.short,
       sort: i, pricePending: p.priceRub === null, sizeChartId: p.sizes.length && p.slot !== "feet" ? chartId : null,
-    }).onConflictDoNothing().returning();
+    }).onConflictDoUpdate({ target: schema.product.slug, set: { title: p.title, short: p.short, model: p.model, sort: i } }).returning();
     const productId = row?.id ?? (await db.select({ id: schema.product.id }).from(schema.product).where(sql`${schema.product.slug} = ${p.slug}`))[0].id;
     const sizes = p.sizes.length ? p.sizes : [""];
     const variants = p.colors.flatMap((c) => sizes.map((s) => ({
