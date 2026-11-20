@@ -57,6 +57,10 @@ fi
 if grep -qE '^APP_PORT=' .env; then sed -i "s/^APP_PORT=.*/APP_PORT=${APP_PORT}/" .env; else echo "APP_PORT=${APP_PORT}" >> .env; fi
 log "App port: ${APP_PORT}"
 
+if ! $SUDO docker image inspect postgres:16-alpine >/dev/null 2>&1; then
+  log "postgres:16-alpine not found, pulling"
+  $SUDO docker pull postgres:16-alpine || { echo "Нет образа postgres:16-alpine и Docker Hub недоступен. Загрузите образ вручную (docker save/load)." >&2; exit 2; }
+fi
 if [ -f medform-app.tar.gz ]; then
   log "Loading prebuilt image"
   $SUDO docker load -i medform-app.tar.gz

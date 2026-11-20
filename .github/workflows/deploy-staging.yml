@@ -35,8 +35,9 @@ jobs:
         if: env.HAS_SECRETS == 'true'
         run: |
           docker build -t medform-app .
-          docker pull postgres:16-alpine
-          docker save medform-app postgres:16-alpine | gzip > medform-app.tar.gz
+          # образ базы уже на сервере; отправляем только сайт (меньше 100 МБ на каждый деплой)
+          docker save medform-app | gzip > medform-app.tar.gz
+          ls -lh medform-app.tar.gz
           mkdir -p bundle/deploy
           cp medform-app.tar.gz docker-compose.yml .env.example bundle/
           cp deploy/* bundle/deploy/
@@ -60,6 +61,8 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || 22 }}
           source: "bundle/*"
+          timeout: 60s
+          command_timeout: 15m
           target: /opt/medform
           strip_components: 1
       - name: Bootstrap and start
