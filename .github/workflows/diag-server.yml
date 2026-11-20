@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: 120 requests from GitHub runner
         run: |
+          for f in unbounded-cyrillic.woff2 unbounded-latin.woff2 inter-cyrillic.woff2; do curl -s -o /dev/null -m 15 -w "/fonts/$f %{http_code} %{content_type} %{size_download}\n" "https://med.neeklo.ru/fonts/$f"; done
+          css=$(curl -s -m 15 https://med.neeklo.ru/catalog | grep -o '/_next/static/chunks/[a-z0-9]*\.css' | head -1); curl -s -o /dev/null -m 15 -w "$css %{http_code} %{size_download}\n" "https://med.neeklo.ru$css"
           for u in / /catalog /about /photo-model/f/front-bottom-mask.png /api/health; do
             codes=$(for i in $(seq 1 24); do curl -s -o /dev/null -m 15 -w "%{http_code}\n" "https://med.neeklo.ru$u"; done | sort | uniq -c | tr '\n' ' ')
             echo "$u -> $codes"
