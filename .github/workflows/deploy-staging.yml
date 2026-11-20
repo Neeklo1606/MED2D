@@ -10,6 +10,14 @@ name: Deploy staging (med.neeklo.ru)
 on:
   push:
     branches: [main, claude/festive-clarke-rnf8vy]
+    # документы, скриншоты и диагностика не перезапускают сайт
+    paths-ignore:
+      - "docs/**"
+      - "artifacts/**"
+      - "tools/**"
+      - "**/*.md"
+      - ".github/workflows/diag-server.yml"
+      - ".github/workflows/check-server.yml"
   workflow_dispatch:
 concurrency: deploy-staging
 jobs:
