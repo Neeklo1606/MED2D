@@ -20,6 +20,8 @@ on:
       - ".github/workflows/check-server.yml"
   workflow_dispatch:
 concurrency: deploy-staging
+permissions:
+  contents: write   # загрузка образа в служебный релиз staging-build
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -31,15 +33,20 @@ jobs:
         run: echo "::warning::STAGING_SSH_HOST / STAGING_SSH_USER / STAGING_SSH_KEY are not set, deploy skipped"
       - uses: actions/checkout@v4
         if: env.HAS_SECRETS == 'true'
-      - name: Build image
+      - name: Build image and publish to release staging-build
         if: env.HAS_SECRETS == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           docker build -t medform-app .
-          # образ базы уже на сервере; отправляем только сайт (меньше 100 МБ на каждый деплой)
           docker save medform-app | gzip > medform-app.tar.gz
           ls -lh medform-app.tar.gz
+          # Загрузка на сервер из-за рубежа медленная, а скачивание с сервера быстрое:
+          # кладём образ в релиз, сервер скачивает его сам.
+          gh release view staging-build >/dev/null 2>&1 || gh release create staging-build --prerelease --title "Staging build (служебный)" --notes "Образ для автодеплоя med.neeklo.ru. Обновляется на каждый деплой."
+          gh release upload staging-build medform-app.tar.gz --clobber
           mkdir -p bundle/deploy
-          cp medform-app.tar.gz docker-compose.yml .env.example bundle/
+          cp docker-compose.yml .env.example bundle/
           cp deploy/* bundle/deploy/
       - name: Prepare target dir
         if: env.HAS_SECRETS == 'true'
@@ -74,7 +81,11 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || 22 }}
           command_timeout: 20m
-          script: APP_VERSION=${{ github.sha }} APP_PORT=${{ secrets.APP_PORT || 3010 }} bash /opt/medform/deploy/bootstrap.sh
+          script: |
+            set -e
+            curl -fL --retry 3 --retry-delay 5 -o /opt/medform/medform-app.tar.gz "https://github.com/${{ github.repository }}/releases/download/staging-build/medform-app.tar.gz"
+            ls -lh /opt/medform/medform-app.tar.gz
+            APP_VERSION=${{ github.sha }} APP_PORT=${{ secrets.APP_PORT || 3010 }} bash /opt/medform/deploy/bootstrap.sh
       - name: Smoke from outside
         if: env.HAS_SECRETS == 'true'
         run: |
