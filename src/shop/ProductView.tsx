@@ -18,7 +18,10 @@ export default function ProductView({ p }: { p: Product }) {
   const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [needSize, setNeedSize] = useState(false);
-  const kind = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind);
+  const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
+  // Вещи с фото-слоями показываем на фото-модели, остальные в 3D (если есть WebGL)
+  const onPhoto = ["top", "bottom", "feet"].includes(p.slot);
+  const kind: RendererKind = onPhoto || !webgl ? "photo" : "three";
   const add = useCart((s) => s.add);
   const toast = useToast((s) => s.show);
   const look = p.model ? wear(emptyLook("f"), { slug: p.slug, color, size }) : emptyLook("f");

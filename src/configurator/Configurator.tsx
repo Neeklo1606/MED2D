@@ -105,7 +105,7 @@ function RoundBtn(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
 
 /* ---------- сцена ---------- */
 
-function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKind) => void }) {
+function Stage({ kind, setKind, webgl }: { kind: RendererKind; setKind: (k: RendererKind) => void; webgl: boolean }) {
   const look = useLook((s) => s.look);
   const setGender = useLook((s) => s.setGender);
   const clear = useLook((s) => s.clear);
@@ -122,8 +122,8 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
 
       <div className="absolute right-3 top-3 flex gap-2">
         <div className="flex rounded-full border border-line bg-surface p-1 text-xs font-semibold" role="group" aria-label="Режим отображения">
-          {(["three", "photo"] as const).map((k) => (
-            <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={`min-h-9 min-w-9 rounded-full px-2 ${kind === k ? "bg-ink text-white" : ""}`}>
+          {(["photo", "three"] as const).map((k) => (
+            <button key={k} type="button" aria-pressed={kind === k} disabled={k === "three" && !webgl} onClick={() => setKind(k)} className={`min-h-9 min-w-9 rounded-full px-2.5 disabled:opacity-40 ${kind === k ? "bg-ink text-white" : ""}`}>
               {k === "three" ? t("catalog.stage.mode3d") : t("catalog.stage.mode2d")}
             </button>
           ))}
@@ -131,7 +131,7 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
         <button type="button" onClick={clear} className="min-h-11 rounded-full border border-line bg-surface px-4 text-sm font-semibold">{t("catalog.stage.removeAll")}</button>
       </div>
 
-      {kind === "three" && <p className="pointer-events-none absolute left-3 top-4 hidden max-w-[180px] text-xs text-muted lg:block">{t("catalog.stage.hint")}</p>}
+      <p className="pointer-events-none absolute left-3 top-4 hidden max-w-[180px] text-xs text-muted lg:block">{kind === "three" ? t("catalog.stage.hint") : t("catalog.stage.hintPhoto")}</p>
 
       <div className="absolute bottom-3 left-3 flex items-center gap-2 text-sm">
         <span className="hidden text-muted sm:inline">{t("catalog.stage.gender")}:</span>
@@ -146,7 +146,7 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
       <div className="absolute bottom-3 right-3 flex items-center gap-2 text-sm">
         <RoundBtn aria-label="Приблизить" onClick={() => ref.current?.zoomIn()}>+</RoundBtn>
         <RoundBtn aria-label="Отдалить" onClick={() => ref.current?.zoomOut()}>−</RoundBtn>
-        <RoundBtn aria-label={t("catalog.stage.rotate")} onClick={() => ref.current?.rotate(90)} className="text-base">↻</RoundBtn>
+        <RoundBtn aria-label={kind === "photo" ? t("catalog.stage.flip") : t("catalog.stage.rotate")} onClick={() => ref.current?.rotate(90)} className="text-base">↻</RoundBtn>
         <RoundBtn aria-label={t("catalog.stage.reset")} onClick={() => ref.current?.reset()} className="text-base">⤢</RoundBtn>
       </div>
     </div>
@@ -332,9 +332,9 @@ const noop = () => () => {};
 
 export default function Configurator() {
   useUrlSync();
-  const auto = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind);
-  const [override, setKind] = useState<RendererKind | null>(null);
-  const kind = override ?? auto;
+  // По умолчанию фото-модель (как в макете); 3D доступно переключателем, если есть WebGL.
+  const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
+  const [kind, setKind] = useState<RendererKind>("photo");
   const [cat, setCat] = useState<Product["category"]>("top");
   const [chart, setChart] = useState(false);
   const { addAll, addOne, addItem } = useActions(setCat);
@@ -353,7 +353,7 @@ export default function Configurator() {
         </section>
 
         <section aria-label="Модель" className="mt-2 h-[60svh] min-h-[380px] px-2 lg:mt-0 lg:h-[calc(100svh-120px)] lg:max-h-[860px] lg:min-h-[620px] lg:px-0">
-          <Stage kind={kind} setKind={setKind} />
+          <Stage kind={kind} setKind={setKind} webgl={webgl} />
         </section>
 
         {/* мобильные табы и лента */}
