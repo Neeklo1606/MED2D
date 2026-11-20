@@ -1,3 +1,4 @@
+import type { Slot } from "@/catalog/data";
 import type { Look } from "../look";
 
 /** Общий интерфейс отрисовки образа: 3D (three) или 2D (photo). Логика образа от него не зависит. */
@@ -5,6 +6,10 @@ export interface LookRendererHandle {
   zoomIn(): void;
   zoomOut(): void;
   reset(): void;
+  /** Навести камеру на часть тела (в 2D-режиме приближение к зоне). */
+  focus(slot: Slot | "full"): void;
+  /** Повернуть модель на угол в градусах. */
+  rotate(deg: number): void;
 }
 
 export interface LookRendererProps {

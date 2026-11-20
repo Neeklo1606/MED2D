@@ -9,10 +9,15 @@ import type { LookRendererHandle, LookRendererProps } from "./types";
  */
 const PhotoRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function PhotoRenderer({ look, label }, ref) {
   const [zoom, setZoom] = useState(1);
+  const [origin, setOrigin] = useState("50% 40%");
+  const [flip, setFlip] = useState(1);
+  const Y: Record<string, string> = { full: "50% 40%", head: "50% 8%", top: "50% 30%", coat: "50% 38%", bottom: "50% 65%", feet: "50% 92%", accessory: "50% 35%" };
   useImperativeHandle(ref, () => ({
     zoomIn: () => setZoom((z) => Math.min(2.5, z + 0.25)),
     zoomOut: () => setZoom((z) => Math.max(1, z - 0.25)),
-    reset: () => setZoom(1),
+    reset: () => { setZoom(1); setOrigin(Y.full); setFlip(1); },
+    focus: (slot) => { setOrigin(Y[slot] ?? Y.full); setZoom(slot === "full" ? 1 : 1.6); },
+    rotate: () => setFlip((f) => -f),
   }));
   const c = (slot: keyof typeof look.slots) => {
     const w = look.slots[slot];
@@ -21,7 +26,7 @@ const PhotoRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
   const m = look.gender === "m";
   const sw = m ? 1.1 : 1;
   return (
-    <svg role="img" aria-label={label} viewBox="0 0 200 520" className="h-full w-full transition-transform duration-200 motion-reduce:transition-none" style={{ transform: `scale(${zoom})`, transformOrigin: "50% 40%" }}>
+    <svg role="img" aria-label={label} viewBox="0 0 200 520" className="h-full w-full transition-transform duration-200 motion-reduce:transition-none" style={{ transform: `scale(${zoom * flip}, ${zoom})`, transformOrigin: origin }}>
       <g transform={`translate(${100 - 100 * sw} 0) scale(${sw} 1)`}>
         <circle cx="100" cy="46" r="26" fill="#d6d7db" />
         <rect x="88" y="68" width="24" height="18" fill="#d6d7db" />

@@ -4,6 +4,7 @@ import { COLORS, bySlug } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import { rub } from "@/lib/checkout";
 import { useCart } from "@/configurator/store";
+import { emptyLook, toQuery, wear } from "@/configurator/look";
 import { useCartHydrated, useQuote } from "./hooks";
 
 export function Stepper({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) {
@@ -27,11 +28,14 @@ function CartSkeleton() {
 export default function CartView() {
   const hydrated = useCartHydrated();
   const items = useCart((s) => s.items);
-  const { setQty, setSize, removeAt } = useCart.getState();
+  const { setQty, setSize, setColor, removeAt } = useCart.getState();
   const { quote, error } = useQuote(items, hydrated && items.length > 0);
   const lines = quote && quote.lines.length === items.length ? quote.lines : null;
   const hasErrors = !!lines?.some((l) => l.error);
   const count = items.reduce((n, i) => n + i.qty, 0);
+  // Образ на модели из вещей корзины (по одной на слот, последняя побеждает)
+  const lookFromCart = items.reduce((l, it) => (bySlug.get(it.slug)?.model ? wear(l, { slug: it.slug, color: it.color, size: it.size }) : l), emptyLook("f"));
+  const lookHref = Object.keys(lookFromCart.slots).length ? `/catalog?${toQuery(lookFromCart)}` : null;
 
   if (!hydrated) return <CartSkeleton />;
   if (!items.length) {
@@ -68,6 +72,18 @@ export default function CartView() {
                   <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
                 </button>
               </div>
+              {p && p.colors.length > 1 && (
+                <div className="mt-3 border-t border-line pt-3">
+                  <p className="text-xs text-muted">{t("catalog.card.color")}: <span className="text-ink">{COLORS[it.color]?.name}</span></p>
+                  <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${p.title}`} className="mt-1 flex flex-wrap gap-1">
+                    {p.colors.map((c) => (
+                      <button key={c} type="button" role="radio" aria-checked={it.color === c} aria-label={COLORS[c].name} onClick={() => setColor(i, c)} className="grid size-10 place-items-center rounded-full">
+                        <span className={`size-7 rounded-full border border-line ${it.color === c ? "ring-2 ring-ink ring-offset-2" : ""}`} style={{ background: COLORS[c].hex }} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap items-end justify-between gap-3 border-t border-line pt-3">
                 {sizes.length > 0 ? (
                   <div>
@@ -89,6 +105,9 @@ export default function CartView() {
       </ul>
 
       <aside className="mt-4 lg:mt-0">
+        {lookHref && (
+          <Link href={lookHref} className="press mb-3 flex min-h-12 items-center justify-center gap-2 rounded-full border border-ink bg-surface text-sm font-semibold">{t("cart.page.viewLook")}</Link>
+        )}
         <div className="rounded-[var(--radius-lg)] bg-surface p-5 lg:sticky lg:top-4">
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between"><dt>{t("cart.summary.items")}, {count} шт.</dt><dd className="tabular-nums">{lines ? rub(quote!.itemsTotalKop) : "…"}</dd></div>

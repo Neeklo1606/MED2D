@@ -1,17 +1,28 @@
 "use client";
 import type React from "react";
 import { forwardRef, Suspense, useEffect, useImperativeHandle, useMemo, useRef } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { ContactShadows, OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 type OrbitControlsImpl = React.ComponentRef<typeof OrbitControls>;
-import { bySlug, COLORS, type Gender } from "@/catalog/data";
+import { bySlug, COLORS, type Gender, type Slot } from "@/catalog/data";
 import { wornList } from "../look";
 import type { LookRendererHandle, LookRendererProps } from "./types";
 
 const url = (model: string, g: Gender) => `/3d/models/${model}_${g}.glb`;
 const HOME = { pos: new THREE.Vector3(0.9, 1.25, 3.6), target: new THREE.Vector3(0, 0.88, 0) };
-const MIN = 1.2, MAX = 6;
+const MIN = 0.9, MAX = 6;
+
+/** Куда смотреть при работе с вещью: высота цели (доля роста) и дистанция. */
+const FOCUS: Record<Slot | "full", { y: number; d: number }> = {
+  full: { y: 0.88, d: 3.75 },
+  head: { y: 1.58, d: 1.35 },
+  top: { y: 1.2, d: 2.0 },
+  coat: { y: 1.05, d: 2.5 },
+  bottom: { y: 0.58, d: 2.3 },
+  feet: { y: 0.12, d: 1.5 },
+  accessory: { y: 1.1, d: 2.4 },
+};
 
 function Model({ src, color, base }: { src: string; color?: string; base?: boolean }) {
   const { scene } = useGLTF(src, false, true);
@@ -42,25 +53,59 @@ function Model({ src, color, base }: { src: string; color?: string; base?: boole
   return <primitive object={obj} />;
 }
 
-const CameraRig = forwardRef<LookRendererHandle>(function CameraRig(_, ref) {
+const CameraRig = forwardRef<LookRendererHandle, { gender: Gender }>(function CameraRig({ gender }, ref) {
   const { camera, invalidate } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
+  const anim = useRef<{ p0: THREE.Vector3; p1: THREE.Vector3; t0: THREE.Vector3; t1: THREE.Vector3; k: number } | null>(null);
+  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  const go = (pos: THREE.Vector3, target: THREE.Vector3) => {
+    const c = controls.current;
+    if (!c) return;
+    if (reduce) { camera.position.copy(pos); c.target.copy(target); c.update(); invalidate(); return; }
+    anim.current = { p0: camera.position.clone(), p1: pos, t0: c.target.clone(), t1: target, k: 0 };
+    invalidate();
+  };
+
+  useFrame((_, dt) => {
+    const a = anim.current, c = controls.current;
+    if (!a || !c) return;
+    a.k = Math.min(1, a.k + dt / 0.45);
+    const e = 1 - Math.pow(1 - a.k, 3);
+    camera.position.lerpVectors(a.p0, a.p1, e);
+    c.target.lerpVectors(a.t0, a.t1, e);
+    c.update();
+    if (a.k >= 1) anim.current = null;
+    invalidate();
+  });
+
+  /** Новая точка на той же азимутальной линии, что и сейчас (пользователь не теряет ракурс). */
+  const frame = (slot: Slot | "full", azimuthDelta = 0) => {
+    const c = controls.current;
+    if (!c) return;
+    const h = gender === "m" ? 1.07 : 1;
+    const f = FOCUS[slot];
+    const target = new THREE.Vector3(0, f.y * h, 0);
+    const az = Math.atan2(camera.position.x - c.target.x, camera.position.z - c.target.z) + azimuthDelta;
+    const elev = slot === "feet" ? 0.25 : slot === "head" ? 0.05 : 0.12;
+    const pos = new THREE.Vector3(Math.sin(az) * Math.cos(elev), Math.sin(elev), Math.cos(az) * Math.cos(elev)).multiplyScalar(f.d * h).add(target);
+    go(pos, target);
+  };
+
   const dolly = (k: number) => {
     const c = controls.current;
     if (!c) return;
     const dir = camera.position.clone().sub(c.target);
-    const d = THREE.MathUtils.clamp(dir.length() * k, MIN, MAX);
-    camera.position.copy(c.target).add(dir.setLength(d));
-    c.update();
-    invalidate();
+    go(c.target.clone().add(dir.setLength(THREE.MathUtils.clamp(dir.length() * k, MIN, MAX))), c.target.clone());
   };
-  const reset = () => {
-    camera.position.copy(HOME.pos);
-    controls.current?.target.copy(HOME.target);
-    controls.current?.update();
-    invalidate();
+  const rotate = (deg: number) => {
+    const c = controls.current;
+    if (!c) return;
+    const dir = camera.position.clone().sub(c.target).applyAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(deg));
+    go(c.target.clone().add(dir), c.target.clone());
   };
-  useImperativeHandle(ref, () => ({ zoomIn: () => dolly(0.8), zoomOut: () => dolly(1.25), reset }));
+  const reset = () => go(HOME.pos.clone(), HOME.target.clone());
+  useImperativeHandle(ref, () => ({ zoomIn: () => dolly(0.8), zoomOut: () => dolly(1.25), reset, focus: (s) => frame(s), rotate }));
   return (
     <OrbitControls
       ref={controls}
@@ -72,6 +117,7 @@ const CameraRig = forwardRef<LookRendererHandle>(function CameraRig(_, ref) {
       maxDistance={MAX}
       minPolarAngle={0.35}
       maxPolarAngle={1.75}
+      onStart={() => { anim.current = null; }}
     />
   );
 });
@@ -88,6 +134,8 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
     zoomIn: () => rig.current?.zoomIn(),
     zoomOut: () => rig.current?.zoomOut(),
     reset: () => rig.current?.reset(),
+    focus: (slot) => rig.current?.focus(slot),
+    rotate: (deg) => rig.current?.rotate(deg),
   }));
   return (
     <Canvas
@@ -111,13 +159,14 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
         <circleGeometry args={[0.7, 64]} />
         <meshStandardMaterial color="#e6e7eb" roughness={1} />
       </mesh>
+      <ContactShadows position={[0, 0.002, 0]} scale={1.6} blur={2.2} far={1.6} opacity={0.35} resolution={256} />
       <Suspense fallback={null}>
         <Model src={url("mannequin", g)} base />
         {items.map(({ slot, worn, product }) => (
           <Model key={`${slot}-${product.model}-${g}`} src={url(product.model!, g)} color={COLORS[worn.color]?.hex} />
         ))}
       </Suspense>
-      <CameraRig ref={rig} />
+      <CameraRig ref={rig} gender={g} />
     </Canvas>
   );
 });

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getField } from "@/content/registry";
 import Configurator from "@/configurator/Configurator";
+import CatalogGrid from "@/shop/CatalogGrid";
 
 export const metadata: Metadata = {
   title: getField("catalog.seo.title"),
@@ -10,6 +11,6 @@ export const metadata: Metadata = {
 
 export default function CatalogPage() {
   return (
-    <main><Configurator /></main>
+    <main><Configurator /><CatalogGrid /></main>
   );
 }

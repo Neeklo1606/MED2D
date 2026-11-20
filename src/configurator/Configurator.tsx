@@ -1,7 +1,8 @@
 "use client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { CATEGORIES, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/catalog/data";
+import { bySlug, CATEGORIES, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import { fromQuery, missingSizes, toQuery, total, wornList } from "./look";
 import { DEFAULT_LOOK, useCart, useLook, useToast } from "./store";
@@ -67,7 +68,18 @@ function useActions(setCat: (c: Product["category"]) => void) {
     add([{ slug: x.worn.slug, color: x.worn.color, size: x.worn.size }]);
     toast(t("catalog.toast.added"));
   };
-  return { addAll, addOne };
+  /** Одна вещь из карточки (в том числе не надетая и без 3D-модели). false = нужен размер. */
+  const addItem = (slug: string) => {
+    const p = bySlug.get(slug);
+    const pick = useLook.getState().picks[slug];
+    if (!p || !pick) return true;
+    if (p.sizes.length && !pick.size) { toast(t("catalog.card.sizeMissing")); return false; }
+    if (p.priceRub === null) { toast(t("catalog.toast.pending")); return true; }
+    add([{ slug, color: pick.color, size: pick.size }]);
+    toast(t("catalog.toast.added"));
+    return true;
+  };
+  return { addAll, addOne, addItem };
 }
 
 /* ---------- мелкие элементы ---------- */
@@ -98,6 +110,8 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
   const setGender = useLook((s) => s.setGender);
   const clear = useLook((s) => s.clear);
   const ref = useRef<LookRendererHandle>(null);
+  const focus = useLook((s) => s.focus);
+  useEffect(() => { if (focus.n) ref.current?.focus(focus.slot); }, [focus, kind]);
   const label = wornList(look).map((x) => `${x.product.title}, ${COLORS[x.worn.color]?.name}`).join("; ") || t("catalog.total.empty");
   return (
     <div className="relative h-full overflow-hidden rounded-[var(--radius-lg)]">
@@ -117,7 +131,7 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
         <button type="button" onClick={clear} className="min-h-11 rounded-full border border-line bg-surface px-4 text-sm font-semibold">{t("catalog.stage.removeAll")}</button>
       </div>
 
-      {kind === "three" && <p className="pointer-events-none absolute left-1/2 top-16 hidden -translate-x-1/2 text-xs text-muted lg:block">{t("catalog.stage.hint")}</p>}
+      {kind === "three" && <p className="pointer-events-none absolute left-3 top-4 hidden max-w-[180px] text-xs text-muted lg:block">{t("catalog.stage.hint")}</p>}
 
       <div className="absolute bottom-3 left-3 flex items-center gap-2 text-sm">
         <span className="hidden text-muted sm:inline">{t("catalog.stage.gender")}:</span>
@@ -130,10 +144,10 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
       </div>
 
       <div className="absolute bottom-3 right-3 flex items-center gap-2 text-sm">
-        <span className="hidden text-muted sm:inline">{t("catalog.stage.zoom")}:</span>
         <RoundBtn aria-label="Приблизить" onClick={() => ref.current?.zoomIn()}>+</RoundBtn>
         <RoundBtn aria-label="Отдалить" onClick={() => ref.current?.zoomOut()}>−</RoundBtn>
-        <RoundBtn aria-label={t("catalog.stage.reset")} onClick={() => ref.current?.reset()} className="text-base">⟲</RoundBtn>
+        <RoundBtn aria-label={t("catalog.stage.rotate")} onClick={() => ref.current?.rotate(90)} className="text-base">↻</RoundBtn>
+        <RoundBtn aria-label={t("catalog.stage.reset")} onClick={() => ref.current?.reset()} className="text-base">⤢</RoundBtn>
       </div>
     </div>
   );
@@ -141,10 +155,12 @@ function Stage({ kind, setKind }: { kind: RendererKind; setKind: (k: RendererKin
 
 /* ---------- карточка ---------- */
 
-function ProductCard({ p, mobile, onSizeChart }: { p: Product; mobile?: boolean; onSizeChart: () => void }) {
+function ProductCard({ p, mobile, onSizeChart, onAddItem }: { p: Product; mobile?: boolean; onSizeChart: () => void; onAddItem: (slug: string) => boolean }) {
   const pick = useLook((s) => s.picks[p.slug]);
   const worn = useLook((s) => s.look.slots[p.slot]?.slug === p.slug);
-  const invalid = useLook((s) => s.invalid.includes(p.slot) && s.look.slots[p.slot]?.slug === p.slug);
+  const flagged = useLook((s) => s.invalid.includes(p.slot) && s.look.slots[p.slot]?.slug === p.slug);
+  const [needSize, setNeedSize] = useState(false);
+  const invalid = flagged || (needSize && !pick.size);
   const { toggle, setColor, setSize } = useLook.getState();
   const canWear = p.model !== null;
   return (
@@ -187,12 +203,19 @@ function ProductCard({ p, mobile, onSizeChart }: { p: Product; mobile?: boolean;
           ) : <p className="mt-1 text-xs">{t("catalog.card.oneSize")}</p>}
           {invalid && <p role="alert" className="mt-1.5 text-xs font-semibold text-red-700">{t("catalog.card.sizeMissing")}</p>}
         </div>
-        {canWear && (
-          <button type="button" onClick={() => toggle(p.slug)} aria-pressed={worn}
-            className={`flex min-h-11 w-full items-center justify-center rounded-full text-sm font-semibold ${worn ? "border border-ink bg-surface" : "bg-ink text-white"}`}>
-            {worn ? t("catalog.card.takeOff") : t("catalog.card.tryOn")}
+        <div className="flex gap-2">
+          {canWear && (
+            <button type="button" onClick={() => toggle(p.slug)} aria-pressed={worn}
+              className={`flex min-h-11 flex-1 items-center justify-center rounded-full text-sm font-semibold ${worn ? "border border-ink bg-surface" : "bg-ink text-white"}`}>
+              {worn ? t("catalog.card.takeOff") : t("catalog.card.tryOn")}
+            </button>
+          )}
+          <button type="button" onClick={() => setNeedSize(!onAddItem(p.slug))} aria-label={`${t("catalog.total.addOne")}: ${p.title}`}
+            className={`flex min-h-11 items-center justify-center gap-2 rounded-full border border-ink px-4 text-sm font-semibold ${canWear ? "" : "flex-1"}`}>
+            <IconCart />{!canWear && t("catalog.total.addOne")}
           </button>
-        )}
+        </div>
+        <Link href={`/product/${p.slug}`} className="block text-center text-xs underline underline-offset-2">{t("catalog.card.details")}</Link>
       </div>
     </article>
   );
@@ -200,26 +223,55 @@ function ProductCard({ p, mobile, onSizeChart }: { p: Product; mobile?: boolean;
 
 /* ---------- итог ---------- */
 
-function TotalRows({ onAdd }: { onAdd: (s: Slot) => void }) {
-  const look = useLook((s) => s.look);
+function TotalRow({ slot, onAdd }: { slot: Slot; onAdd: (s: Slot) => void }) {
+  const worn = useLook((s) => s.look.slots[slot]);
   const remove = useLook((s) => s.remove);
-  const list = wornList(look);
-  if (!list.length) return <p className="py-3 text-sm opacity-80">{t("catalog.total.empty")}</p>;
+  const [open, setOpen] = useState(false);
+  const product = worn ? bySlug.get(worn.slug) : undefined;
+  if (!worn || !product) return null;
+  const { setColor, setSize, focusOn } = useLook.getState();
   return (
-    <ul className="divide-y divide-white/25 text-sm">
-      {list.map(({ slot, worn, product }) => (
-        <li key={slot} className="flex items-center gap-2 py-2">
+    <li className="py-2">
+      <div className="flex items-center gap-1">
+        <button type="button" aria-expanded={open} onClick={() => { setOpen(!open); focusOn(slot); }} className="no-press flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-sm)] text-left hover:bg-white/10">
+          <span className="size-4 shrink-0 rounded-full border border-white/60" style={{ background: COLORS[worn.color]?.hex }} aria-hidden />
           <span className="min-w-0 flex-1">
             <span className="block truncate">{product.title}</span>
-            <span className="block text-xs opacity-75">{COLORS[worn.color]?.name}{worn.size ? `, ${worn.size}` : ""}</span>
+            <span className="block text-xs opacity-80">{COLORS[worn.color]?.name}{worn.size ? `, ${worn.size}` : `, ${product.sizes.length ? "размер не выбран" : "один размер"}`} · {open ? "свернуть" : "изменить"}</span>
           </span>
-          <span className="shrink-0 font-semibold">{product.priceRub === null ? "—" : formatRub(product.priceRub)}</span>
-          <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="grid size-11 place-items-center rounded-full hover:bg-white/15"><IconCart /></button>
-          <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="grid size-11 place-items-center rounded-full hover:bg-white/15"><IconX /></button>
-        </li>
-      ))}
-    </ul>
+          <span className="shrink-0 font-semibold tabular-nums">{product.priceRub === null ? "—" : formatRub(product.priceRub)}</span>
+        </button>
+        <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="grid size-11 shrink-0 place-items-center rounded-full hover:bg-white/15"><IconCart /></button>
+        <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="grid size-11 shrink-0 place-items-center rounded-full hover:bg-white/15"><IconX /></button>
+      </div>
+      {open && (
+        <div className="mt-1 space-y-2 rounded-[var(--radius-md)] bg-white/10 p-2.5">
+          <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${product.title}`} className="flex flex-wrap gap-1">
+            {product.colors.map((c) => (
+              <button key={c} type="button" role="radio" aria-checked={worn.color === c} aria-label={COLORS[c].name} onClick={() => setColor(product.slug, c)} className="grid size-10 place-items-center rounded-full">
+                <span className={`size-7 rounded-full border border-white/50 ${worn.color === c ? "ring-2 ring-white ring-offset-2 ring-offset-accent" : ""}`} style={{ background: COLORS[c].hex }} />
+              </button>
+            ))}
+          </div>
+          {product.sizes.length > 0 && (
+            <div role="radiogroup" aria-label={`${t("catalog.card.size")}: ${product.title}`} className="flex flex-wrap gap-1.5">
+              {product.sizes.map((z) => (
+                <button key={z} type="button" role="radio" aria-checked={worn.size === z} onClick={() => setSize(product.slug, z)}
+                  className={`grid min-h-10 min-w-10 place-items-center rounded-[var(--radius-sm)] px-2 text-xs font-semibold ${worn.size === z ? "bg-white text-ink" : "border border-white/50"}`}>{z}</button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </li>
   );
+}
+
+function TotalRows({ onAdd }: { onAdd: (s: Slot) => void }) {
+  const look = useLook((s) => s.look);
+  const list = wornList(look);
+  if (!list.length) return <p className="py-3 text-sm opacity-80">{t("catalog.total.empty")}</p>;
+  return <ul className="divide-y divide-white/25 text-sm">{list.map(({ slot }) => <TotalRow key={slot} slot={slot} onAdd={onAdd} />)}</ul>;
 }
 
 function TotalCard({ onAdd, onAddAll }: { onAdd: (s: Slot) => void; onAddAll: () => void }) {
@@ -285,7 +337,8 @@ export default function Configurator() {
   const kind = override ?? auto;
   const [cat, setCat] = useState<Product["category"]>("top");
   const [chart, setChart] = useState(false);
-  const { addAll, addOne } = useActions(setCat);
+  const { addAll, addOne, addItem } = useActions(setCat);
+  const focusOn = useLook((s) => s.focusOn);
   const wornSlots = useLook((s) => s.look.slots);
 
   return (
@@ -309,7 +362,7 @@ export default function Configurator() {
             {CATEGORIES.map((c) => {
               const has = PRODUCTS.some((p) => p.category === c.id && wornSlots[p.slot]?.slug === p.slug);
               return (
-                <button key={c.id} type="button" role="tab" aria-selected={cat === c.id} onClick={() => setCat(c.id)}
+                <button key={c.id} type="button" role="tab" aria-selected={cat === c.id} onClick={() => { setCat(c.id); focusOn(c.id === "accessory" ? "full" : c.id); }}
                   className={`relative min-h-11 shrink-0 rounded-full px-4 text-sm font-semibold ${cat === c.id ? "bg-ink text-white" : "border border-line bg-surface"}`}>
                   {c.label}{has && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-accent" aria-label="надето" />}
                 </button>
@@ -317,14 +370,14 @@ export default function Configurator() {
             })}
           </div>
           <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 [scrollbar-width:none]">
-            {PRODUCTS.filter((p) => p.category === cat).map((p) => <ProductCard key={p.slug} p={p} mobile onSizeChart={() => setChart(true)} />)}
+            {PRODUCTS.filter((p) => p.category === cat).map((p) => <ProductCard key={p.slug} p={p} mobile onSizeChart={() => setChart(true)} onAddItem={addItem} />)}
           </div>
         </section>
 
         {/* десктопная колонка */}
         <section aria-label="Вещи" className="hidden lg:block">
           <div className="flex max-h-[calc(100svh-120px)] flex-col gap-4 overflow-y-auto pb-2 pr-1 lg:max-h-[860px]">
-            {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} onSizeChart={() => setChart(true)} />)}
+            {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} onSizeChart={() => setChart(true)} onAddItem={addItem} />)}
           </div>
         </section>
       </div>

@@ -18,6 +18,9 @@ interface LookState {
   remove: (slot: Slot) => void;
   clear: () => void;
   setInvalid: (s: Slot[]) => void;
+  /** Куда навести камеру: меняется счётчик, чтобы повторный фокус тоже срабатывал. */
+  focus: { slot: Slot | "full"; n: number };
+  focusOn: (slot: Slot | "full") => void;
 }
 
 const initialPicks = Object.fromEntries(PRODUCTS.map((p) => [p.slug, { color: p.colors[0], size: null }]));
@@ -35,6 +38,8 @@ export const useLook = create<LookState>()((set, get) => ({
   look: emptyLook(),
   picks: initialPicks,
   invalid: [],
+  focus: { slot: "full", n: 0 },
+  focusOn: (slot) => set({ focus: { slot, n: get().focus.n + 1 } }),
   setLook: (look) => {
     const picks = { ...get().picks };
     for (const w of Object.values(look.slots)) if (w) picks[w.slug] = { color: w.color, size: w.size };
@@ -45,8 +50,8 @@ export const useLook = create<LookState>()((set, get) => ({
     const p = bySlug.get(slug);
     if (!p) return;
     const { look, picks } = get();
-    if (look.slots[p.slot]?.slug === slug) set({ look: takeOff(look, p.slot) });
-    else set({ look: wear(look, { slug, ...picks[slug] }), invalid: get().invalid.filter((s) => s !== p.slot) });
+    if (look.slots[p.slot]?.slug === slug) set({ look: takeOff(look, p.slot), focus: { slot: "full", n: get().focus.n + 1 } });
+    else set({ look: wear(look, { slug, ...picks[slug] }), invalid: get().invalid.filter((s) => s !== p.slot), focus: { slot: p.slot, n: get().focus.n + 1 } });
   },
   setColor: (slug, color) => {
     const p = bySlug.get(slug);
@@ -54,7 +59,13 @@ export const useLook = create<LookState>()((set, get) => ({
     const { look, picks } = get();
     const next = { ...picks[slug], color };
     const worn = look.slots[p.slot]?.slug === slug;
-    set({ picks: { ...picks, [slug]: next }, look: worn ? wear(look, { slug, ...next }) : look });
+    // Выбор цвета у вещи с 3D-моделью сразу надевает её: изменение видно на модели.
+    const show = worn || p.model !== null;
+    set({
+      picks: { ...picks, [slug]: next },
+      look: show ? wear(look, { slug, ...next }) : look,
+      focus: show ? { slot: p.slot, n: get().focus.n + 1 } : get().focus,
+    });
   },
   setSize: (slug, size) => {
     const p = bySlug.get(slug);
@@ -80,8 +91,21 @@ interface CartState {
   add: (items: Omit<CartItem, "qty">[]) => void;
   setQty: (i: number, qty: number) => void;
   setSize: (i: number, size: string) => void;
+  setColor: (i: number, color: string) => void;
   removeAt: (i: number) => void;
   clear: () => void;
+}
+
+/** Меняет цвет или размер строки; если такая строка уже есть, количества складываются. */
+export function patchLine(items: CartItem[], i: number, patch: Partial<Pick>): CartItem[] {
+  const out = [...items];
+  const cur = out[i];
+  if (!cur) return items;
+  const next = { ...cur, ...patch };
+  const dup = out.findIndex((x, j) => j !== i && x.slug === next.slug && x.color === next.color && x.size === next.size);
+  if (dup >= 0) { out[dup] = { ...out[dup], qty: Math.min(20, out[dup].qty + cur.qty) }; out.splice(i, 1); }
+  else out[i] = next;
+  return out;
 }
 
 const safeStorage = createJSONStorage(() => {
@@ -102,15 +126,8 @@ export const useCart = create<CartState>()(
         set({ items });
       },
       setQty: (i, qty) => set({ items: get().items.map((x, j) => (j === i ? { ...x, qty: Math.min(20, Math.max(1, qty)) } : x)) }),
-      setSize: (i, size) => {
-        const items = [...get().items];
-        const cur = items[i];
-        if (!cur) return;
-        const dup = items.findIndex((x, j) => j !== i && x.slug === cur.slug && x.color === cur.color && x.size === size);
-        if (dup >= 0) { items[dup] = { ...items[dup], qty: Math.min(20, items[dup].qty + cur.qty) }; items.splice(i, 1); }
-        else items[i] = { ...cur, size };
-        set({ items });
-      },
+      setSize: (i, size) => set({ items: patchLine(get().items, i, { size }) }),
+      setColor: (i, color) => set({ items: patchLine(get().items, i, { color }) }),
       removeAt: (i) => set({ items: get().items.filter((_, j) => j !== i) }),
       clear: () => set({ items: [] }),
     }),
