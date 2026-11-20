@@ -1,0 +1,25 @@
+name: Server diagnostics (read-only)
+# Только чтение конфигов nginx и состояния контейнеров medform. Ничего не меняет.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/festive-clarke-rnf8vy]
+    paths: [.github/workflows/diag-server.yml]
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            echo "== where metrika / sub_filter is configured =="
+            grep -rnE "sub_filter|metrika|mc\.yandex" /etc/nginx 2>/dev/null | grep -v "^/etc/nginx/sites-available/med.neeklo.ru" | cut -c1-220 || true
+            echo "== includes in nginx.conf http block =="
+            grep -nE "include|sub_filter" /etc/nginx/nginx.conf || true
+            echo "== medform containers =="
+            docker ps --filter name=medform --format '{{.Names}} {{.Status}} {{.Ports}}'
+            grep -E '^APP_PORT=' /opt/medform/.env || true
