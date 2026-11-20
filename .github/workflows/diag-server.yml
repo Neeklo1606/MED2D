@@ -1,12 +1,21 @@
 name: Server diagnostics (read-only)
-# Только чтение конфигов nginx и состояния контейнеров medform. Ничего не меняет.
+# Только чтение: логи nginx/приложения, серия запросов к сайту. Ничего не меняет.
 on:
   workflow_dispatch:
   push:
     branches: [claude/festive-clarke-rnf8vy]
     paths: [.github/workflows/diag-server.yml]
 jobs:
-  diag:
+  outside:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 120 requests from GitHub runner
+        run: |
+          for u in / /catalog /about /photo-model/f/front-bottom-mask.png /api/health; do
+            codes=$(for i in $(seq 1 24); do curl -s -o /dev/null -m 15 -w "%{http_code}\n" "https://med.neeklo.ru$u"; done | sort | uniq -c | tr '\n' ' ')
+            echo "$u -> $codes"
+          done
+  server:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1.2.0
@@ -16,10 +25,11 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: ${{ secrets.STAGING_SSH_PORT || 22 }}
           script: |
-            echo "== where metrika / sub_filter is configured =="
-            grep -rnE "sub_filter|metrika|mc\.yandex" /etc/nginx 2>/dev/null | grep -v "^/etc/nginx/sites-available/med.neeklo.ru" | cut -c1-220 || true
-            echo "== includes in nginx.conf http block =="
-            grep -nE "include|sub_filter" /etc/nginx/nginx.conf || true
-            echo "== medform containers =="
-            docker ps --filter name=medform --format '{{.Names}} {{.Status}} {{.Ports}}'
-            grep -E '^APP_PORT=' /opt/medform/.env || true
+            echo "== containers =="; docker ps --filter name=medform --format '{{.Names}} {{.Status}} {{.Ports}}'
+            echo "== app restarts =="; docker inspect -f '{{.RestartCount}} {{.State.StartedAt}}' medform-app-1
+            echo "== local requests to app =="; P=$(grep -E '^APP_PORT=' /opt/medform/.env | cut -d= -f2)
+            for i in $(seq 1 30); do curl -s -o /dev/null -m 10 -w "%{http_code} " "http://127.0.0.1:$P/catalog"; done; echo
+            echo "== nginx errors for med (last 30) =="; grep -h "med.neeklo.ru" /var/log/nginx/error.log 2>/dev/null | tail -30 | cut -c1-260
+            echo "== nginx med site config =="; grep -nE "proxy_pass|include|listen|sub_filter" /etc/nginx/sites-enabled/med.neeklo.ru
+            echo "== app log (last 40) =="; docker logs --tail 40 medform-app-1 2>&1 | cut -c1-200
+            echo "== load =="; uptime; free -h | head -2
