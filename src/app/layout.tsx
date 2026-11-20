@@ -4,6 +4,8 @@ import { APP_URL, INDEXING_ENABLED } from "@/lib/env";
 import { getField } from "@/content/registry";
 import Header from "@/components/Header";
 import Toast from "@/components/Toast";
+import Footer from "@/components/Footer";
+import CookieBanner from "@/components/CookieBanner";
 import NavigationProgress from "@/features/app-feel/NavigationProgress";
 import ServiceWorker from "@/features/app-feel/ServiceWorker";
 
@@ -27,7 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div role="status" className="bg-ink px-4 py-2 text-center text-xs text-white" style={{ paddingTop: "max(8px, env(safe-area-inset-top, 0px))" }}>{getField("global.staging.notice")}</div>
         <Header />
         {children}
+        <Footer />
         <Toast />
+        <CookieBanner ymId={process.env.YM_COUNTER_ID ?? ""} />
         <ServiceWorker buildId={process.env.APP_VERSION ?? "dev"} />
       </body>
     </html>
