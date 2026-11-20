@@ -6,7 +6,9 @@
 
 | Что | Где |
 |---|---|
-| Репозиторий | https://github.com/Neeklo1606/MED2D, рабочая ветка `claude/festive-clarke-rnf8vy` (доступ выдаёт Никита по логину GitHub) |
+| Репозиторий | https://github.com/Neeklo1606/MED2D, рабочая ветка `claude/festive-clarke-rnf8vy` (доступ для GitHub `Osmanovvv` выдаёт Никита) |
+| ТЗ для разработчика | `docs/dev-spec.md` |
+| Стейдж | https://med.neeklo.ru |
 | ТЗ для программиста | `docs/tz.md` |
 | Макет | Figma, страница «Конфигуратор итог»: https://www.figma.com/design/9fKr0pDLkGKPchDhW34P8a/Medform?node-id=42-2 (доступ выдаёт Никита) |
 | 3D-заготовки | `public/3d/models/*.glb` (16 файлов: манекены Ж/М + 7 вещей на каждый), `manifest.json` с габаритами и треугольниками |

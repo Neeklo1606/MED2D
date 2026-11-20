@@ -1,11 +1,17 @@
-Сергей, привет! Передаю проект MEDFORM (интернет-магазин медодежды с 3D-конфигуратором).
+Привет! Передаю проект MEDFORM: интернет-магазин медицинской одежды с 3D-конфигуратором. Этап 1 готов и работает на стейдже.
 
-1. Репозиторий: https://github.com/Neeklo1606/MED2D, ветка claude/festive-clarke-rnf8vy. Приглашение придёт на твой GitHub.
-2. ТЗ: docs/tz.md в репозитории. Там же спецификация для 3D-моделей (формат GLB, оси, материалы fabric/trim, бюджет полигонов).
-3. Макет Figma, страница «Конфигуратор итог»: https://www.figma.com/design/9fKr0pDLkGKPchDhW34P8a/Medform?node-id=42-2 (доступ открою).
-4. 3D-заготовки: public/3d/models/ (16 GLB: манекены Ж/М и 7 вещей на каждый) + manifest.json. Финальные модели кладутся под теми же именами, код не меняется.
-5. Как запустить и что уже сделано: docs/handoff-sergey.md.
+Стейдж: https://med.neeklo.ru/catalog (собрать образ → корзина → заявка)
+Документ передачи (ссылки, что сделано, ТЗ на этапы 2-5): https://claude.ai/artifact/XTXjHskEqAXTn39Ge2s81W
 
-Уже работает: 3D-конфигуратор на заготовках, корзина, оформление заявки, база данных. Тестовый стенд будет на med.neeklo.ru.
+Репозиторий: https://github.com/Neeklo1606/MED2D/tree/claude/festive-clarke-rnf8vy
+Приглашение придёт на твой GitHub (Osmanovvv), принять: https://github.com/Neeklo1606/MED2D/invitations
+ТЗ для разработчика: https://github.com/Neeklo1606/MED2D/blob/claude/festive-clarke-rnf8vy/docs/dev-spec.md
+ТЗ заказчика (+ спецификация 3D-моделей): https://github.com/Neeklo1606/MED2D/blob/claude/festive-clarke-rnf8vy/docs/tz.md
+Макет Figma «Конфигуратор итог»: https://www.figma.com/design/9fKr0pDLkGKPchDhW34P8a/Medform?node-id=42-2
+3D-заготовки (16 GLB): https://github.com/Neeklo1606/MED2D/tree/claude/festive-clarke-rnf8vy/public/3d/models
 
-Вопрос: когда сможешь показать первую версию 3D (хотя бы анорак + джоггеры на женском манекене)? Напиши дату и что войдёт в показ.
+Работай в ветках feat/* и присылай pull request в claude/festive-clarke-rnf8vy: после мерджа сайт сам выкладывается на стейдж за 2 минуты.
+
+Вопросы:
+1. Когда сможешь показать первую версию 3D (хотя бы анорак + джоггеры на женском манекене)? Дата и что войдёт в показ.
+2. Оценка сроков по этапам 2-5 (админка, Telegram, вёрстка страниц, оплата и доставка).
