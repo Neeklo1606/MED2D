@@ -19,6 +19,23 @@ jobs:
         run: |
           urls=""; for f in front.webp back.webp front-top-mask.png front-bottom-mask.png front-feet-mask.png front-top-shade.webp; do for i in 1 2 3 4 5 6 7 8 9 10; do urls="$urls -o /dev/null https://med.neeklo.ru/photo-model/f/$f?n=$i"; done; done
           curl -s -Z --parallel-max 30 -o /dev/null -w "%{http_code}\n" $urls | sort | uniq -c
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload speed test (5 MB and 50 MB, timeout 3 min each)
+        env:
+          KEY: ${{ secrets.STAGING_SSH_KEY }}
+          HOST: ${{ secrets.STAGING_SSH_HOST }}
+          USER_: ${{ secrets.STAGING_SSH_USER }}
+        run: |
+          echo "$KEY" > k && chmod 600 k
+          for mb in 5 50; do
+            head -c ${mb}M /dev/urandom > t$mb.bin
+            start=$(date +%s)
+            if timeout 180 scp -i k -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 t$mb.bin "$USER_@$HOST:/tmp/medform-speedtest.bin"; then echo "$mb MB: $(( $(date +%s) - start )) s"; else echo "$mb MB: FAILED/TIMEOUT after $(( $(date +%s) - start )) s"; fi
+          done
+          ssh -i k -o StrictHostKeyChecking=accept-new "$USER_@$HOST" 'rm -f /tmp/medform-speedtest.bin; pkill -f "scp -tr" || true'
+          rm -f k
   server:
     runs-on: ubuntu-latest
     steps:
