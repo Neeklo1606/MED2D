@@ -15,6 +15,8 @@ export interface LookRendererHandle {
 export interface LookRendererProps {
   look: Look;
   label: string;
+  /** 3D: показать один оборот модели при первой загрузке. */
+  intro?: boolean;
 }
 
 export type RendererKind = "three" | "photo";

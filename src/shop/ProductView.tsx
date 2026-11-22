@@ -9,6 +9,7 @@ import { useCart, useToast } from "@/configurator/store";
 import { detectRenderer, type RendererKind } from "@/configurator/renderers/types";
 import PhotoRenderer from "@/configurator/renderers/PhotoRenderer";
 import { Stepper } from "./CartView";
+import ProductImage from "./ProductImage";
 
 const ThreeRenderer = dynamic(() => import("@/configurator/renderers/ThreeRenderer"), { ssr: false });
 const noop = () => () => {};
@@ -19,9 +20,9 @@ export default function ProductView({ p }: { p: Product }) {
   const [qty, setQty] = useState(1);
   const [needSize, setNeedSize] = useState(false);
   const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
-  // Вещи с фото-слоями показываем на фото-модели, остальные в 3D (если есть WebGL)
+  // Реалистичная 3D-модель, если есть WebGL; без него вещи с фото-слоями на фото-модели, остальные фото товара
   const onPhoto = ["top", "bottom", "feet"].includes(p.slot);
-  const kind: RendererKind = onPhoto || !webgl ? "photo" : "three";
+  const kind: RendererKind = webgl ? "three" : onPhoto ? "photo" : "three";
   const add = useCart((s) => s.add);
   const toast = useToast((s) => s.show);
   const look = p.model ? wear(emptyLook("f"), { slug: p.slug, color, size }) : emptyLook("f");
@@ -37,12 +38,12 @@ export default function ProductView({ p }: { p: Product }) {
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-8">
       <div className="relative h-[52svh] min-h-[340px] overflow-hidden rounded-[var(--radius-lg)] bg-surface lg:h-[640px]">
-        {p.model ? (
-          kind === "three" ? <ThreeRenderer look={look} label={label} /> : <PhotoRenderer look={look} label={label} />
+        {p.model && webgl ? (
+          <ThreeRenderer look={look} label={label} />
+        ) : p.model && kind === "photo" ? (
+          <PhotoRenderer look={look} label={label} />
         ) : (
-          <div className="grid h-full place-items-center" role="img" aria-label={label}>
-            <span className="size-40 rounded-full border border-line" style={{ background: COLORS[color].hex }} />
-          </div>
+          <ProductImage slug={p.slug} color={color} alt={label} className="h-full w-full p-6" />
         )}
         <p className="absolute bottom-3 left-3 rounded-full bg-surface/90 px-3 py-1 text-xs text-muted">{t("product.gallery.pending")}</p>
       </div>

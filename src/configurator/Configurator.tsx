@@ -6,7 +6,8 @@ import { bySlug, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/
 import { getField as t } from "@/content/registry";
 import { fromQuery, missingSizes, toQuery, total, wornList } from "./look";
 import { DEFAULT_LOOK, useCart, useLook, useToast } from "./store";
-import PhotoRenderer, { PHOTO_PART, PhotoThumb } from "./renderers/PhotoRenderer";
+import ProductImage from "@/shop/ProductImage";
+import PhotoRenderer from "./renderers/PhotoRenderer";
 import { detectRenderer, type LookRendererHandle, type RendererKind } from "./renderers/types";
 
 const ThreeRenderer = dynamic(() => import("./renderers/ThreeRenderer"), {
@@ -164,12 +165,9 @@ function Stage({ kind, setKind, webgl, stage }: { kind: RendererKind; setKind: (
 /* ---------- карточка ---------- */
 
 function Thumb({ p, color }: { p: Product; color: string }) {
-  // миниатюра из фото только для вещей, которые сняты на фото-модели
-  const part = ["anorak", "joggers", "sabo"].includes(p.slug) ? PHOTO_PART[p.slot] : undefined;
-  if (part) return <PhotoThumb part={part} color={color} size={40} />;
   return (
-    <div className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-bg" aria-hidden>
-      <span className="size-6 rounded-full border border-line" style={{ background: COLORS[color]?.hex }} />
+    <div className="size-10 shrink-0 rounded-[10px] bg-bg p-0.5" aria-hidden>
+      <ProductImage slug={p.slug} color={color} className="h-full w-full" />
     </div>
   );
 }
@@ -353,7 +351,9 @@ const subscribeMq = (cb: () => void) => { const m = mq(); m.addEventListener("ch
 export default function Configurator() {
   useUrlSync();
   const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
-  const [kind, setKind] = useState<RendererKind>("photo");
+  // реалистичная 3D-модель по умолчанию, если устройство тянет WebGL; фото-модель остаётся переключателем
+  const [choice, setKind] = useState<RendererKind | null>(null);
+  const kind: RendererKind = choice ?? (webgl ? "three" : "photo");
   const [chart, setChart] = useState(false);
   const { addAll, addOne, addItem } = useActions();
   const stage = useRef<LookRendererHandle>(null);

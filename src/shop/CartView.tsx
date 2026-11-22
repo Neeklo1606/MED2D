@@ -6,6 +6,7 @@ import { rub } from "@/lib/checkout";
 import { useCart } from "@/configurator/store";
 import { emptyLook, toQuery, wear } from "@/configurator/look";
 import { useCartHydrated, useQuote } from "./hooks";
+import ProductImage from "./ProductImage";
 
 export function Stepper({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) {
   return (
@@ -58,8 +59,8 @@ export default function CartView() {
           return (
             <li key={`${it.slug}-${it.color}-${it.size}`} className="rounded-[var(--radius-lg)] bg-surface p-4">
               <div className="flex gap-3">
-                <div className="grid size-16 shrink-0 place-items-center rounded-[var(--radius-md)] bg-bg" aria-hidden>
-                  <span className="size-9 rounded-full border border-line" style={{ background: COLORS[it.color]?.hex }} />
+                <div className="size-16 shrink-0 rounded-[var(--radius-md)] bg-bg p-1" aria-hidden>
+                  <ProductImage slug={it.slug} color={it.color} className="h-full w-full" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-display text-[11px] font-bold uppercase leading-snug">{q?.title ?? p?.title}</h3>

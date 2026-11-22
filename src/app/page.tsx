@@ -3,6 +3,7 @@ import { COLORS, formatRub, PRODUCTS } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import HeroModel from "@/site/HeroModel";
 import { ButtonLink, Section } from "@/site/ui";
+import ProductImage from "@/shop/ProductImage";
 
 export const dynamic = "force-static";
 
@@ -50,10 +51,8 @@ export default function Home() {
           {featured.map((p) => (
             <li key={p.slug}>
               <Link href={`/product/${p.slug}`} className="press press-lg flex h-full flex-col rounded-[var(--radius-lg)] bg-surface p-3">
-                <div className="grid aspect-square place-items-center rounded-[var(--radius-md)] bg-bg" aria-hidden>
-                  <div className="flex -space-x-3">
-                    {p.colors.slice(0, 4).map((c) => <span key={c} className="size-12 rounded-full border-2 border-surface md:size-14" style={{ background: COLORS[c].hex }} />)}
-                  </div>
+                <div className="aspect-square rounded-[var(--radius-md)] bg-bg p-2" aria-hidden>
+                  <ProductImage slug={p.slug} color={p.colors[0]} className="h-full w-full" />
                 </div>
                 <h3 className="mt-3 font-display text-[10px] font-bold uppercase leading-snug md:text-xs">{p.title}</h3>
                 <p className="mt-1 text-sm font-semibold">{p.priceRub === null ? <span className="text-muted">{t("catalog.card.pricePending")}</span> : formatRub(p.priceRub)}</p>

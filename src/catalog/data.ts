@@ -19,7 +19,7 @@ export const COLORS: Record<string, { name: string; hex: string }> = {
 
 export interface Product {
   slug: string;
-  /** Имя GLB без суффикса пола: public/3d/models/{model}_{g}.glb */
+  /** Имя GLB без суффикса пола: public/3d/models/{model}_{g}.glb (собирается tools/3d/build.sh) */
   model: string | null;
   slot: Slot;
   title: string;
@@ -42,8 +42,8 @@ export const PRODUCTS: Product[] = [
   { slug: "cap", model: "head_cap", slot: "head", category: "head", title: "Шапочка медицинская", short: "Регулируемая завязка, одна посадка.", priceRub: null, colors: SCRUB, sizes: [] },
   { slug: "dokerka", model: "head_dokerka", slot: "head", category: "head", title: "Головной убор докерка", short: "Мягкая трикотажная шапка.", priceRub: null, colors: SCRUB, sizes: [] },
   { slug: "sabo", model: "feet_sabo", slot: "feet", category: "feet", title: "Сабо", short: "Лёгкие, с фиксирующим ремешком.", priceRub: 3000, colors: ["grey", "navy", "black", "pink", "white"], sizes: ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"] },
-  { slug: "lanyard", model: null, slot: "accessory", category: "accessory", title: "Шнурок для телефона и пропуска", short: "Прочная лента с карабином.", priceRub: null, colors: ["black", "grey", "blue"], sizes: [] },
-  { slug: "shopper", model: null, slot: "accessory", category: "accessory", title: "Шопер", short: "Вместительная сумка для смены.", priceRub: null, colors: ["silver"], sizes: [] },
+  { slug: "lanyard", model: "acc_lanyard", slot: "accessory", category: "accessory", title: "Шнурок для телефона и пропуска", short: "Прочная лента с карабином.", priceRub: null, colors: ["black", "grey", "blue"], sizes: [] },
+  { slug: "shopper", model: "acc_shopper", slot: "accessory", category: "accessory", title: "Шопер", short: "Вместительная сумка для смены.", priceRub: null, colors: ["silver"], sizes: [] },
 ];
 
 export const bySlug = new Map(PRODUCTS.map((p) => [p.slug, p]));

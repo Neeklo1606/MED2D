@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { COLORS, formatRub, PRODUCTS, type Product } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
+import ProductImage from "./ProductImage";
 
 const FILTERS: { id: string; label: string; match: (p: Product) => boolean }[] = [
   { id: "all", label: "Все", match: () => true },
@@ -28,8 +29,8 @@ export default function CatalogGrid() {
         {list.map((p) => (
           <li key={p.slug}>
             <Link href={`/product/${p.slug}`} className="press press-lg flex h-full flex-col rounded-[var(--radius-lg)] bg-surface p-3">
-              <div className="grid aspect-square place-items-center rounded-[var(--radius-md)] bg-bg" aria-hidden>
-                <span className="size-16 rounded-full border border-line md:size-20" style={{ background: COLORS[p.colors[0]].hex }} />
+              <div className="aspect-square rounded-[var(--radius-md)] bg-bg p-2" aria-hidden>
+                <ProductImage slug={p.slug} color={p.colors[0]} className="h-full w-full" />
               </div>
               <h3 className="mt-3 font-display text-[10px] font-bold uppercase leading-snug md:text-[11px]">{p.title}</h3>
               <p className="mt-1 text-sm font-semibold">{p.priceRub === null ? <span className="text-muted">{t("catalog.card.pricePending")}</span> : formatRub(p.priceRub)}</p>

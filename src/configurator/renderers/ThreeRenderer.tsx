@@ -1,9 +1,10 @@
 "use client";
 import type React from "react";
-import { forwardRef, Suspense, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, Suspense, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, OrbitControls, useGLTF } from "@react-three/drei";
+import { ContactShadows, OrbitControls, useGLTF, useProgress } from "@react-three/drei";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 type OrbitControlsImpl = React.ComponentRef<typeof OrbitControls>;
 import { bySlug, COLORS, type Gender, type Slot } from "@/catalog/data";
 import { wornList } from "../look";
@@ -24,6 +25,10 @@ const FOCUS: Record<Slot | "full", { y: number; d: number }> = {
   accessory: { y: 1.1, d: 2.4 },
 };
 
+/**
+ * Модель из GLB. Манекен (base) рисуется с материалами из файла (кожа, волосы с alphaTest, бельё);
+ * у одежды материал ткани `fabric` перекрашивается: цвет × AO складок (цвет вершин) × карта нормалей плетения.
+ */
 function Model({ src, color, base }: { src: string; color?: string; base?: boolean }) {
   const { scene } = useGLTF(src, false, true);
   const invalidate = useThree((s) => s.invalidate);
@@ -33,8 +38,7 @@ function Model({ src, color, base }: { src: string; color?: string; base?: boole
       if ((m as THREE.Mesh).isMesh) {
         const mesh = m as THREE.Mesh;
         const mat = (mesh.material as THREE.MeshStandardMaterial).clone();
-        mat.side = THREE.DoubleSide;
-        mat.roughness = base ? 0.6 : 0.9;
+        if (!base) mat.side = THREE.DoubleSide;
         mesh.material = mat;
       }
     });
@@ -53,11 +57,47 @@ function Model({ src, color, base }: { src: string; color?: string; base?: boole
   return <primitive object={obj} />;
 }
 
-const CameraRig = forwardRef<LookRendererHandle, { gender: Gender }>(function CameraRig({ gender }, ref) {
+/** Студийный свет: мягкое окружение (без внешних HDR-файлов) + ключевой и контровой. */
+function Studio() {
+  const gl = useThree((s) => s.gl);
+  const env = useMemo(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const tex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
+    return tex;
+  }, [gl]);
+  useEffect(() => () => env.dispose(), [env]);
+  return <primitive object={env} attach="environment" />;
+}
+
+/** Сообщает, что модели загрузились (рендерится внутри Suspense). */
+function Ready({ onReady }: { onReady: () => void }) {
+  useEffect(() => { onReady(); }, [onReady]);
+  return null;
+}
+
+function Loading() {
+  const { active, progress } = useProgress();
+  if (!active) return null;
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-12 flex justify-center" aria-live="polite">
+      <span className="rounded-full bg-surface/90 px-3 py-1.5 text-xs text-muted shadow-sm">3D-модель {Math.round(progress)}%</span>
+    </div>
+  );
+}
+
+const CameraRig = forwardRef<LookRendererHandle, { gender: Gender; intro: boolean }>(function CameraRig({ gender, intro }, ref) {
   const { camera, invalidate } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
+  // первый показ: один плавный оборот вокруг модели, пока пользователь не коснулся сцены
+  const spin = useRef<{ left: number } | null>(null);
+  useEffect(() => {
+    if (!intro || reduceMotion()) return;
+    spin.current = { left: Math.PI * 2 };
+    invalidate();
+  }, [intro, invalidate]);
   const anim = useRef<{ p0: THREE.Vector3; p1: THREE.Vector3; t0: THREE.Vector3; t1: THREE.Vector3; k: number } | null>(null);
-  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const reduce = reduceMotion();
 
   const go = (pos: THREE.Vector3, target: THREE.Vector3) => {
     const c = controls.current;
@@ -68,6 +108,15 @@ const CameraRig = forwardRef<LookRendererHandle, { gender: Gender }>(function Ca
   };
 
   useFrame((_, dt) => {
+    const sp = spin.current, c0 = controls.current;
+    if (sp && c0 && !anim.current) {
+      const step = Math.min(sp.left, dt * (Math.PI * 2) / 7);
+      sp.left -= step;
+      camera.position.sub(c0.target).applyAxisAngle(new THREE.Vector3(0, 1, 0), step).add(c0.target);
+      c0.update();
+      if (sp.left <= 0) spin.current = null;
+      invalidate();
+    }
     const a = anim.current, c = controls.current;
     if (!a || !c) return;
     a.k = Math.min(1, a.k + dt / 0.45);
@@ -117,12 +166,17 @@ const CameraRig = forwardRef<LookRendererHandle, { gender: Gender }>(function Ca
       maxDistance={MAX}
       minPolarAngle={0.35}
       maxPolarAngle={1.75}
-      onStart={() => { anim.current = null; }}
+      onStart={() => { anim.current = null; spin.current = null; }}
     />
   );
 });
 
-const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function ThreeRenderer({ look, label }, ref) {
+function reduceMotion() {
+  return typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
+const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function ThreeRenderer({ look, label, intro = true }, ref) {
+  const [ready, setReady] = useState(false);
   const g = look.gender;
   const items = wornList(look).filter((x) => x.product.model);
   useEffect(() => {
@@ -130,6 +184,7 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
     for (const x of items) useGLTF.preload(url(x.product.model!, g), false, true);
   }, [g, items]);
   const rig = useRef<LookRendererHandle>(null);
+  const onReady = useMemo(() => () => setReady(true), []);
   useImperativeHandle(ref, () => ({
     zoomIn: () => rig.current?.zoomIn(),
     zoomOut: () => rig.current?.zoomOut(),
@@ -138,12 +193,14 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
     rotate: (deg) => rig.current?.rotate(deg),
   }));
   return (
+    <div className="relative h-full w-full">
     <Canvas
       role="img"
       aria-label={label}
       frameloop="demand"
       dpr={[1, 2]}
       camera={{ fov: 30, near: 0.05, far: 20, position: HOME.pos.toArray() }}
+      scene={{ environmentIntensity: 0.45 }}
       gl={{ antialias: true, alpha: true }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -152,8 +209,9 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
       onDoubleClick={() => rig.current?.reset()}
       style={{ touchAction: "none" }}
     >
-      <hemisphereLight args={[0xffffff, 0xd9dbe0, 1.2]} />
-      <directionalLight position={[2, 3, 3]} intensity={1.6} />
+      <Studio />
+      <hemisphereLight args={[0xffffff, 0xd9dbe0, 0.9]} />
+      <directionalLight position={[2, 3, 3]} intensity={1.5} />
       <directionalLight position={[-2, 2, -2]} intensity={0.6} />
       <mesh rotation-x={-Math.PI / 2}>
         <circleGeometry args={[0.7, 64]} />
@@ -165,9 +223,12 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
         {items.map(({ slot, worn, product }) => (
           <Model key={`${slot}-${product.model}-${g}`} src={url(product.model!, g)} color={COLORS[worn.color]?.hex} />
         ))}
+        <Ready onReady={onReady} />
       </Suspense>
-      <CameraRig ref={rig} gender={g} />
+      <CameraRig ref={rig} gender={g} intro={intro && ready} />
     </Canvas>
+    <Loading />
+    </div>
   );
 });
 
