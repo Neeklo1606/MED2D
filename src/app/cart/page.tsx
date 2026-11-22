@@ -6,8 +6,8 @@ export const metadata: Metadata = { title: getField("cart.seo.title"), robots: {
 
 export default function CartPage() {
   return (
-    <main className="mx-auto max-w-[1100px] px-4 pb-32 pt-2 md:px-10 lg:pb-16">
-      <h1 className="mb-4 font-display text-2xl font-black uppercase md:text-4xl">{getField("cart.page.title")}</h1>
+    <main className="mx-auto max-w-[1100px] px-5 pb-32 pt-5 md:px-10 md:pt-8 lg:pb-16">
+      <h1 className="mb-5 font-display text-[30px] font-black uppercase leading-[1.05] md:text-5xl">{getField("cart.page.title")}</h1>
       <CartView />
     </main>
   );

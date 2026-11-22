@@ -11,7 +11,7 @@ export default function NavLinks({ items }: { items: { href: string; label: stri
           const on = path === i.href || path.startsWith(i.href + "/");
           return (
             <li key={i.href}>
-              <Link href={i.href} aria-current={on ? "page" : undefined} className={`flex min-h-11 items-center rounded-full px-3 text-sm ${on ? "bg-surface font-semibold" : "text-muted hover:text-ink"}`}>{i.label}</Link>
+              <Link href={i.href} aria-current={on ? "page" : undefined} className={`flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 text-sm transition-colors ${on ? "bg-surface font-semibold" : "text-muted hover:bg-surface/60 hover:text-ink"}`}>{i.label}</Link>
             </li>
           );
         })}

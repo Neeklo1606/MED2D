@@ -14,16 +14,16 @@ export default function Home() {
   return (
     <main>
       {/* первый экран */}
-      <section className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-10">
-        <div className="py-4 lg:py-10">
+      <section className="mx-auto grid max-w-[1440px] items-center gap-6 px-5 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-10">
+        <div className="pt-5 lg:py-10">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">{t("home.hero.eyebrow")}</p>
           <h1 className="mt-3 font-display text-[32px] font-black uppercase leading-[1.02] md:text-6xl">
             {t("home.hero.h1Start")} <span className="text-accent">{t("home.hero.h1Accent")}</span>
           </h1>
           <p className="mt-4 max-w-xl text-base text-muted md:text-lg">{t("home.hero.lead")}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <ButtonLink href="/catalog" variant="accent">{t("home.hero.cta")}</ButtonLink>
-            <ButtonLink href="/catalog#all-products" variant="outline">{t("home.hero.secondary")}</ButtonLink>
+          <div className="mt-6 flex flex-col gap-2.5 min-[400px]:flex-row min-[400px]:flex-wrap">
+            <ButtonLink href="/catalog" variant="accent" className="min-[400px]:flex-1 sm:flex-none">{t("home.hero.cta")}</ButtonLink>
+            <ButtonLink href="/catalog#all-products" variant="outline" className="min-[400px]:flex-1 sm:flex-none">{t("home.hero.secondary")}</ButtonLink>
           </div>
         </div>
         <div className="relative h-[62svh] min-h-[420px] overflow-hidden rounded-[var(--radius-lg)] lg:h-[720px]">
@@ -47,14 +47,14 @@ export default function Home() {
 
       {/* товары */}
       <Section id="featured" title={t("home.products.title")} action={<Link href="/catalog#all-products" className="hidden text-sm underline underline-offset-2 sm:inline">{t("home.products.all")}</Link>}>
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
           {featured.map((p) => (
             <li key={p.slug}>
-              <Link href={`/product/${p.slug}`} className="press press-lg flex h-full flex-col rounded-[var(--radius-lg)] bg-surface p-3">
-                <div className="aspect-square rounded-[var(--radius-md)] bg-bg p-2" aria-hidden>
+              <Link href={`/product/${p.slug}`} className="press press-lg flex h-full flex-col rounded-[var(--radius-card)] border border-line bg-card p-3 transition-colors hover:border-ink/20 md:p-4">
+                <div className="aspect-square rounded-[12px] bg-bg p-3" aria-hidden>
                   <ProductImage slug={p.slug} color={p.colors[0]} className="h-full w-full" />
                 </div>
-                <h3 className="mt-3 font-display text-[10px] font-bold uppercase leading-snug md:text-xs">{p.title}</h3>
+                <h3 className="mt-3 font-display text-[12px] font-bold uppercase leading-[1.2] md:text-[13px]">{p.title}</h3>
                 <p className="mt-1 text-sm font-semibold">{p.priceRub === null ? <span className="text-muted">{t("catalog.card.pricePending")}</span> : formatRub(p.priceRub)}</p>
               </Link>
             </li>

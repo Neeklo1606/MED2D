@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { COLORS } from "@/catalog/data";
+import { bySlug, COLORS } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import { checkoutSchema, fieldErrors, rub } from "@/lib/checkout";
 import { useCart, useLook } from "@/configurator/store";
@@ -76,7 +76,10 @@ export default function CheckoutView() {
 
   const lines = quote && quote.lines.length === items.length ? quote.lines : null;
   const method = quote?.delivery.find((d) => d.id === form.deliveryMethod);
-  const totalKop = (quote?.itemsTotalKop ?? 0) + (method?.priceKop ?? 0);
+  // до ответа сервера показываем цены каталога, чтобы итог не «мигал»
+  const localItemsKop = items.reduce((sum, it) => sum + (bySlug.get(it.slug)?.priceRub ?? 0) * 100 * it.qty, 0);
+  const itemsKop = quote?.itemsTotalKop ?? localItemsKop;
+  const totalKop = itemsKop + (method?.priceKop ?? 0);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -130,7 +133,7 @@ export default function CheckoutView() {
         )}
 
         <fieldset className="space-y-4 rounded-[var(--radius-lg)] bg-surface p-5">
-          <legend className="float-left mb-1 font-display text-sm font-bold uppercase">{t("checkout.section.contacts")}</legend>
+          <legend className="float-left mb-3 font-display text-sm font-bold uppercase">{t("checkout.section.contacts")}</legend>
           <div className="clear-both space-y-4">
             <Field id="name" label={t("checkout.field.name")} error={err("name")}>
               <input {...a11y("name")} className={inputCls(err("name"))} autoComplete="name" enterKeyHint="next" value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -145,7 +148,7 @@ export default function CheckoutView() {
         </fieldset>
 
         <fieldset className="space-y-4 rounded-[var(--radius-lg)] bg-surface p-5">
-          <legend className="float-left mb-1 font-display text-sm font-bold uppercase">{t("checkout.section.delivery")}</legend>
+          <legend className="float-left mb-3 font-display text-sm font-bold uppercase">{t("checkout.section.delivery")}</legend>
           <div className="clear-both space-y-4">
             <Field id="city" label={t("checkout.field.city")} error={err("city")}>
               <input {...a11y("city")} className={inputCls(err("city"))} autoComplete="address-level2" enterKeyHint="next" value={form.city} onChange={(e) => set("city", e.target.value)} />
@@ -172,7 +175,7 @@ export default function CheckoutView() {
         </fieldset>
 
         <fieldset className="rounded-[var(--radius-lg)] bg-surface p-5">
-          <legend className="float-left mb-1 font-display text-sm font-bold uppercase">{t("checkout.section.comment")}</legend>
+          <legend className="float-left mb-3 font-display text-sm font-bold uppercase">{t("checkout.section.comment")}</legend>
           <div className="clear-both">
             <Field id="comment" label={t("checkout.field.comment")} optional>
               <textarea id="comment" name="comment" rows={3} className={`${inputCls()} py-3`} enterKeyHint="done" value={form.comment} onChange={(e) => set("comment", e.target.value)} />
@@ -202,31 +205,31 @@ export default function CheckoutView() {
         </div>
       </div>
 
-      <aside className="mt-6 lg:mt-0">
-        <div className="rounded-[var(--radius-lg)] bg-surface p-5 lg:sticky lg:top-4">
+      <aside className="mt-6 lg:sticky lg:top-4 lg:mt-0 lg:self-start">
+        <div className="rounded-[var(--radius-lg)] bg-surface p-5">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-sm font-bold uppercase">{t("checkout.summary.title")}</h2>
-            <Link href="/cart" className="text-sm underline">{t("checkout.summary.edit")}</Link>
+            <Link href="/cart" className="-my-3 inline-flex min-h-11 items-center text-sm underline underline-offset-2">{t("checkout.summary.edit")}</Link>
           </div>
           <ul className="mt-3 space-y-2 text-sm">
             {items.map((it, i) => (
               <li key={i} className="flex gap-2">
                 <span className="mt-1 size-3 shrink-0 rounded-full border border-line" style={{ background: COLORS[it.color]?.hex }} />
-                <span className="min-w-0 flex-1">{lines?.[i]?.title ?? it.slug}<span className="block text-xs text-muted">{COLORS[it.color]?.name}{it.size ? `, ${it.size}` : ""} · {it.qty} шт.</span></span>
-                <span className="tabular-nums">{lines?.[i]?.priceKop != null ? rub(lines[i].priceKop! * it.qty) : "…"}</span>
+                <span className="min-w-0 flex-1">{lines?.[i]?.title ?? bySlug.get(it.slug)?.title ?? it.slug}<span className="block text-xs text-muted">{COLORS[it.color]?.name}{it.size ? `, ${it.size}` : ""} · {it.qty} шт.</span></span>
+                <span className="shrink-0 tabular-nums">{(() => { const k = lines?.[i] ? lines[i].priceKop : (bySlug.get(it.slug)?.priceRub ?? null) === null ? null : bySlug.get(it.slug)!.priceRub! * 100; return k === null ? "—" : rub(k * it.qty); })()}</span>
               </li>
             ))}
           </ul>
           <dl className="mt-4 space-y-1.5 border-t border-line pt-3 text-sm">
-            <div className="flex justify-between"><dt>{t("cart.summary.items")}</dt><dd className="tabular-nums">{quote ? rub(quote.itemsTotalKop) : "…"}</dd></div>
-            <div className="flex justify-between gap-3"><dt>{t("cart.summary.delivery")}</dt><dd className="text-right text-muted">{method ? (method.priceKop === null ? "сообщит менеджер" : rub(method.priceKop)) : "…"}</dd></div>
+            <div className="flex justify-between"><dt>{t("cart.summary.items")}</dt><dd className="tabular-nums">{rub(itemsKop)}</dd></div>
+            <div className="flex justify-between gap-3"><dt>{t("cart.summary.delivery")}</dt><dd className="text-right text-muted">{method?.priceKop != null ? rub(method.priceKop) : "сообщит менеджер"}</dd></div>
           </dl>
           <div className="mt-3 flex items-baseline justify-between border-t border-line pt-3">
             <span className="font-display text-sm font-bold uppercase">{t("cart.summary.total")}</span>
-            <span className="font-display text-2xl font-black tabular-nums">{quote ? rub(totalKop) : "…"}</span>
+            <span className="font-display text-2xl font-black tabular-nums">{rub(totalKop)}</span>
           </div>
           <p className="mt-2 text-xs text-muted">{t("cart.summary.payNote")}</p>
-          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface px-4 pt-3 lg:static lg:mt-4 lg:border-0 lg:p-0" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}>
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 px-4 pt-3 backdrop-blur lg:static lg:bg-transparent lg:backdrop-blur-none lg:mt-4 lg:border-0 lg:p-0" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}>
             <button type="submit" disabled={sending} className="press flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-accent text-base font-semibold text-white disabled:opacity-70">
               {sending ? <><span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden />{t("checkout.form.sending")}</> : <>{t("checkout.form.submit")}{quote && <span className="tabular-nums opacity-90">· {rub(totalKop)}</span>}</>}
             </button>
