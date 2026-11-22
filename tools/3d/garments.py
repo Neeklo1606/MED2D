@@ -116,7 +116,7 @@ def axis_of(names, side):
 OUTPARTS = {}
 
 
-def mesh_from(occ, sigma, cuts=(), budget=18000, name="", keep_all=False):
+def mesh_from(occ, sigma, cuts=(), budget=15500, name="", keep_all=False):
     """occ → гладкая поверхность; cuts: функции c(P) (>0 = срезать) для открытых краёв."""
     f = ndimage.gaussian_filter(occ.astype(np.float32), sigma / STEP)
     v, fc, _, _ = marching_cubes(f, 0.5, spacing=(STEP,) * 3)
@@ -194,7 +194,7 @@ def patch(m, select, offset, name, mat="fabric", shrink=0.0):
     return sub
 
 
-def rect_patch(m, axis, sign, u0, u1, v0, v1, offset, n=(24, 24), shape=None):
+def rect_patch(m, axis, sign, u0, u1, v0, v1, offset, n=(24, 24), shape=None, uv_fn=None):
     """Ровная накладная деталь: сетка в прямоугольнике (u,v), спроецированная на поверхность вещи вдоль оси.
     axis=2 (спереди, u=x, v=y) или axis=0 (сбоку, u=z, v=y); sign — с какой стороны (+1/−1)."""
     V, N = m.vertices, m.vertex_normals
@@ -204,6 +204,8 @@ def rect_patch(m, axis, sign, u0, u1, v0, v1, offset, n=(24, 24), shape=None):
     tree = cKDTree(P[:, [ua, 1]])
     us, vs = np.linspace(u0, u1, n[0]), np.linspace(v0, v1, n[1])
     U, Vv = np.meshgrid(us, vs, indexing="ij")
+    if uv_fn is not None:
+        U, Vv = uv_fn(*np.meshgrid(np.linspace(0, 1, n[0]), np.linspace(0, 1, n[1]), indexing="ij"))
     if shape is not None:
         lo, hi = shape(Vv)
         U = lo + (U - u0) / (u1 - u0) * (hi - lo)
@@ -455,6 +457,8 @@ def build_coat(top_occ, pants_occ):
     for o in (top_occ, pants_occ):
         if o is not None:
             occ |= ndimage.binary_dilation(o & (Y > 0.4 * S) & ~((SD_ARM < SD_TOR) & (Y < ARMPIT_Y) & (Y > HIP_Y + 0.05 * S)), iterations=2)
+            if o is pants_occ:
+                occ |= ndimage.binary_dilation(o & (Y > 0.45 * S) & (Y < HIP_Y), iterations=4)
     occ &= ~(((SD_ARM < 0.02) | ((SD_ARM < SD_TOR) & (Y < ARMPIT_Y))) & (Y > HIP_Y + 0.05 * S))
     sl, sl_cuts = sleeves(((1, L_LO), (-1, R_LO)), 0.86, 0.034, ("upperarm", "lowerarm"))
     if top_occ is not None:
@@ -469,17 +473,21 @@ def build_coat(top_occ, pants_occ):
     cuts = [Cut(cut_plane((0, hem, 0), (0, -1, 0)), None, (0, -1, 0)), neck_cut]
     occ = apply_cuts(occ, cuts)
     cuts += sl_cuts
-    m = mesh_from(occ, 0.008, cuts, budget=19000, name="halat")
+    m = mesh_from(occ, 0.008, cuts, budget=15000, name="halat")
     add("coat_halat", m)
     cen, nz = m.triangles_center, m.face_normals[:, 2]
     front = (cen[:, 2] > 0.03) & (nz > 0.25)
     # лацканы вдоль выреза
-    lap = front & (cen[:, 1] > vy - 0.01) & (cen[:, 1] < NECK_Y + 0.02) & (
-        np.abs(cen[:, 0]) < (cen[:, 1] - vy) / 1.6 + 0.055 * S) & (np.abs(cen[:, 0]) > (cen[:, 1] - vy) / 1.6 - 0.005)
-    if lap.any():
-        lp = m.submesh([np.where(lap)[0]], append=True)
-        lp.vertices += lp.vertex_normals * 0.004
-        add("coat_halat", lp, dark=0.85)
+    top_y = NECK_Y + 0.015
+    for sg in (1, -1):
+        def lap_uv(s_, t_, sg=sg):
+            y = vy + 0.01 + s_ * (top_y - vy - 0.01)
+            x_edge = sg * ((y - vy) / 1.6 + 0.004)
+            w = 0.058 * S * (0.3 + 0.7 * np.clip(s_, 0, 1) ** 0.7) * (1 - 0.3 * np.clip((s_ - 0.88) / 0.12, 0, 1))
+            return x_edge + sg * t_ * w, y
+        add("coat_halat", rect_patch(m, 2, 1, 0, 1, 0, 1, 0.0045, n=(28, 10), uv_fn=lap_uv), dark=0.72)
+    # планка застёжки
+    add("coat_halat", rect_patch(m, 2, 1, -0.017 * S, 0.017 * S, hem + 0.01, vy - 0.005, 0.002, n=(6, 60)), dark=0.85)
     # планка застёжки и пуговицы
     zf = lambda x, y: m.vertices[(np.abs(m.vertices[:, 0] - x) < 0.012) & (np.abs(m.vertices[:, 1] - y) < 0.012) & (m.vertices[:, 2] > 0), 2]  # noqa: E731
     for y in np.linspace(vy - 0.02, hem + 0.12 * S, 5):
@@ -491,7 +499,7 @@ def build_coat(top_occ, pants_occ):
             add("coat_halat", b, "trim")
     # накладные карманы: два нижних и нагрудный
     for x0, y0, y1, w in ((0.11, hem + 0.13 * S, hem + 0.30 * S, 0.075), (-0.11, hem + 0.13 * S, hem + 0.30 * S, 0.075),
-                          (0.09, NECK_Y - 0.19 * S, NECK_Y - 0.10 * S, 0.05)):
+                          (0.115, NECK_Y - 0.27 * S, NECK_Y - 0.185 * S, 0.048)):
         add("coat_halat", rect_patch(m, 2, 1, (x0 - w) * S, (x0 + w) * S, y0, y1, 0.004), dark=0.7)
 
 
@@ -551,10 +559,11 @@ def build_sabo():
         sd = sdf(foot)
         pts = BV[(ZONE == ZN.index("foot")) & (SIDE == s)]
         zmin, zmax = pts[:, 2].min(), pts[:, 2].max()
-        upper = (sd < 0.011) & (Z > zmin + 0.075 * S)               # мысок и подъём, пятка открыта
-        upper &= Y < 0.085 * S
-        sole = (sd < 0.012) | ndimage.binary_dilation(foot & (Y < 0.025), iterations=4)
-        sole &= Y < 0.024
+        upper = (sd < 0.014) & (Z > zmin + 0.085 * S)               # объёмный мысок, пятка открыта
+        upper &= Y < 0.088 * S
+        foot_print = ndimage.binary_dilation(foot & (Y < 0.03), iterations=5)
+        sole = (sd < 0.012) | drape(foot_print, 0.02) | foot_print
+        sole &= Y < 0.03
         so = upper | sole
         # ремешок за пяткой
         cx = pts[:, 0].mean()
@@ -566,11 +575,11 @@ def build_sabo():
             for j in range(3):
                 hx = cx + i * 0.018 * S
                 hz = zmax - 0.03 * S - j * 0.025 * S + (i % 2) * 0.012 * S
-                hole = ((X - hx) ** 2 + (Z - hz) ** 2 < (0.0055 * S) ** 2) & (Y > 0.035)
+                hole = ((X - hx) ** 2 + (Z - hz) ** 2 < (0.0062 * S) ** 2) & (Y > 0.045)
                 so &= ~hole
         so &= ~(sd < 0.002)
         occ |= so
-    m = mesh_from(occ, 0.0035, [], budget=19000, name="sabo", keep_all=True)
+    m = mesh_from(occ, 0.0035, [], budget=17000, name="sabo", keep_all=True)
     add("feet_sabo", m)
 
 
