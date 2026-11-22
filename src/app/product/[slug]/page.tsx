@@ -16,9 +16,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const p = bySlug.get((await params).slug);
   if (!p) notFound();
   return (
-    <main className="mx-auto max-w-[1200px] px-4 pb-16 pt-1 md:px-10">
-      <nav aria-label="Хлебные крошки" className="mb-3 text-xs text-muted">
-        <Link href="/" className="underline-offset-2 hover:underline">{getField("product.crumbs.home")}</Link> / <Link href="/catalog" className="underline-offset-2 hover:underline">{getField("product.crumbs.catalog")}</Link> / <span className="text-ink">{p.title}</span>
+    <main className="mx-auto max-w-[1200px] px-5 pb-28 pt-3 md:px-10 md:pt-6 lg:pb-16">
+      <nav aria-label="Хлебные крошки" className="mb-3 truncate text-[13px] text-muted">
+        <Link href="/" className="-my-3 py-3 underline-offset-2 hover:underline">{getField("product.crumbs.home")}</Link> / <Link href="/catalog" className="-my-3 py-3 underline-offset-2 hover:underline">{getField("product.crumbs.catalog")}</Link> / <span className="text-ink" aria-current="page">{p.title}</span>
       </nav>
       <ProductView p={p} />
     </main>

@@ -9,7 +9,9 @@
   --color-bg: #f3f3f3;
   --color-surface: #ffffff;
   --color-text: #0b0b0b;
-  --color-muted: #8e8e8e;
+  /* #8e8e8e из макета даёт контраст 3:1 на фоне; для текста затемнён до 4.5:1 (WCAG AA) */
+  --color-muted: #6f6f6f;
+  --color-muted-soft: #8e8e8e;
   --color-line: #e4e4e4;
   --color-accent: #0646b0;
   --color-accent-contrast: #ffffff;
@@ -17,6 +19,9 @@
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 24px;
+  --radius-card: 16px;
+  --radius-total: 23px;
+  --radius-total-lg: 28px;
   --radius-pill: 999px;
   --space-gutter: 16px;
   --font-display: "Display", system-ui, sans-serif;

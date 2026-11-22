@@ -15,7 +15,7 @@ export default function Buyers() {
   return (
     <main>
       <PageTitle title={t("buyers.page.title")} />
-      <nav aria-label="Разделы" className="mx-auto mt-4 flex max-w-[1440px] gap-2 overflow-x-auto px-4 [scrollbar-width:none] md:px-10">
+      <nav aria-label="Разделы" className="mx-auto mt-4 flex max-w-[1440px] gap-2 overflow-x-auto px-5 [scrollbar-width:none] md:px-10">
         {[...BLOCKS.map((b) => ({ id: b.id, label: t(`buyers.${b.id}.title`) })), { id: "faq", label: t("buyers.faq.title") }].map((x) => (
           <a key={x.id} href={`#${x.id}`} className="press inline-flex min-h-11 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold">{x.label}</a>
         ))}
