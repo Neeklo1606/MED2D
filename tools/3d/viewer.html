@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- Просмотрщик моделей MEDFORM (three.js, свет как на сайте).
+     Запуск: python3 tools/3d/serve.py <папка_glb>  →  http://localhost:8765/?g=f&items=top_anorak:E5B2BB,bottom_joggers:E5B2BB&az=0 -->
+<html><head><meta charset="utf-8"><title>MEDFORM 3D</title>
+<style>html,body{margin:0;height:100%;background:#f3f3f3}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+</head><body><script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+const q = new URLSearchParams(location.search);
+const g = q.get("g") || "f";
+const items = (q.get("items") || "").split(",").filter(Boolean).map((s) => s.split(":"));
+const azs = (q.get("az") || "0").split(",").map(Number);
+const W = innerWidth / azs.length, H = innerHeight;
+const nobody = q.get("nobody") === "1", transparent = q.get("transparent") === "1", hideTrim = q.get("hide") === "trim";
+if (transparent) document.documentElement.style.background = document.body.style.background = "transparent";
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: transparent, premultipliedAlpha: false });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setScissorTest(true);
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+if (!transparent) scene.background = new THREE.Color("#f3f3f3");
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = Number(q.get("env") || 0.45);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd9dbe0, 0.9));
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(2, 3, 3); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.6); rim.position.set(-2, 2, -2); scene.add(rim);
+const loader = new GLTFLoader();
+const load = (u) => new Promise((r, e) => loader.load(u, (x) => r(x.scene), undefined, e));
+const list = nobody ? items : [["mannequin", null], ...items];
+const objs = await Promise.all(list.map(([m]) => load(`/glb/${m}_${g}.glb`)));
+objs.forEach((o, i) => {
+  const c = list[i][1];
+  o.traverse((m) => {
+    if (!m.isMesh) return;
+    m.material = m.material.clone();
+    m.material.side = THREE.DoubleSide;
+    if (c && m.material.name !== "trim") m.material.color.set("#" + c);
+    if (hideTrim && m.material.name === "trim") m.visible = false;
+    if (q.get("flat") === "1") { m.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); }
+  });
+  scene.add(o);
+});
+const cam = new THREE.PerspectiveCamera(30, W / H, 0.05, 20);
+let ty = Number(q.get("ty") || (g === "m" ? 0.95 : 0.88)), dist = Number(q.get("d") || 3.9);
+if (q.get("fit") === "1") {
+  // кадр по габаритам вещи (с учётом ракурса)
+  const box = new THREE.Box3();
+  objs.forEach((o) => box.expandByObject(o));
+  const size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  ty = c.y;
+  const half = Math.max(size.y, Math.max(size.x, size.z) * (H / W)) / 2 * 1.12;
+  dist = half / Math.tan(THREE.MathUtils.degToRad(15)) + Math.max(size.x, size.z) / 2;
+  objs.forEach((o) => o.position.set(-c.x, 0, -c.z));
+}
+const elev = Number(q.get("elev") ?? 0.25);
+azs.forEach((az, i) => {
+  const a = THREE.MathUtils.degToRad(az);
+  cam.position.set(Math.sin(a) * dist, ty + elev, Math.cos(a) * dist);
+  cam.lookAt(0, ty, 0);
+  renderer.setViewport(i * W, 0, W, H);
+  renderer.setScissor(i * W, 0, W, H);
+  renderer.render(scene, cam);
+});
+document.title = "ready";
+</script></body></html>
