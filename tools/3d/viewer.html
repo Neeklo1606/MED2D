@@ -8,6 +8,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 const q = new URLSearchParams(location.search);
 const g = q.get("g") || "f";
 const items = (q.get("items") || "").split(",").filter(Boolean).map((s) => s.split(":"));
@@ -30,7 +31,7 @@ scene.environmentIntensity = Number(q.get("env") || 0.45);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xd9dbe0, 0.9));
 const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(2, 3, 3); scene.add(key);
 const rim = new THREE.DirectionalLight(0xffffff, 0.6); rim.position.set(-2, 2, -2); scene.add(rim);
-const loader = new GLTFLoader();
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); // модели после tools/3d/optimize.mjs
 const load = (u) => new Promise((r, e) => loader.load(u, (x) => r(x.scene), undefined, e));
 const list = nobody ? items : [["mannequin", null], ...items];
 const objs = await Promise.all(list.map(([m]) => load(`/glb/${m}_${g}.glb`)));
