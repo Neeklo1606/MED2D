@@ -1,7 +1,8 @@
 {
  "acc_lanyard_f.glb": {
   "tris": 2740,
-  "bytes": 89704,
+  "bytes": 31892,
+  "hash": "a17a917667",
   "min": [
    -0.106,
    0.997,
@@ -15,7 +16,8 @@
  },
  "acc_lanyard_m.glb": {
   "tris": 2740,
-  "bytes": 87772,
+  "bytes": 31184,
+  "hash": "69e9090ca5",
   "min": [
    -0.125,
    1.092,
@@ -29,7 +31,8 @@
  },
  "acc_shopper_f.glb": {
   "tris": 3872,
-  "bytes": 142496,
+  "bytes": 43440,
+  "hash": "4e42e837a6",
   "min": [
    0.237,
    0.002,
@@ -43,7 +46,8 @@
  },
  "acc_shopper_m.glb": {
   "tris": 3872,
-  "bytes": 142628,
+  "bytes": 43064,
+  "hash": "42cd7a7b01",
   "min": [
    0.271,
    0.002,
@@ -57,7 +61,8 @@
  },
  "bottom_joggers_f.glb": {
   "tris": 19527,
-  "bytes": 715780,
+  "bytes": 215524,
+  "hash": "d8d8093ee5",
   "min": [
    -0.233,
    0.047,
@@ -71,7 +76,8 @@
  },
  "bottom_joggers_m.glb": {
   "tris": 19528,
-  "bytes": 722912,
+  "bytes": 218232,
+  "hash": "6175027563",
   "min": [
    -0.262,
    0.049,
@@ -85,7 +91,8 @@
  },
  "coat_halat_f.glb": {
   "tris": 20135,
-  "bytes": 761392,
+  "bytes": 232800,
+  "hash": "2f99563cef",
   "min": [
    -0.321,
    0.482,
@@ -99,7 +106,8 @@
  },
  "coat_halat_m.glb": {
   "tris": 20135,
-  "bytes": 767812,
+  "bytes": 235264,
+  "hash": "c1eed2f4c5",
   "min": [
    -0.373,
    0.513,
@@ -113,7 +121,8 @@
  },
  "feet_sabo_f.glb": {
   "tris": 17000,
-  "bytes": 738800,
+  "bytes": 235944,
+  "hash": "1fb573ec3a",
   "min": [
    -0.244,
    -0.006,
@@ -127,7 +136,8 @@
  },
  "feet_sabo_m.glb": {
   "tris": 16999,
-  "bytes": 731096,
+  "bytes": 234200,
+  "hash": "1045824aca",
   "min": [
    -0.278,
    -0.006,
@@ -141,7 +151,8 @@
  },
  "head_cap_f.glb": {
   "tris": 9024,
-  "bytes": 361416,
+  "bytes": 108828,
+  "hash": "532f27ca03",
   "min": [
    -0.089,
    1.48,
@@ -155,7 +166,8 @@
  },
  "head_cap_m.glb": {
   "tris": 9023,
-  "bytes": 346188,
+  "bytes": 104004,
+  "hash": "31d530a686",
   "min": [
    -0.108,
    1.592,
@@ -169,7 +181,8 @@
  },
  "head_dokerka_f.glb": {
   "tris": 12763,
-  "bytes": 514676,
+  "bytes": 154188,
+  "hash": "49b438aa92",
   "min": [
    -0.095,
    1.589,
@@ -183,7 +196,8 @@
  },
  "head_dokerka_m.glb": {
   "tris": 12167,
-  "bytes": 479812,
+  "bytes": 144772,
+  "hash": "4849a157c9",
   "min": [
    -0.11,
    1.702,
@@ -197,7 +211,8 @@
  },
  "mannequin_f.glb": {
   "tris": 28671,
-  "bytes": 1376368,
+  "bytes": 485120,
+  "hash": "0f5e71ae71",
   "min": [
    -0.29,
    -0.0,
@@ -211,7 +226,8 @@
  },
  "mannequin_m.glb": {
   "tris": 26664,
-  "bytes": 1163444,
+  "bytes": 395944,
+  "hash": "1c175ca539",
   "min": [
    -0.352,
    0.0,
@@ -225,7 +241,8 @@
  },
  "top_anorak_f.glb": {
   "tris": 20753,
-  "bytes": 782120,
+  "bytes": 240172,
+  "hash": "85e6efa91b",
   "min": [
    -0.261,
    0.868,
@@ -239,7 +256,8 @@
  },
  "top_anorak_m.glb": {
   "tris": 19751,
-  "bytes": 730348,
+  "bytes": 221508,
+  "hash": "d096768935",
   "min": [
    -0.317,
    0.932,
@@ -253,7 +271,8 @@
  },
  "top_tshirt_f.glb": {
   "tris": 15498,
-  "bytes": 564872,
+  "bytes": 170276,
+  "hash": "f39b1826c1",
   "min": [
    -0.242,
    0.845,
@@ -267,7 +286,8 @@
  },
  "top_tshirt_m.glb": {
   "tris": 15500,
-  "bytes": 567484,
+  "bytes": 169840,
+  "hash": "d7de07187d",
   "min": [
    -0.295,
    0.909,

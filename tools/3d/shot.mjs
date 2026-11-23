@@ -9,7 +9,7 @@ const b = await chromium.launch({ args: ["--use-gl=angle", "--use-angle=swiftsha
 const p = await b.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 1 });
 p.on("console", (m) => m.type() === "error" && console.log("console:", m.text()));
 p.on("pageerror", (e) => console.log("pageerror:", e.message));
-await p.goto(`http://127.0.0.1:${process.env.VPORT || 8765}/?${q}`);
+await p.goto(`http://127.0.0.1:${process.env.PORT || process.env.VPORT || 8765}/?${q}`);
 await p.waitForFunction(() => document.title === "ready", null, { timeout: 120000 });
 await p.screenshot({ path: out, omitBackground: true });
 await b.close();

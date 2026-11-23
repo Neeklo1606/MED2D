@@ -23,7 +23,23 @@ const nextConfig: NextConfig = {
   async headers() {
     const headers = [...securityHeaders];
     if (!indexing) headers.push({ key: "X-Robots-Tag", value: "noindex, nofollow" });
-    return [{ source: "/:path*", headers }];
+    return [
+      { source: "/:path*", headers },
+      // 3D-модели с версией (?v=<хэш содержимого> из model-versions.json): файл по такому адресу не меняется
+      {
+        source: "/3d/:path*",
+        has: [{ type: "query", key: "v" }],
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      // без версии (прямые ссылки, инструменты): короткий кеш, чтобы новые модели появлялись без сброса кеша
+      {
+        source: "/3d/:path*",
+        missing: [{ type: "query", key: "v" }],
+        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+      },
+      // фото товаров меняются редко: сутки из кеша, неделю показываем старое, пока обновляем в фоне
+      { source: "/products/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
+    ];
   },
 };
 

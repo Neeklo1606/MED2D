@@ -8,8 +8,9 @@
 | 2 | `garments.py` (Python) | Одежда объёмом на воксельной сетке по реальной фигуре: свобода кроя, драпировка под весом ткани, проймы и вырезы, резинки со сборкой, накладные карманы, клапаны, отвороты, лацканы, пуговицы, строчки |
 | 3 | `assemble.py` (Blender) | Материалы `fabric` (белый × AO складок в цвете вершин × карта нормалей саржи) и `trim`; AO запекается Cycles вместе с телом; базовое бельё в манекене |
 | 4 | `glb_fix.py` | Режимы прозрачности кожи/волос для three.js, текстуры в JPEG/PNG до бюджета |
-| 5 | `manifest.py` | `manifest.json`: треугольники, размер, габариты |
-| 6 | `thumbs.mjs` + `thumbs_pack.py` | Фото товаров без тела (тень + маска ткани), сайт перекрашивает их CSS |
+| 5 | `optimize.mjs` (Node, `npx @gltf-transform/cli@4.5.1`) | Сжатие для сайта: геометрия meshopt, текстуры WebP (кожа ≤ 1024 px, остальное ≤ 512, нормали без потерь). Имена материалов, COLOR_0, UV, режимы прозрачности сохраняются; уже сжатые файлы пропускаются; файл заменяется только после проверки |
+| 6 | `manifest.py` | `manifest.json`: треугольники, размер, габариты, хэш; для `public/3d/models` ещё `src/configurator/model-versions.json` — сайт грузит `<имя>.glb?v=<хэш>` с кешем на год |
+| 7 | `thumbs.mjs` + `thumbs_pack.py` | Фото товаров без тела (тень + маска ткани), сайт перекрашивает их CSS |
 
 Вещи по фото изделий: верх (оверсайз, V-вырез, спущенное плечо, рукав с отворотом, нагрудный карман с ручкой,
 карман-кенгуру, резинка по низу), брюки (широкие прямые, карго с клапанами, косые карманы, пояс на резинке),
@@ -26,7 +27,13 @@ python3 -m venv .venv && .venv/bin/pip install numpy scipy scikit-image trimesh 
 BLENDER=/path/to/blender PY=.venv/bin/python tools/3d/build.sh /tmp/medform-3d f m      # около 6 минут
 ```
 
-Просмотр как на сайте (three.js, тот же свет):
+После ручной замены GLB (без `build.sh`) обязательно:
+
+```bash
+node tools/3d/optimize.mjs public/3d/models && python3 tools/3d/manifest.py public/3d/models
+```
+
+Просмотр как на сайте (three.js, тот же свет, понимает сжатые meshopt-файлы; порт: `PORT=8791 node tools/3d/shot.mjs …`):
 
 ```bash
 python3 tools/3d/serve.py public/3d/models &
