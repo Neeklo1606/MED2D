@@ -39,6 +39,9 @@ const nextConfig: NextConfig = {
       },
       // фото товаров меняются редко: сутки из кеша, неделю показываем старое, пока обновляем в фоне
       { source: "/products/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
+      // шрифты и фото-модель меняются редко: месяц в кеше, фоновое обновление
+      { source: "/fonts/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=2592000" }] },
+      { source: "/photo-model/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
     ];
   },
 };
