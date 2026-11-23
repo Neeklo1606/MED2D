@@ -17,7 +17,7 @@ export default function Home() {
       <section className="mx-auto grid max-w-[1440px] items-center gap-6 px-5 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:gap-10">
         <div className="pt-5 lg:py-10">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">{t("home.hero.eyebrow")}</p>
-          <h1 className="mt-3 font-display text-[32px] font-black uppercase leading-[1.02] md:text-6xl">
+          <h1 className="mt-3 font-display text-[28px] font-black uppercase leading-[1.02] min-[390px]:text-[30px] md:text-6xl">
             {t("home.hero.h1Start")} <span className="text-accent">{t("home.hero.h1Accent")}</span>
           </h1>
           <p className="mt-4 max-w-xl text-base text-muted md:text-lg">{t("home.hero.lead")}</p>

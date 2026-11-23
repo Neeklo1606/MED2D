@@ -50,8 +50,9 @@ export const useLook = create<LookState>()((set, get) => ({
     const p = bySlug.get(slug);
     if (!p) return;
     const { look, picks } = get();
-    if (look.slots[p.slot]?.slug === slug) set({ look: takeOff(look, p.slot), focus: { slot: "full", n: get().focus.n + 1 } });
-    else set({ look: wear(look, { slug, ...picks[slug] }), invalid: get().invalid.filter((s) => s !== p.slot), focus: { slot: p.slot, n: get().focus.n + 1 } });
+    // камера не двигается сама: ракурс и приближение меняет только пользователь
+    if (look.slots[p.slot]?.slug === slug) set({ look: takeOff(look, p.slot) });
+    else set({ look: wear(look, { slug, ...picks[slug] }), invalid: get().invalid.filter((s) => s !== p.slot) });
   },
   setColor: (slug, color) => {
     const p = bySlug.get(slug);
@@ -64,7 +65,6 @@ export const useLook = create<LookState>()((set, get) => ({
     set({
       picks: { ...picks, [slug]: next },
       look: show ? wear(look, { slug, ...next }) : look,
-      focus: show ? { slot: p.slot, n: get().focus.n + 1 } : get().focus,
     });
   },
   setSize: (slug, size) => {

@@ -27,7 +27,7 @@ export function ButtonLink({ href, children, variant = "dark", className = "" }:
 export function PageTitle({ title, lead }: { title: string; lead?: string }) {
   return (
     <div className="mx-auto max-w-[1440px] px-5 pt-5 md:px-10 md:pt-8">
-      <h1 className="font-display text-[30px] font-black uppercase leading-[1.05] md:text-5xl">{title}</h1>
+      <h1 className="font-display text-[26px] font-black uppercase leading-[1.05] min-[390px]:text-[28px] md:text-5xl">{title}</h1>
       {lead && <p className="mt-3 max-w-2xl text-base text-muted md:text-lg">{lead}</p>}
     </div>
   );

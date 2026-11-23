@@ -182,7 +182,7 @@ function Controls({ stage }: { stage: React.RefObject<LookRendererHandle | null>
   return (
     <div className="pointer-events-none flex items-start justify-between gap-4 [&_button]:pointer-events-auto">
       <div role="group" aria-labelledby="stage-gender">
-        <p id="stage-gender" className="mb-2 text-[13px] text-muted lg:text-[14px]">{t("catalog.stage.gender")}</p>
+        <p id="stage-gender" className="mb-1.5 text-[12px] text-muted lg:text-[14px]">{t("catalog.stage.gender")}</p>
         <div className="flex gap-1.5">
           {(["f", "m"] as const).map((g) => (
             <SquareBtn key={g} on={gender === g} aria-pressed={gender === g} aria-label={g === "f" ? t("catalog.stage.genderF") : t("catalog.stage.genderM")} onClick={() => setGender(g)}>{g === "f" ? "Ж" : "М"}</SquareBtn>
@@ -190,7 +190,7 @@ function Controls({ stage }: { stage: React.RefObject<LookRendererHandle | null>
         </div>
       </div>
       <div role="group" aria-labelledby="stage-zoom" className="text-right">
-        <p id="stage-zoom" className="mb-2 text-[13px] text-muted lg:text-[14px]">{t("catalog.stage.zoom")}</p>
+        <p id="stage-zoom" className="mb-1.5 text-[12px] text-muted lg:text-[14px]">{t("catalog.stage.zoom")}</p>
         <div className="flex gap-1.5">
           <SquareBtn aria-label={t("catalog.stage.zoomIn")} onClick={() => stage.current?.zoomIn()} className="text-accent"><span className="text-[22px] font-light leading-none">+</span></SquareBtn>
           <SquareBtn aria-label={t("catalog.stage.zoomOut")} onClick={() => stage.current?.zoomOut()}><span className="text-[22px] font-light leading-none">−</span></SquareBtn>
@@ -245,15 +245,11 @@ const ProductCard = memo(function ProductCard({ p, onSizeChart, onAddItem, mobil
   const flagged = useLook((s) => s.invalid.includes(p.slot) && s.look.slots[p.slot]?.slug === p.slug);
   const [needSize, setNeedSize] = useState(false);
   const invalid = flagged || (needSize && !pick.size);
-  const { toggle, setColor, setSize, focusOn } = useLook.getState();
+  const { toggle, setColor, setSize } = useLook.getState();
   const canWear = p.model !== null;
   const titleId = `card-${p.slug}-${mobile ? "m" : "d"}`;
-  // тап по свободному месту карточки надетой вещи наводит камеру на её зону
-  const onCardClick = (e: React.MouseEvent) => {
-    if (worn && !(e.target as HTMLElement).closest("button, a")) focusOn(p.slot);
-  };
   return (
-    <article data-card={p.slug} data-cat={p.category} aria-labelledby={titleId} onClick={onCardClick}
+    <article data-card={p.slug} data-cat={p.category} aria-labelledby={titleId}
       className={`relative flex flex-col rounded-[var(--radius-card)] border bg-card p-4 transition-[border-color,box-shadow] duration-200 ${mobile ? "w-[min(calc(100vw-56px),340px)] shrink-0 snap-start" : ""} ${invalid ? "border-red-600 ring-1 ring-red-600" : worn ? "border-accent ring-1 ring-accent" : "border-line"}`}>
       <div className="flex gap-3">
         <div className={`relative size-12 shrink-0 rounded-[12px] bg-bg p-0.5 ${worn ? "ring-2 ring-accent" : ""}`} aria-hidden>
@@ -377,12 +373,12 @@ function TotalRow({ slot, onAdd }: { slot: Slot; onAdd: (s: Slot) => void }) {
   const [open, setOpen] = useState(false);
   const product = worn ? bySlug.get(worn.slug) : undefined;
   if (!worn || !product) return null;
-  const { setColor, setSize, focusOn } = useLook.getState();
+  const { setColor, setSize } = useLook.getState();
   const detail = `${COLORS[worn.color]?.name}${worn.size ? `, ${worn.size}` : product.sizes.length ? `, ${t("catalog.total.noSize")}` : ""}`;
   return (
     <li className="py-0.5">
       <div className="flex items-center gap-1">
-        <button type="button" aria-expanded={open} onClick={() => { setOpen(!open); focusOn(slot); }} className="no-press flex min-h-11 min-w-0 flex-1 flex-col justify-center text-left">
+        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="no-press flex min-h-11 min-w-0 flex-1 flex-col justify-center text-left">
           <span className="block truncate text-[14px] text-white">{product.title}</span>
           <span className="flex min-w-0 items-center gap-1 text-[11.5px] text-white/70">
             <span className="truncate">{detail}</span>
@@ -442,6 +438,8 @@ function TotalBlock({ onAdd, onAddAll, innerRef }: { onAdd: (s: Slot) => void; o
 /** Мобильная панель: видна, только пока блок ИТОГО ниже экрана. */
 function StickyTotal({ target, onAddAll }: { target: React.RefObject<HTMLDivElement | null>; onAddAll: () => void }) {
   const [hidden, setHidden] = useState(true);
+  // панель не закрывает низ карточек: пока лента вещей у нижнего края экрана, панель спрятана
+  const [overRail, setOverRail] = useState(false);
   const sum = useLook((s) => total(s.look));
   const count = useLook((s) => Object.keys(s.look.slots).length);
   useEffect(() => {
@@ -449,9 +447,12 @@ function StickyTotal({ target, onAddAll }: { target: React.RefObject<HTMLDivElem
     if (!el) return;
     const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting || e.boundingClientRect.top < 0), { threshold: 0.15 });
     io.observe(el);
-    return () => io.disconnect();
+    const rail = [...document.querySelectorAll<HTMLElement>("[data-scroller]")].find((r) => r.offsetParent !== null);
+    const io2 = rail ? new IntersectionObserver(([e]) => setOverRail(e.isIntersecting), { rootMargin: "-82% 0px 0px 0px" }) : null;
+    if (rail) io2!.observe(rail);
+    return () => { io.disconnect(); io2?.disconnect(); };
   }, [target]);
-  if (hidden || !count) return null;
+  if (hidden || overRail || !count) return null;
   return (
     <div className="on-accent fade-up fixed inset-x-3 z-40 mx-auto flex max-w-[560px] items-center gap-3 rounded-full bg-accent py-1.5 pl-5 pr-1.5 text-white shadow-[0_8px_24px_rgb(6_70_176/0.35)] lg:hidden" style={{ bottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}>
       <button type="button" onClick={() => target.current?.scrollIntoView({ behavior: "smooth", block: "center" })} className="no-press flex min-h-11 min-w-0 flex-1 items-baseline gap-2 text-left">
@@ -484,10 +485,10 @@ export default function Configurator() {
 
   const heading = (
     <>
-      <h1 className="font-display text-[31px] uppercase leading-[1.02] tracking-[-0.03em] [text-wrap:initial] md:text-5xl lg:text-[36px] xl:text-[34px] 2xl:text-[38px]">
+      <h1 className="font-display text-[27px] uppercase leading-[1.02] tracking-[-0.03em] [text-wrap:initial] min-[390px]:text-[29px] md:text-5xl lg:text-[36px] xl:text-[34px] 2xl:text-[38px]">
         {(() => { const [first, ...rest] = t("catalog.hero.titleStart").split(" "); return <>{first}<br />{rest.join(" ")} </>; })()}<span className="text-accent">{t("catalog.hero.titleAccent")}</span>
       </h1>
-      <p className="mt-4 max-w-md text-[15px] leading-[1.25] text-muted md:max-w-xl md:text-[17px] lg:text-[16px] lg:leading-snug xl:text-[17px]">{t("catalog.hero.subtitle")}</p>
+      <p className="mt-3 max-w-md text-[14px] leading-[1.3] text-muted md:max-w-xl md:text-[17px] lg:text-[16px] lg:leading-snug xl:text-[17px]">{t("catalog.hero.subtitle")}</p>
     </>
   );
 
@@ -498,7 +499,7 @@ export default function Configurator() {
       <div className="pb-8 lg:hidden">
         <section className="px-5 pt-[22px] md:px-10 md:pt-8">{heading}</section>
         <section aria-label={t("catalog.stage.gender")} onPointerDownCapture={dismissHint} onWheelCapture={dismissHint}
-          className="relative mx-5 mt-6 h-[352px] min-[390px]:h-[380px] md:mx-10 md:h-[560px]">
+          className="relative mx-5 mt-5 h-[352px] min-[390px]:h-[380px] md:mx-10 md:h-[560px]">
           {!desktop && stageEl}
           <div className="absolute inset-x-0 top-0 z-10"><Controls stage={stage} /></div>
         </section>
