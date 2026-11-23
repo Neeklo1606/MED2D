@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { forwardRef, Suspense, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Component, forwardRef, Suspense, useEffect, useImperativeHandle, useMemo, useRef, useState, type ReactNode } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, OrbitControls, useGLTF, useProgress } from "@react-three/drei";
 import * as THREE from "three";
@@ -10,12 +10,12 @@ import { bySlug, COLORS, PRODUCTS, type Gender, type Slot } from "@/catalog/data
 import { wornList } from "../look";
 import { modelFile as url, warm } from "../models";
 import type { LookRendererHandle, LookRendererProps } from "./types";
-const HOME = { pos: new THREE.Vector3(0.9, 1.25, 3.6), target: new THREE.Vector3(0, 0.88, 0) };
+const HOME = { pos: new THREE.Vector3(1.0, 1.3, 4.0), target: new THREE.Vector3(0, 0.9, 0) };
 const MIN = 0.9, MAX = 6;
 
 /** Куда смотреть при работе с вещью: высота цели (доля роста) и дистанция. */
 const FOCUS: Record<Slot | "full", { y: number; d: number }> = {
-  full: { y: 0.88, d: 3.75 },
+  full: { y: 0.9, d: 4.15 },
   head: { y: 1.58, d: 1.35 },
   top: { y: 1.2, d: 2.0 },
   coat: { y: 1.05, d: 2.5 },
@@ -28,6 +28,33 @@ const FOCUS: Record<Slot | "full", { y: number; d: number }> = {
  * Модель из GLB. Манекен (base) рисуется с материалами из файла (кожа, волосы с alphaTest, бельё);
  * у одежды материал ткани `fabric` перекрашивается: цвет × AO складок (цвет вершин) × карта нормалей плетения.
  */
+/**
+ * Ошибка загрузки одной модели (сеть, 502) не должна ронять страницу: вещь пропадает со сцены,
+ * кеш загрузчика чистится и через паузу идёт повторная попытка (до 4 раз).
+ */
+class ModelBoundary extends Component<{ src: string; children: ReactNode }, { failed: boolean; attempt: number }> {
+  state = { failed: false, attempt: 0 };
+  private timer: ReturnType<typeof setTimeout> | undefined;
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch() {
+    useGLTF.clear(this.props.src);
+    if (this.state.attempt >= 4) return;
+    this.timer = setTimeout(() => this.setState((s) => ({ failed: false, attempt: s.attempt + 1 })), 1500 * (this.state.attempt + 1));
+  }
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+  render() {
+    return this.state.failed ? null : <SafeKey k={this.state.attempt}>{this.props.children}</SafeKey>;
+  }
+}
+
+function SafeKey({ k, children }: { k: number; children: ReactNode }) {
+  return <group key={k}>{children}</group>;
+}
+
 function Model({ src, color, base }: { src: string; color?: string; base?: boolean }) {
   const { scene } = useGLTF(src, false, true);
   const invalidate = useThree((s) => s.invalidate);
@@ -254,9 +281,11 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
       </mesh>
       <ContactShadows position={[0, 0.002, 0]} scale={1.6} blur={2.2} far={1.6} opacity={0.35} resolution={256} />
       <Suspense fallback={null}>
-        <Model src={url("mannequin", g)} base />
+        <ModelBoundary key={url("mannequin", g)} src={url("mannequin", g)}><Model src={url("mannequin", g)} base /></ModelBoundary>
         {items.map(({ slot, worn, product }) => (
-          <Model key={`${slot}-${product.model}-${g}`} src={url(product.model!, g)} color={COLORS[worn.color]?.hex} />
+          <ModelBoundary key={`${slot}-${product.model}-${g}`} src={url(product.model!, g)}>
+            <Model src={url(product.model!, g)} color={COLORS[worn.color]?.hex} />
+          </ModelBoundary>
         ))}
         <Ready onReady={onReady} />
       </Suspense>

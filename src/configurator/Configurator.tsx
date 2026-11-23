@@ -35,7 +35,9 @@ function UrlSync() {
   const ready = useRef(false);
   useEffect(() => {
     const parsed = fromQuery(window.location.search);
-    setLook(Object.keys(parsed.slots).length ? parsed : { ...DEFAULT_LOOK, gender: parsed.gender });
+    // ссылка с ?g= — это сохранённый образ (в том числе пустой после «Снять всё»); без неё показываем образ по умолчанию
+    const saved = new URLSearchParams(window.location.search).has("g");
+    setLook(saved || Object.keys(parsed.slots).length ? parsed : { ...DEFAULT_LOOK, gender: parsed.gender });
     ready.current = true;
   }, [setLook]);
   useEffect(() => {
@@ -49,6 +51,9 @@ function UrlSync() {
 function focusCard(slug: string) {
   const el = [...document.querySelectorAll<HTMLElement>(`[data-card="${slug}"]`)].find((e) => e.offsetParent !== null);
   el?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+  // фокус на группу размеров, чтобы выбрать размер с клавиатуры (spec 2.5)
+  const size = el?.querySelector<HTMLElement>('[role="radiogroup"][aria-label^="Размер"] [role="radio"]');
+  size?.focus({ preventScroll: true });
 }
 
 /** Действия корзины из конфигуратора: обычные функции над сторами, стабильные между рендерами. */
