@@ -1,0 +1,1287 @@
+{
+  "base": "http://localhost:3400",
+  "readonly": false,
+  "db": "not-configured",
+  "at": "2026-11-22T23:59:18.565Z",
+  "rows": [
+    {
+      "vp": "api",
+      "group": "health",
+      "name": "/api/health 200 + JSON",
+      "status": "pass",
+      "ms": 9
+    },
+    {
+      "vp": "api",
+      "group": "health",
+      "name": "security headers present",
+      "status": "pass",
+      "ms": 29
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "open /catalog and accept cookies",
+      "status": "pass",
+      "ms": 1013
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "3D canvas renders (non-blank pixels)",
+      "status": "pass",
+      "ms": 4383,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-3d-canvas-renders-non-blank-pixels.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "wear top (t-shirt replaces default top)",
+      "status": "pass",
+      "ms": 1299
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "change top colour (model recoloured)",
+      "status": "pass",
+      "ms": 1000
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "choose top size",
+      "status": "pass",
+      "ms": 347
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "wear trousers, colour + size",
+      "status": "pass",
+      "ms": 660
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "wear shoes + size",
+      "status": "pass",
+      "ms": 565
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "wear cap",
+      "status": "pass",
+      "ms": 400
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "wear lanyard",
+      "status": "pass",
+      "ms": 1367,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-wear-lanyard.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "ИТОГО lists the outfit and sums prices (8 200 ₽)",
+      "status": "pass",
+      "ms": 37
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "switch Ж -> М keeps the outfit",
+      "status": "pass",
+      "ms": 1824,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-switch-ж-м-keeps-the-outfit.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "zoom + changes the view",
+      "status": "pass",
+      "ms": 1019
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "zoom − changes the view",
+      "status": "pass",
+      "ms": 1270
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "rotate changes the view",
+      "status": "pass",
+      "ms": 1027,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-rotate-changes-the-view.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "share URL encodes the outfit",
+      "status": "pass",
+      "ms": 502
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "share URL round-trip (fresh tab restores outfit)",
+      "status": "pass",
+      "ms": 4566
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "«Снять всё» empties the look, model stays",
+      "status": "pass",
+      "ms": 1106,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-снять-всё-empties-the-look-model-stays.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "reload after «Снять всё» keeps the empty look",
+      "status": "fail",
+      "ms": 4191,
+      "error": "after reload ИТОГО shows 3 items (Сабо 3 000 ₽ | Медицинские брюки 3 000 ₽ | Медицинский верх 3 200 ₽); URL http://localhost:3400/catalog?g=m&feet=sabo.grey&bottom=joggers.lightblue&top=anorak.lightblue",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-reload-after-снять-всё-keeps-the-empty-look.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "«Добавить весь образ» with missing size: error on card",
+      "status": "pass",
+      "ms": 4109,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-добавить-весь-образ-with-missing-size-error-on-card.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "missing size: keyboard focus moves to the size group",
+      "status": "fail",
+      "ms": 61,
+      "error": "focus stays on «BUTTON Добавить весь образ в корзину», spec 2.5 requires focus on the size group of the flagged card",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-missing-size-keyboard-focus-moves-to-the-size-group.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "fix size, add whole look",
+      "status": "pass",
+      "ms": 87
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "header cart counter shows 3",
+      "status": "pass",
+      "ms": 67
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart shows 3 lines with product images",
+      "status": "pass",
+      "ms": 184,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-cart-shows-3-lines-with-product-images.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart: change colour",
+      "status": "pass",
+      "ms": 242
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart: change size",
+      "status": "pass",
+      "ms": 240
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart: change quantity",
+      "status": "pass",
+      "ms": 228
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart: no DB -> graceful price error",
+      "status": "pass",
+      "ms": 132,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-cart-no-db-graceful-price-error.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "cart survives reload",
+      "status": "pass",
+      "ms": 81
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "open checkout",
+      "status": "pass",
+      "ms": 78
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "checkout: empty submit shows field errors and focuses first",
+      "status": "pass",
+      "ms": 435,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-checkout-empty-submit-shows-field-errors-and-focuses-first.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "checkout: invalid phone/email messages",
+      "status": "pass",
+      "ms": 56
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "checkout: valid data clears errors",
+      "status": "pass",
+      "ms": 329
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "checkout: submit",
+      "status": "pass",
+      "ms": 127,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-configurator-checkout-submit.png"
+    },
+    {
+      "vp": "375",
+      "group": "configurator",
+      "name": "no console errors during the flow",
+      "status": "pass",
+      "ms": 0
+    },
+    {
+      "vp": "375",
+      "group": "resilience",
+      "name": "failed GLB download keeps /catalog usable",
+      "status": "fail",
+      "ms": 8189,
+      "error": "PAGE CRASHED (error boundary «Что-то пошло не так»). whole page replaced by the error boundary («500 Что-то пошло не так») after one model failed to download",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-resilience-failed-glb-download-keeps-catalog-usable.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "home opens, cookie banner accepted, nav links collected",
+      "status": "pass",
+      "ms": 934
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/ 200, no console errors",
+      "status": "pass",
+      "ms": 657
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/about 200, no console errors",
+      "status": "pass",
+      "ms": 646
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/buyers 200, no console errors",
+      "status": "pass",
+      "ms": 614
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/cart 200, no console errors",
+      "status": "pass",
+      "ms": 643
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/catalog 200, no console errors",
+      "status": "pass",
+      "ms": 4299
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/contacts 200, no console errors",
+      "status": "pass",
+      "ms": 673
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/consent 200, no console errors",
+      "status": "pass",
+      "ms": 631
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/cookies 200, no console errors",
+      "status": "pass",
+      "ms": 605
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/offer 200, no console errors",
+      "status": "pass",
+      "ms": 635
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/privacy 200, no console errors",
+      "status": "pass",
+      "ms": 655
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/requisites 200, no console errors",
+      "status": "pass",
+      "ms": 611
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 3720,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-pages-product-anorak.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/tshirt",
+      "status": "pass",
+      "ms": 3652
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/joggers",
+      "status": "pass",
+      "ms": 3636
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/halat",
+      "status": "pass",
+      "ms": 4672
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/cap",
+      "status": "pass",
+      "ms": 4671
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/dokerka",
+      "status": "pass",
+      "ms": 4248
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 4788
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/lanyard",
+      "status": "pass",
+      "ms": 4353
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/shopper",
+      "status": "pass",
+      "ms": 4242
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /this-page-does-not-exist",
+      "status": "pass",
+      "ms": 722,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/375-pages-404-page-this-page-does-not-exist.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /product/no-such-product",
+      "status": "pass",
+      "ms": 645
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /legal/no-such-doc",
+      "status": "pass",
+      "ms": 653
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "open /catalog and accept cookies",
+      "status": "pass",
+      "ms": 490
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "3D canvas renders (non-blank pixels)",
+      "status": "pass",
+      "ms": 4284,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-3d-canvas-renders-non-blank-pixels.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "wear top (t-shirt replaces default top)",
+      "status": "pass",
+      "ms": 1729
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "change top colour (model recoloured)",
+      "status": "pass",
+      "ms": 979
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "choose top size",
+      "status": "pass",
+      "ms": 324
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "wear trousers, colour + size",
+      "status": "pass",
+      "ms": 782
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "wear shoes + size",
+      "status": "pass",
+      "ms": 547
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "wear cap",
+      "status": "pass",
+      "ms": 389
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "wear lanyard",
+      "status": "pass",
+      "ms": 1314,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-wear-lanyard.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "ИТОГО lists the outfit and sums prices (8 200 ₽)",
+      "status": "pass",
+      "ms": 28
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "switch Ж -> М keeps the outfit",
+      "status": "pass",
+      "ms": 1944,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-switch-ж-м-keeps-the-outfit.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "switch М -> Ж keeps the outfit",
+      "status": "pass",
+      "ms": 1220
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "zoom + changes the view",
+      "status": "pass",
+      "ms": 1207
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "zoom − changes the view",
+      "status": "pass",
+      "ms": 1262
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "rotate changes the view",
+      "status": "pass",
+      "ms": 1048,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-rotate-changes-the-view.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "share URL encodes the outfit",
+      "status": "pass",
+      "ms": 502
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "share URL round-trip (fresh tab restores outfit)",
+      "status": "pass",
+      "ms": 3623
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "«Снять всё» empties the look, model stays",
+      "status": "pass",
+      "ms": 945,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-снять-всё-empties-the-look-model-stays.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "reload after «Снять всё» keeps the empty look",
+      "status": "fail",
+      "ms": 3662,
+      "error": "after reload ИТОГО shows 3 items (Сабо 3 000 ₽ | Медицинские брюки 3 000 ₽ | Медицинский верх 3 200 ₽); URL http://localhost:3400/catalog?g=f&feet=sabo.grey&bottom=joggers.lightblue&top=anorak.lightblue",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-reload-after-снять-всё-keeps-the-empty-look.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "«Добавить весь образ» with missing size: error on card",
+      "status": "pass",
+      "ms": 2701,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-добавить-весь-образ-with-missing-size-error-on-card.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "missing size: keyboard focus moves to the size group",
+      "status": "fail",
+      "ms": 35,
+      "error": "focus stays on «BUTTON Добавить весь образ в корзину», spec 2.5 requires focus on the size group of the flagged card",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-missing-size-keyboard-focus-moves-to-the-size-group.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "fix size, add whole look",
+      "status": "pass",
+      "ms": 84
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "header cart counter shows 3",
+      "status": "pass",
+      "ms": 55
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart shows 3 lines with product images",
+      "status": "pass",
+      "ms": 154,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-cart-shows-3-lines-with-product-images.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart: change colour",
+      "status": "pass",
+      "ms": 243
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart: change size",
+      "status": "pass",
+      "ms": 214
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart: change quantity",
+      "status": "pass",
+      "ms": 218
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart: no DB -> graceful price error",
+      "status": "pass",
+      "ms": 108,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-cart-no-db-graceful-price-error.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "cart survives reload",
+      "status": "pass",
+      "ms": 69
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "open checkout",
+      "status": "pass",
+      "ms": 65
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "checkout: empty submit shows field errors and focuses first",
+      "status": "pass",
+      "ms": 316,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-checkout-empty-submit-shows-field-errors-and-focuses-first.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "checkout: invalid phone/email messages",
+      "status": "pass",
+      "ms": 53
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "checkout: valid data clears errors",
+      "status": "pass",
+      "ms": 273
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "checkout: submit",
+      "status": "pass",
+      "ms": 95,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-configurator-checkout-submit.png"
+    },
+    {
+      "vp": "1440",
+      "group": "configurator",
+      "name": "no console errors during the flow",
+      "status": "pass",
+      "ms": 0
+    },
+    {
+      "vp": "1440",
+      "group": "resilience",
+      "name": "failed GLB download keeps /catalog usable",
+      "status": "fail",
+      "ms": 8110,
+      "error": "PAGE CRASHED (error boundary «Что-то пошло не так»). whole page replaced by the error boundary («500 Что-то пошло не так») after one model failed to download",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-resilience-failed-glb-download-keeps-catalog-usable.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "home opens, cookie banner accepted, nav links collected",
+      "status": "pass",
+      "ms": 746
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/ 200, no console errors",
+      "status": "pass",
+      "ms": 611
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/about 200, no console errors",
+      "status": "pass",
+      "ms": 607
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/buyers 200, no console errors",
+      "status": "pass",
+      "ms": 606
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/cart 200, no console errors",
+      "status": "pass",
+      "ms": 619
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/catalog 200, no console errors",
+      "status": "pass",
+      "ms": 3435
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/contacts 200, no console errors",
+      "status": "fail",
+      "ms": 173,
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3400/contacts Call log: - navigating to \"http://localhost:3400/contacts\", waiting until \"domcontentloaded\"",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-contacts-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/consent 200, no console errors",
+      "status": "fail",
+      "ms": 50,
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3400/legal/consent Call log: - navigating to \"http://localhost:3400/legal/consent\", waiting until \"domcontentloaded\"",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-legal-consent-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/cookies 200, no console errors",
+      "status": "fail",
+      "ms": 48,
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3400/legal/cookies Call log: - navigating to \"http://localhost:3400/legal/cookies\", waiting until \"domcontentloaded\"",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-legal-cookies-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/offer 200, no console errors",
+      "status": "fail",
+      "ms": 54,
+      "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3400/legal/offer Call log: - navigating to \"http://localhost:3400/legal/offer\", waiting until \"domcontentloaded\"",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-legal-offer-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/privacy 200, no console errors",
+      "status": "fail",
+      "ms": 973,
+      "error": "request failed: http://localhost:3400/contacts net::ERR_CONNECTION_REFUSED || request failed: http://localhost:3400/legal/consent net::ERR_CONNECTION_REFUSED || request failed: http://localhost:3400/legal/cookies net::ERR_CONNECTION_REFUSED || request failed: http://localhost:3400/legal/offer net::ERR_CONNECTION_REFUSED",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-legal-privacy-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/requisites 200, no console errors",
+      "status": "pass",
+      "ms": 611
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 3927,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-product-anorak.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/tshirt",
+      "status": "pass",
+      "ms": 3500
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/joggers",
+      "status": "pass",
+      "ms": 3286
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/halat",
+      "status": "pass",
+      "ms": 3381
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/cap",
+      "status": "pass",
+      "ms": 3302
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/dokerka",
+      "status": "pass",
+      "ms": 3198
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 3491
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/lanyard",
+      "status": "pass",
+      "ms": 3932
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/shopper",
+      "status": "pass",
+      "ms": 4641
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /this-page-does-not-exist",
+      "status": "pass",
+      "ms": 630,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400/1440-pages-404-page-this-page-does-not-exist.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /product/no-such-product",
+      "status": "pass",
+      "ms": 616
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /legal/no-such-doc",
+      "status": "pass",
+      "ms": 611
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 996
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 2668
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 2766
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 2009
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1936
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1173
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 889
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 883
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 932
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 967
+    },
+    {
+      "vp": "360",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 897
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 1134
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 4421
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 2859
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 3461
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1182
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1204
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 946
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 946
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 931
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 964
+    },
+    {
+      "vp": "375",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 914
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 1047
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 3171
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 2953
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 2897
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1176
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1181
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 928
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 882
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 935
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 1003
+    },
+    {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 997
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 1233
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 4586
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 3118
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 4637
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1308
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1178
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 967
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 865
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 871
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 914
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 904
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 1054
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 2993
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 3018
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 1952
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1941
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1199
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 946
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 937
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 1026
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 965
+    },
+    {
+      "vp": "1440",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 974
+    }
+  ],
+  "warnings": []
+}
