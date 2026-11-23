@@ -1,0 +1,415 @@
+{
+  "base": "https://med.neeklo.ru",
+  "readonly": true,
+  "db": "ok",
+  "at": "2026-11-23T00:20:34.473Z",
+  "rows": [
+    {
+      "vp": "api",
+      "group": "health",
+      "name": "/api/health 200 + JSON",
+      "status": "pass",
+      "ms": 151
+    },
+    {
+      "vp": "api",
+      "group": "health",
+      "name": "security headers present",
+      "status": "pass",
+      "ms": 201
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "home opens, cookie banner accepted, nav links collected",
+      "status": "pass",
+      "ms": 1878
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "home: no console errors",
+      "status": "pass",
+      "ms": 782
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "no analytics script before consent (Metrika)",
+      "status": "fail",
+      "ms": 3817,
+      "error": "Yandex Metrika is injected into the HTML before cookie consent (https://mc.yandex.ru/metrika/tag.js); CSP blocks it -> console error on every page",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-no-analytics-script-before-consent-metrika.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/ 200, no console errors",
+      "status": "fail",
+      "ms": 9020,
+      "error": "HTTP 502 https://med.neeklo.ru/photo-model/f/front-top-mask.png || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/photo-model/f/front-top-mask.png",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-200-no-console-errors.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/about 200, no console errors",
+      "status": "pass",
+      "ms": 1462
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/buyers 200, no console errors",
+      "status": "pass",
+      "ms": 1491
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/cart 200, no console errors",
+      "status": "fail",
+      "ms": 8995,
+      "error": "HTTP 502 https://med.neeklo.ru/catalog?_rsc=z0wyxdPQsgvRMaIZ || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/catalog?_rsc=z0wyxdPQsgvRMaIZ",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-cart-200-no-console-errors.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/catalog 200, no console errors",
+      "status": "pass",
+      "ms": 7517
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/contacts 200, no console errors",
+      "status": "pass",
+      "ms": 1515
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/consent 200, no console errors",
+      "status": "pass",
+      "ms": 1711
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/cookies 200, no console errors",
+      "status": "fail",
+      "ms": 8984,
+      "error": "HTTP 502 https://med.neeklo.ru/?_rsc=WwC3cvhzBrx28J6k || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/?_rsc=WwC3cvhzBrx28J6k || HTTP 502 https://med.neeklo.ru/cart?_rsc=WwC3cvhzBrx28J6k || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/cart?_rsc=WwC3cv",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-legal-cookies-200-no-console-errors.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/offer 200, no console errors",
+      "status": "fail",
+      "ms": 9079,
+      "error": "HTTP 502 https://med.neeklo.ru/legal/privacy?_rsc=iz0F1nDYGlVm0cDN || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/legal/privacy?_rsc=iz0F1nDYGlVm0cDN",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-legal-offer-200-no-console-errors.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/privacy 200, no console errors",
+      "status": "fail",
+      "ms": 9072,
+      "error": "HTTP 502 https://med.neeklo.ru/legal/privacy?_rsc=c5aHd5pTXDUY6dkd || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/legal/privacy?_rsc=c5aHd5pTXDUY6dkd",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-legal-privacy-200-no-console-errors.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/legal/requisites 200, no console errors",
+      "status": "pass",
+      "ms": 2017
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 4010,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-product-anorak.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/tshirt",
+      "status": "pass",
+      "ms": 3458
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/joggers",
+      "status": "pass",
+      "ms": 3364
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/halat",
+      "status": "pass",
+      "ms": 3468
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/cap",
+      "status": "pass",
+      "ms": 3376
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/dokerka",
+      "status": "pass",
+      "ms": 3505
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/sabo",
+      "status": "fail",
+      "ms": 9230,
+      "error": "HTTP 502 https://med.neeklo.ru/fonts/unbounded-cyrillic.woff2 || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/fonts/unbounded-cyrillic.woff2",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-product-sabo.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/lanyard",
+      "status": "pass",
+      "ms": 3326
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "/product/shopper",
+      "status": "pass",
+      "ms": 3439
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /this-page-does-not-exist",
+      "status": "pass",
+      "ms": 1666,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-404-page-this-page-does-not-exist.png"
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /product/no-such-product",
+      "status": "pass",
+      "ms": 1552
+    },
+    {
+      "vp": "375",
+      "group": "pages",
+      "name": "404 page /legal/no-such-doc",
+      "status": "fail",
+      "ms": 9153,
+      "error": "HTTP 502 https://med.neeklo.ru/about?_rsc=obKpZf5FBIdxA6Qv || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/about?_rsc=obKpZf5FBIdxA6Qv || HTTP 502 https://med.neeklo.ru/buyers?_rsc=obKpZf5FBIdxA6Qv || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/buye",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/375-pages-404-page-legal-no-such-doc.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "home opens, cookie banner accepted, nav links collected",
+      "status": "pass",
+      "ms": 1302
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "home: no console errors",
+      "status": "pass",
+      "ms": 1518
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "no analytics script before consent (Metrika)",
+      "status": "fail",
+      "ms": 9648,
+      "error": "Yandex Metrika is injected into the HTML before cookie consent (https://mc.yandex.ru/metrika/tag.js); CSP blocks it -> console error on every page",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-no-analytics-script-before-consent-metrika.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/ 200, no console errors",
+      "status": "pass",
+      "ms": 1723
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/about 200, no console errors",
+      "status": "pass",
+      "ms": 1751
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/buyers 200, no console errors",
+      "status": "fail",
+      "ms": 9116,
+      "error": "HTTP 502 https://med.neeklo.ru/buyers?_rsc=bL6c39yhqboFAG98 || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/buyers?_rsc=bL6c39yhqboFAG98",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-buyers-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/cart 200, no console errors",
+      "status": "fail",
+      "ms": 9095,
+      "error": "HTTP 502 https://med.neeklo.ru/buyers?_rsc=z0wyxdPQsgvRMaIZ || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/buyers?_rsc=z0wyxdPQsgvRMaIZ",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-cart-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/catalog 200, no console errors",
+      "status": "pass",
+      "ms": 8240
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/contacts 200, no console errors",
+      "status": "pass",
+      "ms": 1929
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/consent 200, no console errors",
+      "status": "pass",
+      "ms": 1989
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/cookies 200, no console errors",
+      "status": "pass",
+      "ms": 2084
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/offer 200, no console errors",
+      "status": "pass",
+      "ms": 2037
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/privacy 200, no console errors",
+      "status": "fail",
+      "ms": 8976,
+      "error": "HTTP 502 https://med.neeklo.ru/about?_rsc=c5aHd5pTXDUY6dkd || console.error: Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ https://med.neeklo.ru/about?_rsc=c5aHd5pTXDUY6dkd",
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-legal-privacy-200-no-console-errors.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/requisites 200, no console errors",
+      "status": "pass",
+      "ms": 1999
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 3961,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-product-anorak.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/tshirt",
+      "status": "pass",
+      "ms": 3537
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/joggers",
+      "status": "pass",
+      "ms": 3780
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/halat",
+      "status": "pass",
+      "ms": 3597
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/cap",
+      "status": "pass",
+      "ms": 3453
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/dokerka",
+      "status": "pass",
+      "ms": 3433
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 3547
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/lanyard",
+      "status": "pass",
+      "ms": 3391
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/shopper",
+      "status": "pass",
+      "ms": 3478
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /this-page-does-not-exist",
+      "status": "pass",
+      "ms": 1889,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/med.neeklo.ru-pages/1440-pages-404-page-this-page-does-not-exist.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /product/no-such-product",
+      "status": "pass",
+      "ms": 1950
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /legal/no-such-doc",
+      "status": "pass",
+      "ms": 1936
+    }
+  ],
+  "warnings": []
+}

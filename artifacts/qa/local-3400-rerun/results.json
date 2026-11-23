@@ -1,0 +1,179 @@
+{
+  "base": "http://localhost:3400",
+  "readonly": false,
+  "db": "not-configured",
+  "at": "2026-11-23T00:00:19.067Z",
+  "rows": [
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "home opens, cookie banner accepted, nav links collected",
+      "status": "pass",
+      "ms": 826
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/ 200, no console errors",
+      "status": "pass",
+      "ms": 658
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/about 200, no console errors",
+      "status": "pass",
+      "ms": 659
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/buyers 200, no console errors",
+      "status": "pass",
+      "ms": 691
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/cart 200, no console errors",
+      "status": "pass",
+      "ms": 757
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/catalog 200, no console errors",
+      "status": "pass",
+      "ms": 7960
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/contacts 200, no console errors",
+      "status": "pass",
+      "ms": 825
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/consent 200, no console errors",
+      "status": "pass",
+      "ms": 720
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/cookies 200, no console errors",
+      "status": "pass",
+      "ms": 677
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/offer 200, no console errors",
+      "status": "pass",
+      "ms": 685
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/privacy 200, no console errors",
+      "status": "pass",
+      "ms": 635
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/legal/requisites 200, no console errors",
+      "status": "pass",
+      "ms": 644
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 4096,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400-rerun/1440-pages-product-anorak.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/tshirt",
+      "status": "pass",
+      "ms": 3447
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/joggers",
+      "status": "pass",
+      "ms": 3433
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/halat",
+      "status": "pass",
+      "ms": 4950
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/cap",
+      "status": "pass",
+      "ms": 4994
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/dokerka",
+      "status": "pass",
+      "ms": 4253
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 4142
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/lanyard",
+      "status": "pass",
+      "ms": 4989
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "/product/shopper",
+      "status": "pass",
+      "ms": 3540
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /this-page-does-not-exist",
+      "status": "pass",
+      "ms": 626,
+      "screenshot": "/home/user/MED2D/.claude/worktrees/agent-ae840be7e8b26688c/artifacts/qa/local-3400-rerun/1440-pages-404-page-this-page-does-not-exist.png"
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /product/no-such-product",
+      "status": "pass",
+      "ms": 621
+    },
+    {
+      "vp": "1440",
+      "group": "pages",
+      "name": "404 page /legal/no-such-doc",
+      "status": "pass",
+      "ms": 623
+    }
+  ],
+  "warnings": []
+}
