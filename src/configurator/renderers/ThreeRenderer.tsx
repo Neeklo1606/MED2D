@@ -6,11 +6,10 @@ import { ContactShadows, OrbitControls, useGLTF, useProgress } from "@react-thre
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 type OrbitControlsImpl = React.ComponentRef<typeof OrbitControls>;
-import { bySlug, COLORS, type Gender, type Slot } from "@/catalog/data";
+import { bySlug, COLORS, PRODUCTS, type Gender, type Slot } from "@/catalog/data";
 import { wornList } from "../look";
+import { modelFile as url, warm } from "../models";
 import type { LookRendererHandle, LookRendererProps } from "./types";
-
-const url = (model: string, g: Gender) => `/3d/models/${model}_${g}.glb`;
 const HOME = { pos: new THREE.Vector3(0.9, 1.25, 3.6), target: new THREE.Vector3(0, 0.88, 0) };
 const MIN = 0.9, MAX = 6;
 
@@ -171,6 +170,39 @@ const CameraRig = forwardRef<LookRendererHandle, { gender: Gender; intro: boolea
   );
 });
 
+/**
+ * После первого кадра с моделью, в простое браузера, по одному файлу: остальные вещи этого пола,
+ * манекен и надетые вещи другого пола. Цвет задаётся материалом, поэтому на вещь нужен один GLB.
+ * Только скачивание в кеш (без разбора и без индикатора загрузки); при экономии трафика не делаем.
+ */
+function usePrefetchRest(ready: boolean, g: Gender, worn: string[]) {
+  const wornKey = worn.join(",");
+  useEffect(() => {
+    if (!ready) return;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    if (conn?.saveData || /2g$/.test(conn?.effectiveType ?? "")) return;
+    const other: Gender = g === "f" ? "m" : "f";
+    const models = PRODUCTS.flatMap((p) => (p.model ? [p.model] : []));
+    const wornModels = wornKey ? wornKey.split(",") : [];
+    const queue = [
+      ...models.filter((m) => !wornModels.includes(m)).map((m) => url(m, g)),
+      url("mannequin", other),
+      ...wornModels.map((m) => url(m, other)),
+    ];
+    const idle = (cb: () => void) =>
+      typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(cb, { timeout: 3000 }) : setTimeout(cb, 1000);
+    let stop = false;
+    (async () => {
+      for (const u of queue) {
+        await new Promise<void>((r) => idle(r));
+        if (stop) return;
+        await warm(u);
+      }
+    })();
+    return () => { stop = true; };
+  }, [ready, g, wornKey]);
+}
+
 function reduceMotion() {
   return typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
@@ -179,10 +211,12 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
   const [ready, setReady] = useState(false);
   const g = look.gender;
   const items = wornList(look).filter((x) => x.product.model);
+  // сначала только то, что видно: манекен и надетые вещи (все запросы сразу, параллельно)
+  const firstKey = [url("mannequin", g), ...items.map((x) => url(x.product.model!, g))].join(" ");
   useEffect(() => {
-    useGLTF.preload(url("mannequin", g), false, true);
-    for (const x of items) useGLTF.preload(url(x.product.model!, g), false, true);
-  }, [g, items]);
+    for (const u of firstKey.split(" ")) useGLTF.preload(u, false, true);
+  }, [firstKey]);
+  usePrefetchRest(ready, g, items.map((x) => x.product.model!));
   const rig = useRef<LookRendererHandle>(null);
   const onReady = useMemo(() => () => setReady(true), []);
   useImperativeHandle(ref, () => ({
@@ -234,7 +268,7 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
 
 export default ThreeRenderer;
 
-/** Для тестов и предзагрузки соседних вещей. */
+/** Для тестов и предзагрузки соседних вещей (адрес с ?v=<хэш>). */
 export const modelUrl = (slug: string, g: Gender) => {
   const m = bySlug.get(slug)?.model;
   return m ? url(m, g) : null;

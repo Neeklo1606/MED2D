@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getField } from "@/content/registry";
 import Configurator from "@/configurator/Configurator";
+import ModelPreload from "@/configurator/ModelPreload";
 import CatalogGrid from "@/shop/CatalogGrid";
 
 export const metadata: Metadata = {
@@ -11,6 +12,6 @@ export const metadata: Metadata = {
 
 export default function CatalogPage() {
   return (
-    <main><Configurator /><CatalogGrid /></main>
+    <main><ModelPreload /><Configurator /><CatalogGrid /></main>
   );
 }
