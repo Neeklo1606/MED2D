@@ -270,18 +270,18 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
       frameloop="demand"
       dpr={[1, 2]}
       camera={{ fov: 30, near: 0.05, far: 20, position: HOME.pos.toArray() }}
-      scene={{ environmentIntensity: 0.7 }}
+      scene={{ environmentIntensity: 1.0 }}
       gl={{ antialias: true, alpha: true }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.NeutralToneMapping;
-        gl.toneMappingExposure = 1.2;
+        gl.toneMappingExposure = 1.3;
         gl.outputColorSpace = THREE.SRGBColorSpace;
       }}
       onDoubleClick={() => rig.current?.reset()}
       style={{ touchAction: "none" }}
     >
       <Studio />
-      <hemisphereLight args={[0xffffff, 0xd9dbe0, 0.9]} />
+      <hemisphereLight args={[0xffffff, 0xd9dbe0, 1.1]} />
       <directionalLight position={[2, 3, 3]} intensity={1.5} />
       <directionalLight position={[-2, 2, -2]} intensity={0.6} />
       <ContactShadows position={[0, 0.002, 0]} scale={1.6} blur={2.2} far={1.6} opacity={0.35} resolution={256} />

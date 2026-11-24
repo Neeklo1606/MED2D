@@ -1,22 +1,14 @@
 "use client";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { COLORS, formatRub, type Product } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import { emptyLook, toQuery, wear } from "@/configurator/look";
 import { useCart, useToast } from "@/configurator/store";
-import { detectRenderer, type RendererKind } from "@/configurator/renderers/types";
-import PhotoRenderer from "@/configurator/renderers/PhotoRenderer";
 import { Stepper } from "./CartView";
-import ProductImage from "./ProductImage";
+import ProductGallery from "./ProductGallery";
 import SizeChart from "./SizeChart";
 
-const ThreeRenderer = dynamic(() => import("@/configurator/renderers/ThreeRenderer"), {
-  ssr: false,
-  loading: () => <div aria-hidden className="absolute bottom-[6%] left-1/2 h-[84%] w-[24%] -translate-x-1/2 animate-pulse rounded-t-[999px] rounded-b-[40px] bg-black/[0.04]" />,
-});
-const noop = () => () => {};
 
 export default function ProductView({ p }: { p: Product }) {
   const [color, setColor] = useState(p.colors[0]);
@@ -34,14 +26,9 @@ export default function ProductView({ p }: { p: Product }) {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
-  // Реалистичная 3D-модель, если есть WebGL; без него вещи с фото-слоями на фото-модели, остальные фото товара
-  const onPhoto = ["top", "bottom", "feet"].includes(p.slot);
-  const kind: RendererKind = webgl ? "three" : onPhoto ? "photo" : "three";
   const add = useCart((s) => s.add);
   const toast = useToast((s) => s.show);
   const look = p.model ? wear(emptyLook("f"), { slug: p.slug, color, size }) : emptyLook("f");
-  const label = `${p.title}, ${COLORS[color].name}`;
 
   const addToCart = () => {
     if (p.sizes.length && !size) {
@@ -57,16 +44,8 @@ export default function ProductView({ p }: { p: Product }) {
 
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-8">
-      <div className="relative h-[52svh] max-h-[560px] min-h-[340px] overflow-hidden rounded-[var(--radius-lg)] bg-surface md:h-[560px] lg:sticky lg:top-4 lg:self-start lg:h-[min(680px,calc(100svh-32px))] lg:max-h-none">
-        {p.model && webgl ? (
-          <ThreeRenderer look={look} label={label} />
-        ) : p.model && kind === "photo" ? (
-          <PhotoRenderer look={look} label={label} />
-        ) : (
-          <ProductImage slug={p.slug} color={color} alt={label} className="h-full w-full p-6" />
-        )}
-        <p className="pointer-events-none absolute left-3 top-3 rounded-full bg-bg/90 px-3 py-1.5 text-xs text-muted">{t("product.gallery.pending")}</p>
-      </div>
+      {/* обычные фото товара, без 3D: 3D-примерка — в конфигураторе */}
+      <ProductGallery p={p} color={color} className="h-[52svh] max-h-[560px] min-h-[340px] md:h-[560px] lg:sticky lg:top-4 lg:h-[min(680px,calc(100svh-32px))] lg:max-h-none lg:self-start" />
 
       <div className="mt-5 lg:mt-0">
         <h1 className="font-display text-[22px] font-black uppercase leading-[1.1] md:text-3xl">{p.title}</h1>

@@ -6,6 +6,7 @@ import { bySlug, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/
 import { getField as t } from "@/content/registry";
 import { fromQuery, missingSizes, toQuery, total, wornList } from "./look";
 import { DEFAULT_LOOK, useCart, useLook, useToast } from "./store";
+import ProductGallery from "@/shop/ProductGallery";
 import ProductImage from "@/shop/ProductImage";
 import PhotoRenderer from "./renderers/PhotoRenderer";
 import { detectRenderer, type LookRendererHandle, type RendererKind } from "./renderers/types";
@@ -242,6 +243,65 @@ function Stage({ kind, setKind, webgl, stage, desktop }: { kind: RendererKind; s
 
 /* ---------- карточка ---------- */
 
+/** Попап карточки товара: обычные фото (без 3D), описание, цвет, размер, примерка и корзина. */
+function ProductDialog({ p, onClose, onAddItem }: { p: Product; onClose: () => void; onAddItem: (slug: string) => boolean }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const pick = useLook((s) => s.picks[p.slug]);
+  const worn = useLook((s) => s.look.slots[p.slot]?.slug === p.slug);
+  const { toggle, setColor, setSize } = useLook.getState();
+  const [needSize, setNeedSize] = useState(false);
+  useEffect(() => { ref.current?.showModal(); }, []);
+  const titleId = `dlg-${p.slug}`;
+  return (
+    <dialog ref={ref} onClose={onClose} aria-labelledby={titleId} onClick={(e) => { if (e.target === ref.current) ref.current?.close(); }}
+      className="m-0 mt-auto max-h-[92svh] w-full max-w-none overflow-y-auto rounded-t-[22px] bg-surface p-0 backdrop:bg-black/45 md:m-auto md:max-h-[86svh] md:w-[min(92vw,860px)] md:rounded-[22px]">
+      <div className="md:grid md:grid-cols-[1.05fr_1fr]">
+        <ProductGallery p={p} color={pick.color} className="h-[46svh] max-h-[420px] rounded-none md:h-full md:max-h-none md:min-h-[520px]" />
+        <div className="p-5 md:p-7">
+          <div className="flex items-start justify-between gap-3">
+            <h2 id={titleId} className="font-display text-[18px] font-bold uppercase leading-[1.15] tracking-[-0.03em] md:text-[22px]">{p.title}</h2>
+            <button type="button" onClick={() => ref.current?.close()} aria-label={t("product.dialog.close")} className="relative -mr-1 -mt-1 grid size-9 shrink-0 place-items-center rounded-full bg-bg after:absolute after:-inset-1">
+              <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+          <p className="mt-2 font-display text-[18px] font-bold tracking-[-0.03em] tabular-nums">{p.priceRub === null ? <span className="text-[14px] font-normal text-muted">{t("catalog.card.pricePending")}</span> : formatRub(p.priceRub)}</p>
+          <p className="mt-2 text-[14px] leading-snug text-muted">{p.short}</p>
+
+          <p className="mt-5 text-[13px] text-muted">{t("catalog.card.color")}: <span className="text-ink">{COLORS[pick.color]?.name}</span></p>
+          <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${p.title}`} className="mt-2 flex flex-wrap gap-2.5">
+            {p.colors.map((c) => (
+              <button key={c} type="button" role="radio" aria-checked={pick.color === c} aria-label={COLORS[c].name} onClick={() => setColor(p.slug, c)}
+                className={`relative size-8 rounded-full after:absolute after:-inset-1.5 ${pick.color === c ? "ring-2 ring-ink ring-offset-2" : ""}`}>
+                <span className={`block size-full rounded-full ${c === "white" || c === "silver" ? "border border-[#e2e2e2]" : ""}`} style={{ background: COLORS[c].hex }} />
+              </button>
+            ))}
+          </div>
+          {p.sizes.length > 0 && (
+            <>
+              <p className="mt-4 text-[13px] text-muted">{t("catalog.card.size")}{pick.size ? <>: <span className="text-ink">{pick.size}</span></> : ""}</p>
+              <div role="radiogroup" aria-label={`${t("catalog.card.size")}: ${p.title}`} className="mt-2 flex flex-wrap gap-2">
+                {p.sizes.map((z) => (
+                  <button key={z} type="button" role="radio" aria-checked={pick.size === z} onClick={() => { setSize(p.slug, z); setNeedSize(false); }}
+                    className={`grid h-11 min-w-11 place-items-center rounded-[10px] px-2 text-[14px] tabular-nums ${pick.size === z ? "bg-ink text-white" : needSize ? "border border-red-600/60" : "border border-[#e2e2e2]"}`}>{z}</button>
+                ))}
+              </div>
+              {needSize && <p role="alert" className="mt-2 text-[13px] font-semibold text-red-700">{t("catalog.card.sizeMissing")}</p>}
+            </>
+          )}
+          <div className="mt-6 flex gap-2">
+            {p.model !== null && (
+              <button type="button" onClick={() => { toggle(p.slug); ref.current?.close(); }} aria-pressed={worn}
+                className={`h-12 flex-1 rounded-full text-[14px] font-medium ${worn ? "border border-[#e2e2e2]" : "border border-ink"}`}>{worn ? t("catalog.card.takeOff") : t("catalog.card.tryOn")}</button>
+            )}
+            <button type="button" onClick={() => setNeedSize(!onAddItem(p.slug))} className="h-12 flex-1 rounded-full bg-ink text-[14px] font-medium text-white">{t("product.buy.add")}</button>
+          </div>
+          <Link href={`/product/${p.slug}`} className="mt-4 inline-flex min-h-11 items-center text-[13px] underline underline-offset-[3px]">{t("product.dialog.page")}</Link>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
 const ProductCard = memo(function ProductCard({ p, onAddItem, mobile }: { p: Product; onAddItem: (slug: string) => boolean; mobile?: boolean }) {
   const pick = useLook((s) => s.picks[p.slug]);
   const worn = useLook((s) => s.look.slots[p.slot]?.slug === p.slug);
@@ -251,14 +311,15 @@ const ProductCard = memo(function ProductCard({ p, onAddItem, mobile }: { p: Pro
   const { toggle, setColor, setSize } = useLook.getState();
   const canWear = p.model !== null;
   const titleId = `card-${p.slug}-${mobile ? "m" : "d"}`;
+  const [details, setDetails] = useState(false);
   const btn = "relative h-[31px] shrink-0 rounded-full px-[15px] text-[13px] font-medium leading-none after:absolute after:-inset-y-[7px] after:inset-x-0";
   return (
     <article data-card={p.slug} data-cat={p.category} aria-labelledby={titleId}
       className={`relative flex flex-col rounded-[16px] border-[1.5px] bg-surface pb-[14px] pl-4 pr-[13px] pt-[14px] transition-[border-color] duration-200 ${mobile ? "w-[335px] max-w-[calc(100vw-40px)] shrink-0 snap-center" : "w-[328px]"} ${invalid ? "border-red-600" : "border-[#e9e9e9]"}`}>
       <div className="flex gap-[16px]">
-        <div className="size-[38px] shrink-0 overflow-hidden rounded-[8px] bg-[#f1f1f1]" aria-hidden>
+        <button type="button" onClick={() => setDetails(true)} tabIndex={-1} aria-hidden className="size-[38px] shrink-0 overflow-hidden rounded-[8px] bg-[#f1f1f1]">
           <ProductImage slug={p.slug} color={pick.color} className="h-full w-full" />
-        </div>
+        </button>
         <div className="min-w-0 flex-1 pt-[2px]">
           <div className="flex items-start justify-between gap-2">
             <h3 id={titleId} className="font-display text-[12.5px] font-bold uppercase leading-[1.15] tracking-[-0.05em] [text-wrap:nowrap]">{p.title}</h3>
@@ -297,7 +358,7 @@ const ProductCard = memo(function ProductCard({ p, onAddItem, mobile }: { p: Pro
       {invalid && <p role="alert" className="mt-2 text-[12px] font-semibold text-red-700">{t("catalog.card.sizeMissing")}</p>}
 
       <div className="mt-auto flex items-end justify-between gap-3 pt-[6px]">
-        <Link href={`/product/${p.slug}`} className="mb-[6px] text-[12px] leading-none underline underline-offset-[3px]">{t("catalog.card.details")}</Link>
+        <button type="button" onClick={() => setDetails(true)} aria-haspopup="dialog" className="relative mb-[6px] text-[12px] leading-none underline underline-offset-[3px] after:absolute after:-inset-y-3 after:inset-x-0">{t("catalog.card.details")}</button>
         {canWear ? (
           <button type="button" onClick={() => toggle(p.slug)} aria-pressed={worn} aria-describedby={titleId}
             className={`${btn} ${worn ? "border-[1.5px] border-[#e2e2e2] bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.05)]" : "bg-ink text-white"}`}>
@@ -307,6 +368,7 @@ const ProductCard = memo(function ProductCard({ p, onAddItem, mobile }: { p: Pro
           <button type="button" onClick={() => setNeedSize(!onAddItem(p.slug))} aria-label={`${t("catalog.total.addOne")}: ${p.title}`} className={`${btn} bg-ink text-white`}>{t("product.buy.add")}</button>
         )}
       </div>
+      {details && <ProductDialog p={p} onClose={() => setDetails(false)} onAddItem={onAddItem} />}
     </article>
   );
 });
@@ -336,7 +398,7 @@ function CardRail({ onAddItem }: { onAddItem: (slug: string) => boolean }) {
 /* ---------- итог ---------- */
 
 const IconCircleX = () => (
-  <svg viewBox="0 0 20 20" className="size-[19px]" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden><circle cx="10" cy="10" r="9.2" /><path d="M6.6 6.6l6.8 6.8M13.4 6.6l-6.8 6.8" /></svg>
+  <svg viewBox="0 0 20 20" className="size-[26px] lg:size-[22px]" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden><circle cx="10" cy="10" r="9.2" /><path d="M6.6 6.6l6.8 6.8M13.4 6.6l-6.8 6.8" /></svg>
 );
 
 function TotalRow({ slot, onAdd }: { slot: Slot; onAdd: (s: Slot) => void }) {
@@ -345,13 +407,13 @@ function TotalRow({ slot, onAdd }: { slot: Slot; onAdd: (s: Slot) => void }) {
   const product = worn ? bySlug.get(worn.slug) : undefined;
   if (!worn || !product) return null;
   return (
-    <li className="flex h-[26px] items-center gap-[7px] border-b border-white/25 lg:h-[26px]">
+    <li className="flex h-[40px] items-center gap-[14px] border-b border-white/25 lg:h-[30px] lg:gap-[9px]">
       <span className="min-w-0 flex-1 truncate text-[13px] text-white/75 max-lg:text-[13.5px]">
         {product.title}<span className="sr-only">, {COLORS[worn.color]?.name}{worn.size ? `, ${worn.size}` : ""}</span>
       </span>
       <span className="shrink-0 font-display text-[12px] font-bold tracking-[-0.02em] tabular-nums text-white/75">{product.priceRub === null ? "—" : formatRub(product.priceRub)}</span>
-      <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="relative grid shrink-0 place-items-center text-white/80 after:absolute after:-inset-[6px]"><IconCircleX /></button>
-      <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="relative grid size-[19px] shrink-0 place-items-center rounded-full bg-white text-ink after:absolute after:-inset-[6px]"><IconCart className="size-[12px]" /></button>
+      <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="relative grid shrink-0 place-items-center text-white/85 after:absolute after:-inset-[9px] lg:after:-inset-[6px]"><IconCircleX /></button>
+      <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="relative grid size-[26px] shrink-0 place-items-center rounded-full bg-white text-ink after:absolute after:-inset-[9px] lg:size-[22px] lg:after:-inset-[6px]"><IconCart className="size-[15px] lg:size-[13px]" /></button>
     </li>
   );
 }
