@@ -11,12 +11,7 @@ async function navLinks(page, mobile) {
       if (h && h.startsWith("/") && !h.startsWith("//")) hrefs.add(h.split("#")[0]);
     }
   };
-  if (mobile) {
-    await page.getByRole("button", { name: "Меню" }).click();
-    await page.locator("dialog[open] a").first().waitFor({ timeout: 5000 });
-    await collect("dialog[open] a[href]");
-    await page.keyboard.press("Escape");
-  }
+  // в макете нет мобильного меню: все разделы есть в подвале
   await collect("header a[href]");
   await collect("footer a[href]");
   return [...hrefs].sort();

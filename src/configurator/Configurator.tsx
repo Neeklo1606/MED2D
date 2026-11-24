@@ -403,7 +403,7 @@ export default function Configurator() {
           <h1 className="font-display text-[33px] font-bold uppercase leading-[35px] tracking-[-0.06em] [text-wrap:initial] md:text-5xl">
             {title}<span className="text-accent">{t("catalog.hero.titleAccent")}</span>
           </h1>
-          <p className="mt-[19px] max-w-[330px] text-[13.65px] leading-[17px] text-muted-soft md:max-w-xl md:text-[16px] md:leading-snug">{t("catalog.hero.subtitle")}</p>
+          <p className="mt-[19px] max-w-[300px] text-[13.65px] leading-[17px] text-muted-soft md:max-w-xl md:text-[16px] md:leading-snug">{t("catalog.hero.subtitle")}</p>
         </section>
         <section aria-label={t("catalog.stage.gender")} onPointerDownCapture={dismissHint} onWheelCapture={dismissHint}
           className="relative mx-5 mt-[25px] h-[333px] md:mx-10 md:h-[560px]">

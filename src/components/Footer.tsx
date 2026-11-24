@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getField } from "@/content/registry";
+import Logo from "./Logo";
 import { LEGAL, NAV } from "./nav";
 
 export default function Footer() {
@@ -9,7 +10,7 @@ export default function Footer() {
       <p role="note" className="border-b border-white/15 px-5 py-3 text-center text-xs text-white/70 md:px-10">{getField("global.staging.notice")}</p>
       <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-10 md:grid-cols-[1.4fr_1fr_1fr_1.4fr] md:px-10" style={{ paddingBottom: "max(40px, calc(env(safe-area-inset-bottom, 0px) + 24px))" }}>
         <div>
-          <p className="font-display text-2xl font-black">MEDFORM</p>
+          <Logo className="h-[15px] w-auto !text-white" />
           <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/60">Medicine inside</p>
           <p className="mt-4 max-w-xs text-sm text-white/75">{getField("global.footer.about")}</p>
         </div>

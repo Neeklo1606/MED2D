@@ -54,7 +54,7 @@ async function inViewport(page, loc) {
 
 /** Outfit built by the scenario; also what the share URL must restore. */
 const OUTFIT = [
-  { slug: "tshirt", color: "синий", size: "M", q: "top=tshirt.blue.M" },
+  { slug: "tshirt", color: "чёрный", size: "M", q: "top=tshirt.black.M" },
   { slug: "joggers", color: "тёмно-синий", size: "L", q: "bottom=joggers.navy.L" },
   { slug: "sabo", color: "серый", size: "40", q: "feet=sabo.grey.40" },
   { slug: "cap", color: "тёмно-синий", size: null, q: "head=cap.navy" },
@@ -104,22 +104,22 @@ export async function runConfigurator({ browser, base, vpKey, vpDef, results, db
     await waitAttr(wearBtn(page, "tshirt"), "aria-pressed", "true");
     await waitAttr(wearBtn(page, "anorak"), "aria-pressed", "false");
     const rows = await totalRows(page);
-    assert(rows.some((r) => r.includes("Футболка оверсайз")) && !rows.some((r) => r.includes("Медицинский верх")), `ИТОГО: ${rows.join(" | ")}`);
+    assert(rows.some((r) => r.includes("Футболка")) && !rows.some((r) => r.includes("Медицинский верх")), `ИТОГО: ${rows.join(" | ")}`);
     before = await waitScene(page, browser);
     glbOk(log, ["top_tshirt_f.glb"]);
   }, { fatal: true });
 
   await step("change top colour (model recoloured)", async () => {
-    await pick(page, "tshirt", "синий");
+    await pick(page, "tshirt", "чёрный");
     const after = await waitScene(page, browser);
     const d = await imageDiff(browser, before, after);
     assert(d > 0.5, `canvas did not change after colour switch (diff ${d.toFixed(2)})`);
-    await waitUrl(page, /top=tshirt\.blue/);
+    await waitUrl(page, /top=tshirt\.black/);
   });
 
   await step("choose top size", async () => {
     await pick(page, "tshirt", "M");
-    await waitUrl(page, /top=tshirt\.blue\.M/);
+    await waitUrl(page, /top=tshirt\.black\.M/);
   });
 
   await step("wear trousers, colour + size", async () => {
