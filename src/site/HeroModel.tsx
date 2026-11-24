@@ -8,7 +8,7 @@ const LOOKS: [string, string, string][] = [
   ["lightblue", "navy", "white"],
   ["pink", "pink", "white"],
   ["navy", "navy", "black"],
-  ["white", "lightblue", "grey"],
+  ["lightblue", "lightblue", "white"],
 ];
 
 /** Витрина на главной: фото-модель, цвета образа сменяются раз в 2,6 с (без анимации при reduced motion). */

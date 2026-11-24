@@ -19,14 +19,16 @@
 html, body { background: var(--color-bg); color: var(--color-text); }
 body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 input, textarea, select { font-size: 16px; }
-.font-display { font-weight: 700; letter-spacing: -0.01em; }
-h1.font-display, h2.font-display { font-variation-settings: "wght" 720; }
+/* базовый слой: утилиты (tracking-*, font-*) могут переопределить */
+@layer base {
+  .font-display { font-weight: 700; letter-spacing: -0.01em; }
+}
 .overflow-x-auto { overscroll-behavior-x: contain; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
 /* на синем фоне (ИТОГО, плашки) кольцо белое */
 .on-accent :focus-visible { outline-color: #fff; }
 html { scroll-padding-top: 16px; }
-h1, h2, h3 { text-wrap: balance; }
+@layer base { h1, h2, h3 { text-wrap: balance; } }
 p { text-wrap: pretty; }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }

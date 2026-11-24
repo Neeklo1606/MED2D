@@ -5,6 +5,8 @@ import { LEGAL, NAV } from "./nav";
 export default function Footer() {
   return (
     <footer className="mt-8 bg-ink text-white">
+      {/* в макете плашки нет: предупреждение тестовой версии живёт в подвале */}
+      <p role="note" className="border-b border-white/15 px-5 py-3 text-center text-xs text-white/70 md:px-10">{getField("global.staging.notice")}</p>
       <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-10 md:grid-cols-[1.4fr_1fr_1fr_1.4fr] md:px-10" style={{ paddingBottom: "max(40px, calc(env(safe-area-inset-bottom, 0px) + 24px))" }}>
         <div>
           <p className="font-display text-2xl font-black">MEDFORM</p>

@@ -10,12 +10,13 @@ import { bySlug, COLORS, PRODUCTS, type Gender, type Slot } from "@/catalog/data
 import { wornList } from "../look";
 import { modelFile as url, warm } from "../models";
 import type { LookRendererHandle, LookRendererProps } from "./types";
-const HOME = { pos: new THREE.Vector3(1.0, 1.3, 4.0), target: new THREE.Vector3(0, 0.9, 0) };
+// кадр как в макете: модель почти анфас и по всей высоте сцены
+const HOME = { pos: new THREE.Vector3(0.42, 0.98, 3.3), target: new THREE.Vector3(0, 0.85, 0) };
 const MIN = 0.9, MAX = 6;
 
 /** Куда смотреть при работе с вещью: высота цели (доля роста) и дистанция. */
 const FOCUS: Record<Slot | "full", { y: number; d: number }> = {
-  full: { y: 0.9, d: 4.15 },
+  full: { y: 0.85, d: 3.33 },
   head: { y: 1.58, d: 1.35 },
   top: { y: 1.2, d: 2.0 },
   coat: { y: 1.05, d: 2.5 },
@@ -162,7 +163,7 @@ const CameraRig = forwardRef<LookRendererHandle, { gender: Gender; intro: boolea
     const f = FOCUS[slot];
     const target = new THREE.Vector3(0, f.y * h, 0);
     const az = Math.atan2(camera.position.x - c.target.x, camera.position.z - c.target.z) + azimuthDelta;
-    const elev = slot === "feet" ? 0.25 : slot === "head" ? 0.05 : 0.12;
+    const elev = slot === "feet" ? 0.25 : slot === "head" ? 0.05 : slot === "full" ? 0.04 : 0.12;
     const pos = new THREE.Vector3(Math.sin(az) * Math.cos(elev), Math.sin(elev), Math.cos(az) * Math.cos(elev)).multiplyScalar(f.d * h).add(target);
     go(pos, target);
   };
@@ -179,7 +180,15 @@ const CameraRig = forwardRef<LookRendererHandle, { gender: Gender; intro: boolea
     const dir = camera.position.clone().sub(c.target).applyAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(deg));
     go(c.target.clone().add(dir), c.target.clone());
   };
-  const reset = () => go(HOME.pos.clone(), HOME.target.clone());
+  const reset = () => frame("full");
+  // смена Ж/М: модели разного роста — кадр по всей высоте новой модели
+  const firstGender = useRef(true);
+  useEffect(() => {
+    if (firstGender.current) { firstGender.current = false; if (gender === "f") return; }
+    const id = setTimeout(() => frame("full"), 60);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gender]);
   useImperativeHandle(ref, () => ({ zoomIn: () => dolly(0.8), zoomOut: () => dolly(1.25), reset, focus: (s) => frame(s), rotate }));
   return (
     <OrbitControls
@@ -275,10 +284,6 @@ const ThreeRenderer = forwardRef<LookRendererHandle, LookRendererProps>(function
       <hemisphereLight args={[0xffffff, 0xd9dbe0, 0.9]} />
       <directionalLight position={[2, 3, 3]} intensity={1.5} />
       <directionalLight position={[-2, 2, -2]} intensity={0.6} />
-      <mesh rotation-x={-Math.PI / 2}>
-        <circleGeometry args={[0.7, 64]} />
-        <meshStandardMaterial color="#e6e7eb" roughness={1} />
-      </mesh>
       <ContactShadows position={[0, 0.002, 0]} scale={1.6} blur={2.2} far={1.6} opacity={0.35} resolution={256} />
       <Suspense fallback={null}>
         <ModelBoundary key={url("mannequin", g)} src={url("mannequin", g)}><Model src={url("mannequin", g)} base /></ModelBoundary>

@@ -18,15 +18,15 @@ export default function CartButton({ label, round }: { label: string; round?: bo
   if (round) {
     return (
       <Link href="/cart" data-cart-button aria-label={`${label}: ${count}`} className="press relative grid size-11 shrink-0 place-items-center rounded-full bg-accent text-white">
-        <CartIcon className="size-5" />
+        <CartIcon className="size-[19px]" />
         <span className={`absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-ink px-1 text-[11px] font-semibold leading-5 text-white ${count ? "" : "hidden"}`}>{count}</span>
       </Link>
     );
   }
   return (
-    <Link href="/cart" data-cart-button className="press inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-accent px-4 text-sm font-semibold">
+    <Link href="/cart" data-cart-button aria-label={`${label}: ${count}`} className="press relative inline-flex h-[29px] items-center rounded-full border-[1.5px] border-accent px-[14px] text-[12.5px] leading-none text-accent">
       {label}
-      <span className="inline-grid size-6 place-items-center rounded-full bg-accent text-xs text-white" aria-label={`Товаров в корзине: ${count}`}>{count}</span>
+      <span className={`absolute -right-1.5 -top-1.5 grid min-w-[18px] place-items-center rounded-full bg-accent px-1 text-[10.5px] font-semibold leading-[18px] text-white ${count ? "" : "hidden"}`} aria-hidden>{count}</span>
     </Link>
   );
 }

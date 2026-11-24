@@ -23,6 +23,7 @@ const f = (id: string, type: FieldType, label: string, def: string, maxLength?: 
 
 export const registry: FieldDef[] = [
   f("global.header.tagline", "text", "Подпись слева в шапке", "Медицинская одежда", 40),
+  f("global.header.home", "text", "Подпись ссылки логотипа", "MEDFORM, к конфигуратору", 60),
   f("global.header.cart", "text", "Кнопка корзины", "Корзина", 20),
   f("global.staging.notice", "text", "Плашка тестовой версии", "Тестовая версия сайта. Заказы не принимаются, реквизиты продавца будут добавлены.", 160),
   f("global.footer.copyright", "text", "Копирайт в подвале", "MEDFORM. Medicine inside", 80),

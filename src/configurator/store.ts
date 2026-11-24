@@ -28,9 +28,10 @@ const initialPicks = Object.fromEntries(PRODUCTS.map((p) => [p.slug, { color: p.
 export const DEFAULT_LOOK: Look = {
   gender: "f",
   slots: {
-    top: { slug: "anorak", color: "lightblue", size: null },
-    bottom: { slug: "joggers", color: "lightblue", size: null },
-    feet: { slug: "sabo", color: "grey", size: null },
+    // образ из макета: розовые верх и брюки, белые сабо
+    top: { slug: "anorak", color: "pink", size: null },
+    bottom: { slug: "joggers", color: "pink", size: null },
+    feet: { slug: "sabo", color: "white", size: null },
   },
 };
 

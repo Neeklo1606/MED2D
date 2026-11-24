@@ -26,7 +26,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ru">
       <body>
         <NavigationProgress />
-        <div role="status" className="bg-ink px-4 py-2 text-center text-xs text-white" style={{ paddingTop: "max(8px, env(safe-area-inset-top, 0px))" }}>{getField("global.staging.notice")}</div>
         <Header />
         {children}
         <Footer />

@@ -1,13 +1,12 @@
 "use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { bySlug, CATEGORIES, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/catalog/data";
+import { memo, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { bySlug, COLORS, formatRub, PRODUCTS, type Product, type Slot } from "@/catalog/data";
 import { getField as t } from "@/content/registry";
 import { fromQuery, missingSizes, toQuery, total, wornList } from "./look";
 import { DEFAULT_LOOK, useCart, useLook, useToast } from "./store";
 import ProductImage from "@/shop/ProductImage";
-import SizeChart from "@/shop/SizeChart";
 import PhotoRenderer from "./renderers/PhotoRenderer";
 import { detectRenderer, type LookRendererHandle, type RendererKind } from "./renderers/types";
 
@@ -142,37 +141,31 @@ function IconCart({ className = "size-[18px]" }: { className?: string }) {
     </svg>
   );
 }
-const IconX = () => <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>;
-const IconCheck = () => <svg viewBox="0 0 24 24" className="size-2.5" fill="none" stroke="currentColor" strokeWidth="3.5" aria-hidden><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
-const IconRotate = () => (
-  <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M16.5 7.5C15.6 4.2 14 2 12 2 9.2 2 7 6.5 7 12s2.2 10 5 10c.3 0 .7-.1 1-.2" />
-    <path d="m15.2 13.7 3.8 1.9-1.9 3.8" />
-    <path d="M19 15.6c-1.8.9-4.3 1.4-7 1.4-5.5 0-10-2.2-10-5s4.5-5 10-5c4.8 0 8.9 1.7 9.8 4" />
-  </svg>
-);
-const IconFit = () => (
-  <svg viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-    <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" />
-  </svg>
-);
-
-/** Фирменный знак за моделью (крупная кавычка MEDFORM). */
+/**
+ * Фирменный знак за моделью (из макета): две сцепленные дуги «n» и «u», вторая = первая, повёрнутая на 180°.
+ * Пропорции 690 × 395, мягкий серый градиент.
+ */
 function BrandMark() {
+  const piece = "M0,395V190A190,190 0 0 1 190,0H495V190H195V100H190A85,85 0 0 0 105,185V395Z";
   return (
-    <svg viewBox="0 0 170 100" aria-hidden className="pointer-events-none absolute left-1/2 top-[18%] w-[78%] max-w-[520px] -translate-x-1/2 text-brandmark">
-      <path d="M0 100V46A46 46 0 0 1 46 0h78a46 46 0 0 1 46 46v26h-36V48a12 12 0 0 0-12-12H48a12 12 0 0 0-12 12v52z" fill="currentColor" />
-      <rect x="62" y="56" width="46" height="44" rx="4" fill="currentColor" />
+    <svg viewBox="0 0 690 395" aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 w-[71%] -translate-x-1/2 -translate-y-1/2 lg:w-[111%]">
+      <defs>
+        <linearGradient id="bm-a" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stopColor="#000" stopOpacity="0.075" /><stop offset="1" stopColor="#000" stopOpacity="0.035" /></linearGradient>
+        <linearGradient id="bm-b" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#000" stopOpacity="0.02" /><stop offset="1" stopColor="#000" stopOpacity="0.065" /></linearGradient>
+      </defs>
+      <path d={piece} fill="url(#bm-a)" />
+      <path d={piece} fill="url(#bm-b)" transform="rotate(180 345 197.5)" />
     </svg>
   );
 }
 
 /* ---------- управление моделью ---------- */
 
+/** Квадратная кнопка модели и приближения: 34 px на телефоне, 38 px на десктопе; зона нажатия шире видимой. */
 function SquareBtn({ on, className = "", ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement> & { on?: boolean }) {
   return (
     <button type="button" {...rest}
-      className={`grid size-11 place-items-center rounded-[12px] border text-[15px] font-medium transition-colors disabled:opacity-40 lg:rounded-[13px] lg:text-base ${on ? "border-accent bg-accent text-white shadow-[0_4px_12px_rgb(6_70_176/0.25)]" : "border-line bg-surface hover:border-ink/25"} ${className}`} />
+      className={`relative grid size-[34px] place-items-center rounded-[9px] text-[16px] leading-none transition-colors after:absolute after:-inset-[5px] lg:size-[38px] lg:rounded-[10px] lg:text-[17px] ${on ? "bg-accent text-white" : "border border-[#e2e2e2] bg-surface text-ink hover:border-ink/25"} ${className}`} />
   );
 }
 
@@ -180,34 +173,51 @@ function Controls({ stage }: { stage: React.RefObject<LookRendererHandle | null>
   const gender = useLook((s) => s.look.gender);
   const setGender = useLook((s) => s.setGender);
   return (
-    <div className="pointer-events-none flex items-start justify-between gap-4 [&_button]:pointer-events-auto">
+    <div className="pointer-events-none flex items-end justify-between gap-4 [&_button]:pointer-events-auto">
       <div role="group" aria-labelledby="stage-gender">
-        <p id="stage-gender" className="mb-1.5 text-[12px] text-muted lg:text-[14px]">{t("catalog.stage.gender")}</p>
-        <div className="flex gap-1.5">
+        <p id="stage-gender" className="mb-[9px] text-[12.5px] leading-none text-muted-soft">{t("catalog.stage.gender")}</p>
+        <div className="flex gap-[5px]">
           {(["f", "m"] as const).map((g) => (
             <SquareBtn key={g} on={gender === g} aria-pressed={gender === g} aria-label={g === "f" ? t("catalog.stage.genderF") : t("catalog.stage.genderM")} onClick={() => setGender(g)}>{g === "f" ? "Ж" : "М"}</SquareBtn>
           ))}
         </div>
       </div>
       <div role="group" aria-labelledby="stage-zoom" className="text-right">
-        <p id="stage-zoom" className="mb-1.5 text-[12px] text-muted lg:text-[14px]">{t("catalog.stage.zoom")}</p>
-        <div className="flex gap-1.5">
-          <SquareBtn aria-label={t("catalog.stage.zoomIn")} onClick={() => stage.current?.zoomIn()} className="text-accent"><span className="text-[22px] font-light leading-none">+</span></SquareBtn>
-          <SquareBtn aria-label={t("catalog.stage.zoomOut")} onClick={() => stage.current?.zoomOut()}><span className="text-[22px] font-light leading-none">−</span></SquareBtn>
-          <SquareBtn aria-label={t("catalog.stage.reset")} title={t("catalog.stage.reset")} onClick={() => stage.current?.reset()}><IconFit /></SquareBtn>
+        <p id="stage-zoom" className="mb-[9px] text-[12.5px] leading-none text-muted-soft">{t("catalog.stage.zoom")}</p>
+        <div className="flex justify-end gap-[5px]">
+          <SquareBtn aria-label={t("catalog.stage.zoomIn")} onClick={() => stage.current?.zoomIn()} className="text-accent"><span className="text-[24px] font-light leading-none">+</span></SquareBtn>
+          <SquareBtn aria-label={t("catalog.stage.zoomOut")} onClick={() => stage.current?.zoomOut()} className="!text-[#c4c4c4]"><span className="text-[24px] font-light leading-none">−</span></SquareBtn>
         </div>
       </div>
     </div>
   );
 }
 
-function Stage({ kind, setKind, webgl, stage }: { kind: RendererKind; setKind: (k: RendererKind) => void; webgl: boolean; stage: React.RefObject<LookRendererHandle | null> }) {
+const pill = "inline-flex h-[31px] items-center rounded-full border border-[#e2e2e2] bg-surface px-4 text-[13px] leading-none shadow-[0_1px_2px_rgb(0_0_0/0.04)]";
+
+/** Переключатель 3D / фото-модель (в макете фото; 3D — наш режим по умолчанию). */
+function ViewToggle({ kind, setKind, webgl }: { kind: RendererKind; setKind: (k: RendererKind) => void; webgl: boolean }) {
+  return (
+    <div role="group" aria-label={t("catalog.stage.view")} className={`${pill} gap-0.5 !px-[3px]`}>
+      {(["three", "photo"] as const).map((k) => (
+        <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} disabled={k === "three" && !webgl}
+          aria-label={k === "three" ? t("catalog.stage.mode3dLabel") : t("catalog.stage.mode2dLabel")}
+          className={`relative h-[25px] rounded-full px-2.5 text-[12px] font-medium transition-colors after:absolute after:-inset-y-[9px] after:inset-x-0 disabled:opacity-40 ${kind === k ? "bg-ink text-white" : "text-ink"}`}>
+          {k === "three" ? t("catalog.stage.mode3d") : t("catalog.stage.mode2d")}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Stage({ kind, setKind, webgl, stage, desktop }: { kind: RendererKind; setKind: (k: RendererKind) => void; webgl: boolean; stage: React.RefObject<LookRendererHandle | null>; desktop: boolean }) {
   const look = useLook((s) => s.look);
   const clear = useLook((s) => s.clear);
-  const focus = useLook((s) => s.focus);
-  useEffect(() => { if (focus.n) stage.current?.focus(focus.slot); }, [focus, kind, stage]);
   const label = wornList(look).map((x) => `${x.product.title}, ${COLORS[x.worn.color]?.name}`).join("; ") || t("catalog.total.empty");
-  const pill = "h-11 rounded-full border border-line bg-surface/95 backdrop-blur-sm";
+  const empty = !Object.keys(look.slots).length;
+  const removeAll = (
+    <button type="button" onClick={clear} disabled={empty} className={`${pill} relative after:absolute after:-inset-y-[7px] after:inset-x-0 disabled:text-[#c9c9c9]`}>{t("catalog.stage.removeAll")}</button>
+  );
   return (
     <div className="relative h-full">
       <BrandMark />
@@ -215,31 +225,24 @@ function Stage({ kind, setKind, webgl, stage }: { kind: RendererKind; setKind: (
         {kind === "three" ? <ThreeRenderer ref={stage} look={look} label={label} /> : <PhotoRenderer ref={stage} look={look} label={label} />}
       </div>
       {kind === "three" && <GestureHint />}
-      <button type="button" onClick={clear} disabled={!Object.keys(look.slots).length}
-        className={`${pill} absolute bottom-0 left-0 px-4 text-[14px] disabled:opacity-50 lg:px-5 lg:text-[15px]`}>{t("catalog.stage.removeAll")}</button>
-      <div className="absolute bottom-0 right-0 flex items-center gap-1.5">
-        <button type="button" aria-label={kind === "photo" ? t("catalog.stage.flip") : t("catalog.stage.rotate")} title={kind === "photo" ? t("catalog.stage.flip") : t("catalog.stage.rotate")}
-          onClick={() => stage.current?.rotate(kind === "photo" ? 180 : 90)} className={`${pill} grid w-11 place-items-center`}>
-          <IconRotate />
-        </button>
-        <div role="group" aria-label={t("catalog.stage.view")} className={`${pill} flex items-center gap-0.5 p-[3px]`}>
-          {(["three", "photo"] as const).map((k) => (
-            <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} disabled={k === "three" && !webgl}
-              aria-label={k === "three" ? t("catalog.stage.mode3dLabel") : t("catalog.stage.mode2dLabel")}
-              title={k === "three" && !webgl ? t("catalog.stage.no3d") : undefined}
-              className={`h-full min-w-11 rounded-full px-3 text-[13px] font-semibold transition-colors disabled:opacity-40 ${kind === k ? "bg-ink text-white" : "text-ink hover:bg-bg"}`}>
-              {k === "three" ? t("catalog.stage.mode3d") : t("catalog.stage.mode2d")}
-            </button>
-          ))}
-        </div>
-      </div>
+      {desktop ? (
+        <>
+          <div className="absolute right-0 top-[21px]">{removeAll}</div>
+          <div className="absolute left-0 top-[21px]"><ViewToggle kind={kind} setKind={setKind} webgl={webgl} /></div>
+        </>
+      ) : (
+        <>
+          <div className="absolute bottom-[2px] left-0">{removeAll}</div>
+          <div className="absolute bottom-[2px] right-0"><ViewToggle kind={kind} setKind={setKind} webgl={webgl} /></div>
+        </>
+      )}
     </div>
   );
 }
 
 /* ---------- карточка ---------- */
 
-const ProductCard = memo(function ProductCard({ p, onSizeChart, onAddItem, mobile }: { p: Product; onSizeChart: () => void; onAddItem: (slug: string) => boolean; mobile?: boolean }) {
+const ProductCard = memo(function ProductCard({ p, onAddItem, mobile }: { p: Product; onAddItem: (slug: string) => boolean; mobile?: boolean }) {
   const pick = useLook((s) => s.picks[p.slug]);
   const worn = useLook((s) => s.look.slots[p.slot]?.slug === p.slug);
   const flagged = useLook((s) => s.invalid.includes(p.slot) && s.look.slots[p.slot]?.slug === p.slug);
@@ -248,218 +251,127 @@ const ProductCard = memo(function ProductCard({ p, onSizeChart, onAddItem, mobil
   const { toggle, setColor, setSize } = useLook.getState();
   const canWear = p.model !== null;
   const titleId = `card-${p.slug}-${mobile ? "m" : "d"}`;
+  const btn = "relative h-[31px] shrink-0 rounded-full px-[15px] text-[13px] font-medium leading-none after:absolute after:-inset-y-[7px] after:inset-x-0";
   return (
     <article data-card={p.slug} data-cat={p.category} aria-labelledby={titleId}
-      className={`relative flex flex-col rounded-[var(--radius-card)] border bg-card p-4 transition-[border-color,box-shadow] duration-200 ${mobile ? "w-[min(calc(100vw-56px),340px)] shrink-0 snap-start" : ""} ${invalid ? "border-red-600 ring-1 ring-red-600" : worn ? "border-accent ring-1 ring-accent" : "border-line"}`}>
-      <div className="flex gap-3">
-        <div className={`relative size-12 shrink-0 rounded-[12px] bg-bg p-0.5 ${worn ? "ring-2 ring-accent" : ""}`} aria-hidden>
+      className={`relative flex flex-col rounded-[16px] border-[1.5px] bg-surface pb-[14px] pl-4 pr-[13px] pt-[14px] transition-[border-color] duration-200 ${mobile ? "w-[335px] max-w-[calc(100vw-40px)] shrink-0 snap-center" : "w-[328px]"} ${invalid ? "border-red-600" : "border-[#e9e9e9]"}`}>
+      <div className="flex gap-[16px]">
+        <div className="size-[38px] shrink-0 overflow-hidden rounded-[8px] bg-[#f1f1f1]" aria-hidden>
           <ProductImage slug={p.slug} color={pick.color} className="h-full w-full" />
-          {worn && <span className="absolute -right-1.5 -top-1.5 grid size-[18px] place-items-center rounded-full border-2 border-card bg-accent text-white"><IconCheck /></span>}
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <h3 id={titleId} className="pt-0.5 font-display text-[12px] uppercase leading-[1.2] lg:text-[13px]">{p.title}</h3>
-            <p className="shrink-0 pt-0.5 font-display text-[12px] tabular-nums text-muted lg:text-[13px]">{p.priceRub === null ? "" : formatRub(p.priceRub)}</p>
+        <div className="min-w-0 flex-1 pt-[2px]">
+          <div className="flex items-start justify-between gap-2">
+            <h3 id={titleId} className="font-display text-[12.5px] font-bold uppercase leading-[1.15] tracking-[-0.05em] [text-wrap:nowrap]">{p.title}</h3>
+            <p className="shrink-0 font-display text-[12.5px] font-bold leading-[1.15] tracking-[-0.045em] tabular-nums text-muted-soft">{p.priceRub === null ? "" : formatRub(p.priceRub)}</p>
           </div>
-          <p className="mt-1 text-[12px] leading-snug text-muted">
+          <p className="mt-[5px] text-[11.5px] leading-[1.2] text-muted-soft">
             {worn && <span className="sr-only">{t("catalog.card.worn")}. </span>}
             {p.priceRub === null ? `${t("catalog.card.pricePending")} · ` : ""}{p.short}
           </p>
         </div>
       </div>
 
-      <div className="mt-3">
-        <p className="text-[12px] text-muted">{t("catalog.card.color")}: <span className="text-ink">{COLORS[pick.color]?.name}</span></p>
-        <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${p.title}`} className="-mx-[9px] mt-0.5 flex flex-wrap">
+      <div className="mt-[11px] flex items-center">
+        <span className="w-[55px] shrink-0 text-[12.5px] text-muted-soft">{t("catalog.card.color")}:</span>
+        <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${p.title}`} className="flex flex-wrap gap-[6.5px] max-lg:gap-[7.5px]">
           {p.colors.map((c) => (
             <button key={c} type="button" role="radio" aria-checked={pick.color === c} aria-label={COLORS[c].name} onClick={() => setColor(p.slug, c)}
-              className="no-press group grid size-11 place-items-center rounded-full">
-              <span className={`size-[26px] rounded-full transition-[box-shadow,transform] duration-150 group-active:scale-90 ${c === "white" || c === "silver" ? "border border-line" : ""} ${pick.color === c ? "ring-2 ring-ink ring-offset-2 ring-offset-card" : ""}`} style={{ background: COLORS[c].hex }} />
+              className={`no-press relative size-6 rounded-full after:absolute after:-inset-[5px] max-lg:size-[25px] ${pick.color === c ? "ring-[1.5px] ring-ink ring-offset-[2px] ring-offset-surface" : ""}`}>
+              <span className={`block size-full rounded-full ${c === "white" || c === "silver" ? "border border-[#e2e2e2]" : ""}`} style={{ background: COLORS[c].hex }} />
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mt-1">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-[12px] text-muted">{t("catalog.card.size")}{p.sizes.length > 0 && pick.size ? <>: <span className="text-ink">{pick.size}</span></> : ""}</p>
-          {p.sizes.length > 0 && (
-            <button type="button" onClick={onSizeChart} className="no-press -my-3 -mr-1 flex min-h-11 items-center gap-1 px-1 text-[12px] text-ink underline decoration-line underline-offset-[3px] hover:decoration-ink">
-              {t("catalog.card.sizeChart")}
-            </button>
-          )}
-        </div>
+      <div className="mt-[9px] flex items-center">
+        <span className="w-[55px] shrink-0 text-[12.5px] text-muted-soft">{t("catalog.card.size")}:</span>
         {p.sizes.length ? (
-          <div role="radiogroup" aria-label={`${t("catalog.card.size")}: ${p.title}`} className="-mx-1 mt-0.5 flex flex-wrap">
+          <div role="radiogroup" aria-label={`${t("catalog.card.size")}: ${p.title}`} className="no-scrollbar -my-[6px] -mr-[13px] flex min-w-0 flex-1 gap-1 overflow-x-auto py-[6px] pl-[5px] -ml-[5px] pr-[13px] max-lg:gap-[7.5px]">
             {p.sizes.map((s) => (
               <button key={s} type="button" role="radio" aria-checked={pick.size === s} onClick={() => { setSize(p.slug, s); setNeedSize(false); }}
-                className="no-press group grid h-11 min-w-11 place-items-center">
-                <span className={`grid h-8 min-w-9 place-items-center rounded-full px-2 text-[12px] font-medium tabular-nums transition-colors group-active:scale-95 ${pick.size === s ? "bg-ink text-white" : invalid ? "border border-red-600/60 bg-surface" : "border border-line bg-surface group-hover:border-ink/30"}`}>{s}</span>
-              </button>
+                className={`no-press relative grid h-6 min-w-6 shrink-0 place-items-center rounded-[7px] px-1 text-[12px] leading-none tabular-nums after:absolute after:-inset-[5px] max-lg:h-[25px] max-lg:min-w-[25px] ${pick.size === s ? "bg-ink text-white" : invalid ? "border border-red-600/60 bg-surface" : "border border-[#e2e2e2] bg-surface hover:border-ink/30"}`}>{s}</button>
             ))}
           </div>
-        ) : <p className="flex h-11 items-center text-[12px]">{t("catalog.card.oneSize")}</p>}
+        ) : <span className="text-[12px]">{t("catalog.card.oneSize")}</span>}
       </div>
-      {invalid && <p role="alert" className="mt-1 text-[13px] font-semibold text-red-700">{t("catalog.card.sizeMissing")}</p>}
+      {invalid && <p role="alert" className="mt-2 text-[12px] font-semibold text-red-700">{t("catalog.card.sizeMissing")}</p>}
 
-      <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-        <Link href={`/product/${p.slug}`} className="-my-1 inline-flex min-h-11 items-center text-[12px] underline underline-offset-[3px]">{t("catalog.card.details")}</Link>
+      <div className="mt-auto flex items-end justify-between gap-3 pt-[6px]">
+        <Link href={`/product/${p.slug}`} className="mb-[6px] text-[12px] leading-none underline underline-offset-[3px]">{t("catalog.card.details")}</Link>
         {canWear ? (
           <button type="button" onClick={() => toggle(p.slug)} aria-pressed={worn} aria-describedby={titleId}
-            className={`h-11 shrink-0 rounded-full px-5 text-[14px] font-medium transition-colors ${worn ? "border border-line bg-surface hover:border-ink/30" : "bg-ink text-white"}`}>
+            className={`${btn} ${worn ? "border-[1.5px] border-[#e2e2e2] bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.05)]" : "bg-ink text-white"}`}>
             {worn ? t("catalog.card.takeOff") : t("catalog.card.tryOn")}
           </button>
         ) : (
-          <button type="button" onClick={() => setNeedSize(!onAddItem(p.slug))} aria-label={`${t("catalog.total.addOne")}: ${p.title}`}
-            className="h-11 shrink-0 rounded-full bg-ink px-5 text-[14px] font-medium text-white">{t("product.buy.add")}</button>
+          <button type="button" onClick={() => setNeedSize(!onAddItem(p.slug))} aria-label={`${t("catalog.total.addOne")}: ${p.title}`} className={`${btn} bg-ink text-white`}>{t("product.buy.add")}</button>
         )}
       </div>
     </article>
   );
 });
 
-/** Мобильная лента карточек с чипами категорий: активная категория следует за прокруткой. */
-function CardRail({ onSizeChart, onAddItem }: { onSizeChart: () => void; onAddItem: (slug: string) => boolean }) {
+/** Мобильная карусель карточек: карточка по центру, соседние видны по краям (как в макете). */
+function CardRail({ onAddItem }: { onAddItem: (slug: string) => boolean }) {
   const rail = useRef<HTMLDivElement>(null);
-  const [cat, setCat] = useState<Product["category"]>(PRODUCTS[0].category);
-  const cats = CATEGORIES.filter((c) => PRODUCTS.some((p) => p.category === c.id));
+  // при первом показе по центру — первая надетая вещь (в макете «Медицинский верх»)
   useEffect(() => {
     const el = rail.current;
     if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const cards = [...el.querySelectorAll<HTMLElement>("[data-card]")];
-        const x = el.scrollLeft + 40;
-        let cur = cards[0];
-        for (const c of cards) if (c.offsetLeft <= x) cur = c;
-        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4) cur = cards[cards.length - 1];
-        const next = cur?.dataset.cat as Product["category"] | undefined;
-        if (next) setCat(next);
-      });
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => { el.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+    const id = setTimeout(() => {
+      const slots = useLook.getState().look.slots;
+      const first = PRODUCTS.find((p) => slots[p.slot]?.slug === p.slug && p.slot !== "feet");
+      const card = first && el.querySelector<HTMLElement>(`[data-card="${first.slug}"]`);
+      if (card) el.scrollLeft = card.offsetLeft - el.offsetLeft - (el.clientWidth - card.clientWidth) / 2;
+    }, 50);
+    return () => clearTimeout(id);
   }, []);
-  const go = (id: Product["category"]) => {
-    const el = rail.current;
-    const card = el?.querySelector<HTMLElement>(`[data-cat="${id}"]`);
-    if (!el || !card) return;
-    setCat(id);
-    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollTo({ left: card.offsetLeft - el.offsetLeft - parseFloat(getComputedStyle(el).paddingLeft), behavior: smooth ? "smooth" : "auto" });
-  };
   return (
-    <>
-      <div role="group" aria-label={t("catalog.card.categories")} className="no-scrollbar flex gap-1.5 overflow-x-auto px-5 pb-3 md:px-10">
-        {cats.map((c) => (
-          <button key={c.id} type="button" aria-pressed={cat === c.id} onClick={() => go(c.id)}
-            className={`h-11 shrink-0 rounded-full px-4 text-[13px] font-medium transition-colors ${cat === c.id ? "bg-ink text-white" : "border border-line bg-surface"}`}>{c.label}</button>
-        ))}
-      </div>
-      <div ref={rail} data-scroller className="no-scrollbar flex snap-x snap-mandatory scroll-px-5 items-stretch gap-2.5 overflow-x-auto px-5 pb-2 pt-1 md:scroll-px-10 md:px-10">
-        {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} mobile onSizeChart={onSizeChart} onAddItem={onAddItem} />)}
-      </div>
-    </>
+    <div ref={rail} data-scroller className="no-scrollbar flex snap-x snap-mandatory items-start gap-[7px] overflow-x-auto px-5 md:px-10">
+      {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} mobile onAddItem={onAddItem} />)}
+    </div>
   );
 }
 
 /* ---------- итог ---------- */
 
+const IconCircleX = () => (
+  <svg viewBox="0 0 20 20" className="size-[19px]" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden><circle cx="10" cy="10" r="9.2" /><path d="M6.6 6.6l6.8 6.8M13.4 6.6l-6.8 6.8" /></svg>
+);
+
 function TotalRow({ slot, onAdd }: { slot: Slot; onAdd: (s: Slot) => void }) {
   const worn = useLook((s) => s.look.slots[slot]);
   const remove = useLook((s) => s.remove);
-  const [open, setOpen] = useState(false);
   const product = worn ? bySlug.get(worn.slug) : undefined;
   if (!worn || !product) return null;
-  const { setColor, setSize } = useLook.getState();
-  const detail = `${COLORS[worn.color]?.name}${worn.size ? `, ${worn.size}` : product.sizes.length ? `, ${t("catalog.total.noSize")}` : ""}`;
   return (
-    <li className="py-0.5">
-      <div className="flex items-center gap-1">
-        <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="no-press flex min-h-11 min-w-0 flex-1 flex-col justify-center text-left">
-          <span className="block truncate text-[14px] text-white">{product.title}</span>
-          <span className="flex min-w-0 items-center gap-1 text-[11.5px] text-white/70">
-            <span className="truncate">{detail}</span>
-            <svg viewBox="0 0 24 24" className={`size-3.5 shrink-0 text-white transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden><path d="M6 9l6 6 6-6" /></svg>
-            <span className="sr-only">{open ? t("catalog.total.collapse") : t("catalog.total.change")}</span>
-          </span>
-        </button>
-        <span className="shrink-0 pl-1 font-display text-[12px] tabular-nums text-white/90 lg:text-[13px]">{product.priceRub === null ? "—" : formatRub(product.priceRub)}</span>
-        <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="grid size-11 shrink-0 place-items-center rounded-full">
-          <span className="grid size-[22px] place-items-center rounded-full border border-white"><IconX /></span>
-        </button>
-        <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="-ml-2 -mr-2.5 grid size-11 shrink-0 place-items-center rounded-full">
-          <span className="grid size-[22px] place-items-center rounded-full bg-white text-ink"><IconCart className="size-[12px]" /></span>
-        </button>
-      </div>
-      {open && (
-        <div className="fade-up mb-2 mt-1 space-y-1 rounded-[16px] bg-white/10 p-2">
-          <div role="radiogroup" aria-label={`${t("catalog.card.color")}: ${product.title}`} className="flex flex-wrap">
-            {product.colors.map((c) => (
-              <button key={c} type="button" role="radio" aria-checked={worn.color === c} aria-label={COLORS[c].name} onClick={() => setColor(product.slug, c)} className="no-press grid size-11 place-items-center rounded-full">
-                <span className={`size-7 rounded-full border border-white/50 ${worn.color === c ? "ring-2 ring-white ring-offset-2 ring-offset-accent" : ""}`} style={{ background: COLORS[c].hex }} />
-              </button>
-            ))}
-          </div>
-          {product.sizes.length > 0 && (
-            <div role="radiogroup" aria-label={`${t("catalog.card.size")}: ${product.title}`} className="flex flex-wrap gap-1">
-              {product.sizes.map((z) => (
-                <button key={z} type="button" role="radio" aria-checked={worn.size === z} onClick={() => setSize(product.slug, z)}
-                  className={`grid h-11 min-w-11 place-items-center rounded-full px-2 text-sm font-medium tabular-nums ${worn.size === z ? "bg-white text-ink" : "border border-white/50"}`}>{z}</button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+    <li className="flex h-[26px] items-center gap-[7px] border-b border-white/25 lg:h-[26px]">
+      <span className="min-w-0 flex-1 truncate text-[13px] text-white/75 max-lg:text-[13.5px]">
+        {product.title}<span className="sr-only">, {COLORS[worn.color]?.name}{worn.size ? `, ${worn.size}` : ""}</span>
+      </span>
+      <span className="shrink-0 font-display text-[12px] font-bold tracking-[-0.02em] tabular-nums text-white/75">{product.priceRub === null ? "—" : formatRub(product.priceRub)}</span>
+      <button type="button" aria-label={`${t("catalog.total.remove")}: ${product.title}`} onClick={() => remove(slot)} className="relative grid shrink-0 place-items-center text-white/80 after:absolute after:-inset-[6px]"><IconCircleX /></button>
+      <button type="button" aria-label={`${t("catalog.total.addOne")}: ${product.title}`} onClick={() => onAdd(slot)} className="relative grid size-[19px] shrink-0 place-items-center rounded-full bg-white text-ink after:absolute after:-inset-[6px]"><IconCart className="size-[12px]" /></button>
     </li>
   );
 }
 
-function TotalBlock({ onAdd, onAddAll, innerRef }: { onAdd: (s: Slot) => void; onAddAll: () => void; innerRef?: React.Ref<HTMLDivElement> }) {
+/** ИТОГО: на десктопе чёрный блок, на телефоне синий (как в макете); верхний правый угол скруглён сильнее. */
+function TotalBlock({ onAdd, onAddAll }: { onAdd: (s: Slot) => void; onAddAll: () => void }) {
   const look = useLook((s) => s.look);
-  const list = wornList(look);
+  // порядок строк как в каталоге (в макете: футболка, верх, брюки, сабо)
+  const list = wornList(look).sort((a, b) => PRODUCTS.indexOf(a.product) - PRODUCTS.indexOf(b.product));
   return (
-    <div ref={innerRef} className="on-accent rounded-[var(--radius-total)] bg-accent px-4 pb-4 pt-[18px] text-white lg:rounded-[var(--radius-total-lg)] lg:p-6">
+    <div className="on-accent rounded-[14px] rounded-tr-[32px] bg-accent px-4 pb-4 pt-[22px] text-white lg:rounded-[12px] lg:rounded-tr-[30px] lg:bg-[#0b0b0b] lg:pt-5">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="font-display text-[18px] uppercase lg:text-[24px]">{t("catalog.total.label")}</h2>
-        <span className="font-display text-[18px] tabular-nums lg:text-[24px]" aria-live="polite">{formatRub(total(look))}</span>
+        <h2 className="font-display text-[18.5px] font-bold uppercase leading-none tracking-[-0.03em]">{t("catalog.total.label")}</h2>
+        <span className="font-display text-[18.5px] font-bold leading-none tracking-[-0.03em] tabular-nums" aria-live="polite">{formatRub(total(look))}</span>
       </div>
       {list.length ? (
-        <ul className="mt-2 divide-y divide-white/25 border-b border-white/25">{list.map(({ slot }) => <TotalRow key={slot} slot={slot} onAdd={onAdd} />)}</ul>
-      ) : <p className="mt-3 text-sm text-white/85">{t("catalog.total.empty")}</p>}
+        <ul className="mt-[11px]">{list.map(({ slot }) => <TotalRow key={slot} slot={slot} onAdd={onAdd} />)}</ul>
+      ) : <p className="mt-[18px] text-[14px] text-white/85">{t("catalog.total.empty")}</p>}
       <button type="button" onClick={onAddAll} disabled={!list.length}
-        className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-white px-4 text-[14px] font-semibold text-ink disabled:opacity-60 lg:text-[15px]">{t("catalog.total.addAll")}</button>
-    </div>
-  );
-}
-
-/** Мобильная панель: видна, только пока блок ИТОГО ниже экрана. */
-function StickyTotal({ target, onAddAll }: { target: React.RefObject<HTMLDivElement | null>; onAddAll: () => void }) {
-  const [hidden, setHidden] = useState(true);
-  // панель не закрывает низ карточек: пока лента вещей у нижнего края экрана, панель спрятана
-  const [overRail, setOverRail] = useState(false);
-  const sum = useLook((s) => total(s.look));
-  const count = useLook((s) => Object.keys(s.look.slots).length);
-  useEffect(() => {
-    const el = target.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting || e.boundingClientRect.top < 0), { threshold: 0.15 });
-    io.observe(el);
-    const rail = [...document.querySelectorAll<HTMLElement>("[data-scroller]")].find((r) => r.offsetParent !== null);
-    const io2 = rail ? new IntersectionObserver(([e]) => setOverRail(e.isIntersecting), { rootMargin: "-82% 0px 0px 0px" }) : null;
-    if (rail) io2!.observe(rail);
-    return () => { io.disconnect(); io2?.disconnect(); };
-  }, [target]);
-  if (hidden || overRail || !count) return null;
-  return (
-    <div className="on-accent fade-up fixed inset-x-3 z-40 mx-auto flex max-w-[560px] items-center gap-3 rounded-full bg-accent py-1.5 pl-5 pr-1.5 text-white shadow-[0_8px_24px_rgb(6_70_176/0.35)] lg:hidden" style={{ bottom: "max(12px, env(safe-area-inset-bottom, 0px))" }}>
-      <button type="button" onClick={() => target.current?.scrollIntoView({ behavior: "smooth", block: "center" })} className="no-press flex min-h-11 min-w-0 flex-1 items-baseline gap-2 text-left">
-        <span className="font-display text-[13px] uppercase">{t("catalog.total.label")}</span>
-        <span className="truncate font-display text-[17px] tabular-nums">{formatRub(sum)}</span>
-      </button>
-      <button type="button" onClick={onAddAll} className="min-h-11 shrink-0 whitespace-nowrap rounded-full bg-white px-4 text-[14px] font-semibold text-ink">{t("catalog.total.addAllShort")}</button>
+        className="mt-[18px] flex h-[33px] w-full items-center justify-center rounded-full bg-white px-4 text-[13.5px] font-semibold text-ink disabled:opacity-60 lg:mt-[19px] lg:h-[30px] lg:text-[13px]">{t("catalog.total.addAll")}</button>
     </div>
   );
 }
@@ -472,66 +384,61 @@ const subscribeMq = (cb: () => void) => { const m = mq(); m.addEventListener("ch
 
 export default function Configurator() {
   const webgl = useSyncExternalStore(noop, detectRenderer, () => "photo" as RendererKind) === "three";
-  // реалистичная 3D-модель по умолчанию, если устройство тянет WebGL; фото-модель остаётся переключателем
+  // реалистичная 3D-модель по умолчанию, если устройство тянет WebGL; фото-модель — переключателем
   const [choice, setKind] = useState<RendererKind | null>(null);
   const kind: RendererKind = choice ?? (webgl ? "three" : "photo");
-  const [chart, setChart] = useState(false);
-  const openChart = useCallback(() => setChart(true), []);
   const stage = useRef<LookRendererHandle>(null);
-  const totalRef = useRef<HTMLDivElement>(null);
   // сцену монтируем только в видимой раскладке (3D тяжёлое)
   const desktop = useSyncExternalStore(subscribeMq, () => mq().matches, () => false);
-  const stageEl = <Stage kind={kind} setKind={setKind} webgl={webgl} stage={stage} />;
+  const stageEl = <Stage kind={kind} setKind={setKind} webgl={webgl} stage={stage} desktop={desktop} />;
 
-  const heading = (
-    <>
-      <h1 className="font-display text-[27px] uppercase leading-[1.02] tracking-[-0.03em] [text-wrap:initial] min-[390px]:text-[29px] md:text-5xl lg:text-[36px] xl:text-[34px] 2xl:text-[38px]">
-        {(() => { const [first, ...rest] = t("catalog.hero.titleStart").split(" "); return <>{first}<br />{rest.join(" ")} </>; })()}<span className="text-accent">{t("catalog.hero.titleAccent")}</span>
-      </h1>
-      <p className="mt-3 max-w-md text-[14px] leading-[1.3] text-muted md:max-w-xl md:text-[17px] lg:text-[16px] lg:leading-snug xl:text-[17px]">{t("catalog.hero.subtitle")}</p>
-    </>
-  );
+  const title = (() => { const [first, ...rest] = t("catalog.hero.titleStart").split(" "); return <>{first}<br />{rest.join(" ")} </>; })();
 
   return (
     <>
       <UrlSync />
-      {/* телефон и планшет: как в мобильном макете */}
+      {/* телефон и планшет: мобильный макет */}
       <div className="pb-8 lg:hidden">
-        <section className="px-5 pt-[22px] md:px-10 md:pt-8">{heading}</section>
+        <section className="px-5 pt-[30px] md:px-10">
+          <h1 className="font-display text-[33px] font-bold uppercase leading-[35px] tracking-[-0.06em] [text-wrap:initial] md:text-5xl">
+            {title}<span className="text-accent">{t("catalog.hero.titleAccent")}</span>
+          </h1>
+          <p className="mt-[19px] max-w-[330px] text-[13.65px] leading-[17px] text-muted-soft md:max-w-xl md:text-[16px] md:leading-snug">{t("catalog.hero.subtitle")}</p>
+        </section>
         <section aria-label={t("catalog.stage.gender")} onPointerDownCapture={dismissHint} onWheelCapture={dismissHint}
-          className="relative mx-5 mt-5 h-[352px] min-[390px]:h-[380px] md:mx-10 md:h-[560px]">
+          className="relative mx-5 mt-[25px] h-[333px] md:mx-10 md:h-[560px]">
           {!desktop && stageEl}
           <div className="absolute inset-x-0 top-0 z-10"><Controls stage={stage} /></div>
         </section>
-        <section aria-label={t("catalog.card.list")} className="mt-7">
-          <CardRail onSizeChart={openChart} onAddItem={addItem} />
+        <section aria-label={t("catalog.card.list")} className="mt-[26px]">
+          <CardRail onAddItem={addItem} />
         </section>
         <section aria-label={t("catalog.total.label")} className="mt-3 px-5 md:px-10">
-          <div className="md:max-w-[560px]"><TotalBlock onAdd={addOne} onAddAll={addAll} innerRef={totalRef} /></div>
+          <div className="md:max-w-[560px]"><TotalBlock onAdd={addOne} onAddAll={addAll} /></div>
         </section>
-        <StickyTotal target={totalRef} onAddAll={addAll} />
       </div>
 
-      {/* 1024–1279: модель слева (липкая), справа ИТОГО и карточки; от 1280: три колонки как в макете */}
-      <div className="mx-auto hidden max-w-[1440px] gap-x-8 gap-y-6 px-10 pb-12 pt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:[grid-template-areas:'intro_intro'_'stage_total'_'stage_cards'] xl:grid-cols-[minmax(0,380px)_minmax(0,1fr)_minmax(0,400px)] xl:grid-rows-[auto_1fr] xl:gap-y-8 xl:[grid-template-areas:'intro_stage_cards'_'total_stage_cards'] 2xl:grid-cols-[minmax(0,400px)_minmax(0,1fr)_minmax(0,420px)]">
-        <section className="[grid-area:intro]">{heading}</section>
-        <section aria-label={t("catalog.total.label")} className="[grid-area:total] xl:self-start">
-          <TotalBlock onAdd={addOne} onAddAll={addAll} />
-        </section>
-        <section aria-label={t("catalog.stage.gender")} onPointerDownCapture={dismissHint} onWheelCapture={dismissHint}
-          className="sticky top-4 flex h-[calc(100svh-32px)] max-h-[860px] min-h-[560px] flex-col self-start [grid-area:stage] xl:static xl:h-[calc(100svh-150px)] xl:min-h-[620px]">
-          <div className="relative min-h-0 flex-1">
-            {desktop && stageEl}
-            <div className="absolute inset-x-0 top-0 z-10"><Controls stage={stage} /></div>
+      {/* десктоп: макет 1440 × 720 — слева заголовок и ИТОГО, по центру модель, справа карточки */}
+      <div className="relative mx-auto hidden h-[calc(100svh-68px)] max-h-[900px] min-h-[652px] max-w-[1440px] grid-cols-[minmax(0,1fr)_448px_minmax(0,1fr)] px-6 pb-[26px] lg:grid">
+        <section className="flex min-h-0 flex-col justify-between">
+          <div className="pt-[50px]">
+            <h1 className="font-display text-[43px] font-bold uppercase leading-[51px] tracking-[-0.04em] [text-wrap:initial]">
+              {title}<span className="text-accent">{t("catalog.hero.titleAccent")}</span>
+            </h1>
+            <p className="mt-[27px] max-w-[380px] text-[13.6px] leading-[18px] text-muted-soft">{t("catalog.hero.subtitle")}</p>
           </div>
+          <div aria-label={t("catalog.total.label")} role="region" className="w-[331px]"><TotalBlock onAdd={addOne} onAddAll={addAll} /></div>
         </section>
-        <section aria-label={t("catalog.card.list")} className="[grid-area:cards]">
-          <div className="flex flex-col gap-3 xl:max-h-[calc(100svh-110px)] xl:min-h-[660px] xl:overflow-y-auto xl:overscroll-contain xl:pb-8 xl:pr-1 xl:[mask-image:linear-gradient(to_bottom,#000_calc(100%-40px),transparent)] xl:[scrollbar-width:thin]">
-            {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} onSizeChart={openChart} onAddItem={addItem} />)}
+        <section aria-label={t("catalog.stage.gender")} onPointerDownCapture={dismissHint} onWheelCapture={dismissHint} className="relative mt-[5px]">
+          {desktop && stageEl}
+          <div className="absolute inset-x-0 bottom-0 z-10"><Controls stage={stage} /></div>
+        </section>
+        <section aria-label={t("catalog.card.list")} className="flex min-h-0 justify-end">
+          <div className="no-scrollbar -mb-[26px] flex min-h-0 flex-col gap-[6px] overflow-y-auto overscroll-contain pb-10 pt-[26px] [mask-image:linear-gradient(to_bottom,#000_calc(100%-90px),transparent)]">
+            {PRODUCTS.map((p) => <ProductCard key={p.slug} p={p} onAddItem={addItem} />)}
           </div>
         </section>
       </div>
-      {chart && <SizeChart onClose={() => setChart(false)} />}
     </>
   );
 }

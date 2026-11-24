@@ -10,6 +10,7 @@ export const COLORS: Record<string, { name: string; hex: string }> = {
   lightblue: { name: "голубой", hex: "#81A1D2" },
   navy: { name: "тёмно-синий", hex: "#1F2B5F" },
   emerald: { name: "изумрудный", hex: "#244F56" },
+  darkgreen: { name: "тёмно-зелёный", hex: "#28382E" },
   blue: { name: "синий", hex: "#2738A2" },
   pink: { name: "розовый", hex: "#E5B2BB" },
   grey: { name: "серый", hex: "#9A9DA3" },
@@ -30,20 +31,21 @@ export interface Product {
   category: "top" | "bottom" | "coat" | "head" | "feet" | "accessory";
 }
 
-// порядок как в макете: тёмно-синий, синий, изумрудный, голубой, розовый, белый
-const SCRUB = ["navy", "blue", "emerald", "lightblue", "pink", "white"];
+// порядок как в макете «Конфигуратор итог»: тёмно-синий, синий, изумрудный, тёмно-зелёный, голубой, розовый
+const SCRUB = ["navy", "blue", "emerald", "darkgreen", "lightblue", "pink"];
 const CLOTH = ["XS", "S", "M", "L", "XL"];
 
 export const PRODUCTS: Product[] = [
+  // первые четыре карточки, названия и описания — как в макете
+  { slug: "tshirt", model: "top_tshirt", slot: "top", category: "top", title: "Футболка", short: "Оверсайз, принт на груди и спине", priceRub: 2200, colors: ["white", "black"], sizes: CLOTH },
   { slug: "anorak", model: "top_anorak", slot: "top", category: "top", title: "Медицинский верх", short: "Оверсайз, V-вырез, карман-кенгуру", priceRub: 3200, colors: SCRUB, sizes: CLOTH },
-  { slug: "tshirt", model: "top_tshirt", slot: "top", category: "top", title: "Футболка оверсайз", short: "Хлопок, свободная посадка, под халат или анорак.", priceRub: 2200, colors: ["white", "grey", "blue"], sizes: CLOTH },
-  { slug: "joggers", model: "bottom_joggers", slot: "bottom", category: "bottom", title: "Медицинские брюки", short: "Свободный крой, карманы-карго, пояс на резинке", priceRub: 3000, colors: SCRUB, sizes: CLOTH },
-  { slug: "halat", model: "coat_halat", slot: "coat", category: "coat", title: "Халат медицинский унисекс", short: "Классический белый халат, надевается поверх верха.", priceRub: null, colors: ["white"], sizes: CLOTH },
-  { slug: "cap", model: "head_cap", slot: "head", category: "head", title: "Шапочка медицинская", short: "Регулируемая завязка, одна посадка.", priceRub: null, colors: SCRUB, sizes: [] },
-  { slug: "dokerka", model: "head_dokerka", slot: "head", category: "head", title: "Головной убор докерка", short: "Мягкая трикотажная шапка.", priceRub: null, colors: SCRUB, sizes: [] },
-  { slug: "sabo", model: "feet_sabo", slot: "feet", category: "feet", title: "Сабо", short: "Лёгкие, с фиксирующим ремешком.", priceRub: 3000, colors: ["grey", "navy", "black", "pink", "white"], sizes: ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"] },
-  { slug: "lanyard", model: "acc_lanyard", slot: "accessory", category: "accessory", title: "Шнурок для телефона и пропуска", short: "Прочная лента с карабином.", priceRub: null, colors: ["black", "grey", "blue"], sizes: [] },
-  { slug: "shopper", model: "acc_shopper", slot: "accessory", category: "accessory", title: "Шопер", short: "Вместительная сумка для смены.", priceRub: null, colors: ["silver"], sizes: [] },
+  { slug: "joggers", model: "bottom_joggers", slot: "bottom", category: "bottom", title: "Медицинские брюки", short: "Широкие карго на резинке", priceRub: 3000, colors: SCRUB, sizes: CLOTH },
+  { slug: "sabo", model: "feet_sabo", slot: "feet", category: "feet", title: "Сабо", short: "Лёгкие, 3 цвета, с перфорацией", priceRub: 3000, colors: ["white", "grey", "black"], sizes: ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"] },
+  { slug: "halat", model: "coat_halat", slot: "coat", category: "coat", title: "Халат медицинский", short: "Унисекс, надевается поверх верха", priceRub: null, colors: ["white"], sizes: CLOTH },
+  { slug: "cap", model: "head_cap", slot: "head", category: "head", title: "Шапочка медицинская", short: "Регулируемая завязка, одна посадка", priceRub: null, colors: SCRUB, sizes: [] },
+  { slug: "dokerka", model: "head_dokerka", slot: "head", category: "head", title: "Докерка", short: "Мягкая трикотажная шапка", priceRub: null, colors: SCRUB, sizes: [] },
+  { slug: "lanyard", model: "acc_lanyard", slot: "accessory", category: "accessory", title: "Шнурок для пропуска", short: "Прочная лента с карабином", priceRub: null, colors: ["black", "grey", "blue"], sizes: [] },
+  { slug: "shopper", model: "acc_shopper", slot: "accessory", category: "accessory", title: "Шопер", short: "Вместительная сумка для смены", priceRub: null, colors: ["silver"], sizes: [] },
 ];
 
 export const bySlug = new Map(PRODUCTS.map((p) => [p.slug, p]));

@@ -194,8 +194,14 @@ export async function runConfigurator({ browser, base, vpKey, vpDef, results, db
     before = after;
   });
 
-  await step("rotate changes the view", async () => {
-    await page.locator('button[aria-label="Повернуть модель"]:visible').click();
+  await step("drag rotates the view", async () => {
+    // в макете нет кнопки поворота: модель вращают перетаскиванием
+    const box = await page.locator("canvas:visible").first().boundingBox();
+    const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    for (let i = 1; i <= 8; i++) await page.mouse.move(cx + i * 18, cy, { steps: 2 });
+    await page.mouse.up();
     const after = await waitScene(page, browser);
     const d = await imageDiff(browser, before, after);
     assert(d > 0.5, `no visible rotation (diff ${d.toFixed(2)})`);
