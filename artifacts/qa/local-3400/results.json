@@ -2,35 +2,35 @@
   "base": "http://localhost:3400",
   "readonly": false,
   "db": "not-configured",
-  "at": "2026-11-24T19:56:40.999Z",
+  "at": "2026-11-26T15:59:39.332Z",
   "rows": [
     {
       "vp": "api",
       "group": "health",
       "name": "/api/health 200 + JSON",
       "status": "pass",
-      "ms": 10
+      "ms": 12
     },
     {
       "vp": "api",
       "group": "health",
       "name": "security headers present",
       "status": "pass",
-      "ms": 32
+      "ms": 40
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "open /catalog and accept cookies",
       "status": "pass",
-      "ms": 396
+      "ms": 475
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "3D canvas renders (non-blank pixels)",
       "status": "pass",
-      "ms": 3436,
+      "ms": 3977,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-3d-canvas-renders-non-blank-pixels.png"
     },
     {
@@ -38,49 +38,49 @@
       "group": "configurator",
       "name": "wear top (t-shirt replaces default top)",
       "status": "pass",
-      "ms": 1267
+      "ms": 1358
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "change top colour (model recoloured)",
       "status": "pass",
-      "ms": 979
+      "ms": 1041
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "choose top size",
       "status": "pass",
-      "ms": 351
+      "ms": 355
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "wear trousers, colour + size",
       "status": "pass",
-      "ms": 650
+      "ms": 712
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "wear shoes + size",
       "status": "pass",
-      "ms": 667
+      "ms": 650
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "wear cap",
       "status": "pass",
-      "ms": 482
+      "ms": 500
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "wear lanyard",
       "status": "pass",
-      "ms": 1369,
+      "ms": 1539,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-wear-lanyard.png"
     },
     {
@@ -88,14 +88,14 @@
       "group": "configurator",
       "name": "ИТОГО lists the outfit and sums prices (8 200 ₽)",
       "status": "pass",
-      "ms": 35
+      "ms": 66
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "switch Ж -> М keeps the outfit",
       "status": "pass",
-      "ms": 1541,
+      "ms": 2368,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-switch-ж-м-keeps-the-outfit.png"
     },
     {
@@ -103,21 +103,21 @@
       "group": "configurator",
       "name": "zoom + changes the view",
       "status": "pass",
-      "ms": 1023
+      "ms": 1185
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "zoom − changes the view",
       "status": "pass",
-      "ms": 1284
+      "ms": 1497
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "drag rotates the view",
       "status": "pass",
-      "ms": 36127,
+      "ms": 39622,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-drag-rotates-the-view.png"
     },
     {
@@ -132,14 +132,14 @@
       "group": "configurator",
       "name": "share URL round-trip (fresh tab restores outfit)",
       "status": "pass",
-      "ms": 3798
+      "ms": 4478
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "«Снять всё» empties the look, model stays",
       "status": "pass",
-      "ms": 1048,
+      "ms": 1073,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-снять-всё-empties-the-look-model-stays.png"
     },
     {
@@ -147,14 +147,14 @@
       "group": "configurator",
       "name": "reload after «Снять всё» keeps the empty look",
       "status": "pass",
-      "ms": 2809
+      "ms": 2997
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "«Добавить весь образ» with missing size: error on card",
       "status": "pass",
-      "ms": 2656,
+      "ms": 3439,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-добавить-весь-образ-with-missing-size-error-on-card.png"
     },
     {
@@ -162,28 +162,28 @@
       "group": "configurator",
       "name": "missing size: keyboard focus moves to the size group",
       "status": "pass",
-      "ms": 6
+      "ms": 9
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "fix size, add whole look",
       "status": "pass",
-      "ms": 79
+      "ms": 123
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "header cart counter shows 3",
       "status": "pass",
-      "ms": 74
+      "ms": 66
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "cart shows 3 lines with product images",
       "status": "pass",
-      "ms": 173,
+      "ms": 197,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-cart-shows-3-lines-with-product-images.png"
     },
     {
@@ -191,28 +191,28 @@
       "group": "configurator",
       "name": "cart: change colour",
       "status": "pass",
-      "ms": 240
+      "ms": 235
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "cart: change size",
       "status": "pass",
-      "ms": 231
+      "ms": 225
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "cart: change quantity",
       "status": "pass",
-      "ms": 234
+      "ms": 240
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "cart: no DB -> graceful price error",
       "status": "pass",
-      "ms": 150,
+      "ms": 134,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-cart-no-db-graceful-price-error.png"
     },
     {
@@ -220,21 +220,21 @@
       "group": "configurator",
       "name": "cart survives reload",
       "status": "pass",
-      "ms": 80
+      "ms": 118
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "open checkout",
       "status": "pass",
-      "ms": 78
+      "ms": 96
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "checkout: empty submit shows field errors and focuses first",
       "status": "pass",
-      "ms": 370,
+      "ms": 414,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-checkout-empty-submit-shows-field-errors-and-focuses-first.png"
     },
     {
@@ -242,21 +242,21 @@
       "group": "configurator",
       "name": "checkout: invalid phone/email messages",
       "status": "pass",
-      "ms": 46
+      "ms": 63
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "checkout: valid data clears errors",
       "status": "pass",
-      "ms": 271
+      "ms": 313
     },
     {
       "vp": "375",
       "group": "configurator",
       "name": "checkout: submit",
       "status": "pass",
-      "ms": 102,
+      "ms": 138,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-configurator-checkout-submit.png"
     },
     {
@@ -271,7 +271,7 @@
       "group": "resilience",
       "name": "failed GLB download keeps /catalog usable",
       "status": "pass",
-      "ms": 8145,
+      "ms": 8147,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-resilience-failed-glb-download-keeps-catalog-usable.png"
     },
     {
@@ -279,98 +279,98 @@
       "group": "pages",
       "name": "home opens, cookie banner accepted, nav links collected",
       "status": "pass",
-      "ms": 278
+      "ms": 303
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "home: no console errors",
       "status": "pass",
-      "ms": 467
+      "ms": 445
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "no analytics script before consent (Metrika)",
       "status": "pass",
-      "ms": 742
+      "ms": 773
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/about 200, no console errors",
       "status": "pass",
-      "ms": 597
+      "ms": 635
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/buyers 200, no console errors",
       "status": "pass",
-      "ms": 570
+      "ms": 599
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/cart 200, no console errors",
       "status": "pass",
-      "ms": 589
+      "ms": 619
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/catalog 200, no console errors",
       "status": "pass",
-      "ms": 3435
+      "ms": 4138
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/contacts 200, no console errors",
       "status": "pass",
-      "ms": 606
+      "ms": 616
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/legal/consent 200, no console errors",
       "status": "pass",
-      "ms": 614
+      "ms": 644
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/legal/cookies 200, no console errors",
       "status": "pass",
-      "ms": 609
+      "ms": 615
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/legal/offer 200, no console errors",
       "status": "pass",
-      "ms": 606
+      "ms": 614
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/legal/privacy 200, no console errors",
       "status": "pass",
-      "ms": 616
+      "ms": 623
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/legal/requisites 200, no console errors",
       "status": "pass",
-      "ms": 609
+      "ms": 643
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 8199,
+      "ms": 8262,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-pages-product-anorak.png"
     },
     {
@@ -378,7 +378,7 @@
       "group": "pages",
       "name": "/product/tshirt",
       "status": "pass",
-      "ms": 8120
+      "ms": 8130
     },
     {
       "vp": "375",
@@ -392,49 +392,49 @@
       "group": "pages",
       "name": "/product/halat",
       "status": "pass",
-      "ms": 8149
+      "ms": 8132
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/cap",
       "status": "pass",
-      "ms": 8098
+      "ms": 8094
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/dokerka",
       "status": "pass",
-      "ms": 8090
+      "ms": 8123
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 8131
+      "ms": 8151
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/lanyard",
       "status": "pass",
-      "ms": 8091
+      "ms": 8088
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "/product/shopper",
       "status": "pass",
-      "ms": 8095
+      "ms": 8107
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "404 page /this-page-does-not-exist",
       "status": "pass",
-      "ms": 658,
+      "ms": 663,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/375-pages-404-page-this-page-does-not-exist.png"
     },
     {
@@ -442,28 +442,28 @@
       "group": "pages",
       "name": "404 page /product/no-such-product",
       "status": "pass",
-      "ms": 694
+      "ms": 724
     },
     {
       "vp": "375",
       "group": "pages",
       "name": "404 page /legal/no-such-doc",
       "status": "pass",
-      "ms": 659
+      "ms": 668
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "open /catalog and accept cookies",
       "status": "pass",
-      "ms": 328
+      "ms": 425
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "3D canvas renders (non-blank pixels)",
       "status": "pass",
-      "ms": 3466,
+      "ms": 3969,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-3d-canvas-renders-non-blank-pixels.png"
     },
     {
@@ -471,49 +471,49 @@
       "group": "configurator",
       "name": "wear top (t-shirt replaces default top)",
       "status": "pass",
-      "ms": 1660
+      "ms": 1382
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "change top colour (model recoloured)",
       "status": "pass",
-      "ms": 1050
+      "ms": 1064
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "choose top size",
       "status": "pass",
-      "ms": 323
+      "ms": 340
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "wear trousers, colour + size",
       "status": "pass",
-      "ms": 667
+      "ms": 639
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "wear shoes + size",
       "status": "pass",
-      "ms": 640
+      "ms": 668
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "wear cap",
       "status": "pass",
-      "ms": 463
+      "ms": 397
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "wear lanyard",
       "status": "pass",
-      "ms": 1362,
+      "ms": 1422,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-wear-lanyard.png"
     },
     {
@@ -521,14 +521,14 @@
       "group": "configurator",
       "name": "ИТОГО lists the outfit and sums prices (8 200 ₽)",
       "status": "pass",
-      "ms": 32
+      "ms": 36
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "switch Ж -> М keeps the outfit",
       "status": "pass",
-      "ms": 1933,
+      "ms": 1610,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-switch-ж-м-keeps-the-outfit.png"
     },
     {
@@ -536,28 +536,28 @@
       "group": "configurator",
       "name": "switch М -> Ж keeps the outfit",
       "status": "pass",
-      "ms": 1345
+      "ms": 1342
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "zoom + changes the view",
       "status": "pass",
-      "ms": 1009
+      "ms": 1081
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "zoom − changes the view",
       "status": "pass",
-      "ms": 1307
+      "ms": 1294
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "drag rotates the view",
       "status": "pass",
-      "ms": 35312,
+      "ms": 32081,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-drag-rotates-the-view.png"
     },
     {
@@ -565,21 +565,21 @@
       "group": "configurator",
       "name": "share URL encodes the outfit",
       "status": "pass",
-      "ms": 502
+      "ms": 501
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "share URL round-trip (fresh tab restores outfit)",
       "status": "pass",
-      "ms": 3576
+      "ms": 4208
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "«Снять всё» empties the look, model stays",
       "status": "pass",
-      "ms": 1000,
+      "ms": 990,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-снять-всё-empties-the-look-model-stays.png"
     },
     {
@@ -587,14 +587,14 @@
       "group": "configurator",
       "name": "reload after «Снять всё» keeps the empty look",
       "status": "pass",
-      "ms": 2754
+      "ms": 2735
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "«Добавить весь образ» with missing size: error on card",
       "status": "pass",
-      "ms": 2746,
+      "ms": 3068,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-добавить-весь-образ-with-missing-size-error-on-card.png"
     },
     {
@@ -602,28 +602,28 @@
       "group": "configurator",
       "name": "missing size: keyboard focus moves to the size group",
       "status": "pass",
-      "ms": 6
+      "ms": 8
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "fix size, add whole look",
       "status": "pass",
-      "ms": 80
+      "ms": 85
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "header cart counter shows 3",
       "status": "pass",
-      "ms": 71
+      "ms": 73
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "cart shows 3 lines with product images",
       "status": "pass",
-      "ms": 149,
+      "ms": 203,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-cart-shows-3-lines-with-product-images.png"
     },
     {
@@ -631,28 +631,28 @@
       "group": "configurator",
       "name": "cart: change colour",
       "status": "pass",
-      "ms": 245
+      "ms": 248
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "cart: change size",
       "status": "pass",
-      "ms": 232
+      "ms": 227
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "cart: change quantity",
       "status": "pass",
-      "ms": 231
+      "ms": 234
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "cart: no DB -> graceful price error",
       "status": "pass",
-      "ms": 114,
+      "ms": 113,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-cart-no-db-graceful-price-error.png"
     },
     {
@@ -660,21 +660,21 @@
       "group": "configurator",
       "name": "cart survives reload",
       "status": "pass",
-      "ms": 77
+      "ms": 109
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "open checkout",
       "status": "pass",
-      "ms": 72
+      "ms": 97
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "checkout: empty submit shows field errors and focuses first",
       "status": "pass",
-      "ms": 347,
+      "ms": 373,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-checkout-empty-submit-shows-field-errors-and-focuses-first.png"
     },
     {
@@ -682,21 +682,21 @@
       "group": "configurator",
       "name": "checkout: invalid phone/email messages",
       "status": "pass",
-      "ms": 38
+      "ms": 61
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "checkout: valid data clears errors",
       "status": "pass",
-      "ms": 290
+      "ms": 297
     },
     {
       "vp": "1440",
       "group": "configurator",
       "name": "checkout: submit",
       "status": "pass",
-      "ms": 89,
+      "ms": 94,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-configurator-checkout-submit.png"
     },
     {
@@ -704,14 +704,14 @@
       "group": "configurator",
       "name": "no console errors during the flow",
       "status": "pass",
-      "ms": 0
+      "ms": 1
     },
     {
       "vp": "1440",
       "group": "resilience",
       "name": "failed GLB download keeps /catalog usable",
       "status": "pass",
-      "ms": 8097,
+      "ms": 8122,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-resilience-failed-glb-download-keeps-catalog-usable.png"
     },
     {
@@ -719,98 +719,98 @@
       "group": "pages",
       "name": "home opens, cookie banner accepted, nav links collected",
       "status": "pass",
-      "ms": 242
+      "ms": 286
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "home: no console errors",
       "status": "pass",
-      "ms": 490
+      "ms": 465
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "no analytics script before consent (Metrika)",
       "status": "pass",
-      "ms": 717
+      "ms": 775
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/about 200, no console errors",
       "status": "pass",
-      "ms": 583
+      "ms": 611
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/buyers 200, no console errors",
       "status": "pass",
-      "ms": 578
+      "ms": 593
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/cart 200, no console errors",
       "status": "pass",
-      "ms": 630
+      "ms": 631
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/catalog 200, no console errors",
       "status": "pass",
-      "ms": 3497
+      "ms": 3875
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/contacts 200, no console errors",
       "status": "pass",
-      "ms": 629
+      "ms": 617
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/legal/consent 200, no console errors",
       "status": "pass",
-      "ms": 632
+      "ms": 642
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/legal/cookies 200, no console errors",
       "status": "pass",
-      "ms": 602
+      "ms": 614
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/legal/offer 200, no console errors",
       "status": "pass",
-      "ms": 588
+      "ms": 618
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/legal/privacy 200, no console errors",
       "status": "pass",
-      "ms": 655
+      "ms": 623
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/legal/requisites 200, no console errors",
       "status": "pass",
-      "ms": 612
+      "ms": 634
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 8214,
+      "ms": 8194,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-pages-product-anorak.png"
     },
     {
@@ -818,63 +818,63 @@
       "group": "pages",
       "name": "/product/tshirt",
       "status": "pass",
-      "ms": 8142
+      "ms": 8132
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/joggers",
       "status": "pass",
-      "ms": 8128
+      "ms": 8155
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/halat",
       "status": "pass",
-      "ms": 8134
+      "ms": 8126
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/cap",
       "status": "pass",
-      "ms": 8090
+      "ms": 8086
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/dokerka",
       "status": "pass",
-      "ms": 8090
+      "ms": 8097
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 8137
+      "ms": 8134
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/lanyard",
       "status": "pass",
-      "ms": 8078
+      "ms": 8109
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "/product/shopper",
       "status": "pass",
-      "ms": 8101
+      "ms": 8098
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "404 page /this-page-does-not-exist",
       "status": "pass",
-      "ms": 653,
+      "ms": 656,
       "screenshot": "/home/user/MED2D/artifacts/qa/local-3400/1440-pages-404-page-this-page-does-not-exist.png"
     },
     {
@@ -882,70 +882,70 @@
       "group": "pages",
       "name": "404 page /product/no-such-product",
       "status": "pass",
-      "ms": 621
+      "ms": 628
     },
     {
       "vp": "1440",
       "group": "pages",
       "name": "404 page /legal/no-such-doc",
       "status": "pass",
-      "ms": 604
+      "ms": 656
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/",
       "status": "pass",
-      "ms": 1002
+      "ms": 1063
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/catalog",
       "status": "pass",
-      "ms": 2526
+      "ms": 2850
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 945
+      "ms": 954
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 926
+      "ms": 897
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/cart",
       "status": "pass",
-      "ms": 1166
+      "ms": 1167
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/checkout",
       "status": "pass",
-      "ms": 1165
+      "ms": 1172
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/about",
       "status": "pass",
-      "ms": 889
+      "ms": 873
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/buyers",
       "status": "pass",
-      "ms": 861
+      "ms": 865
     },
     {
       "vp": "360",
@@ -959,63 +959,63 @@
       "group": "no-h-scroll",
       "name": "/legal/offer",
       "status": "pass",
-      "ms": 890
+      "ms": 891
     },
     {
       "vp": "360",
       "group": "no-h-scroll",
       "name": "/this-page-does-not-exist",
       "status": "pass",
-      "ms": 875
+      "ms": 890
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/",
       "status": "pass",
-      "ms": 1014
+      "ms": 1027
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/catalog",
       "status": "pass",
-      "ms": 2305
+      "ms": 2825
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 963
+      "ms": 1066
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 897
+      "ms": 914
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/cart",
       "status": "pass",
-      "ms": 1159
+      "ms": 1166
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/checkout",
       "status": "pass",
-      "ms": 1166
+      "ms": 1168
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/about",
       "status": "pass",
-      "ms": 868
+      "ms": 889
     },
     {
       "vp": "375",
@@ -1029,56 +1029,56 @@
       "group": "no-h-scroll",
       "name": "/contacts",
       "status": "pass",
-      "ms": 877
+      "ms": 882
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/legal/offer",
       "status": "pass",
-      "ms": 914
+      "ms": 904
     },
     {
       "vp": "375",
       "group": "no-h-scroll",
       "name": "/this-page-does-not-exist",
       "status": "pass",
-      "ms": 879
+      "ms": 882
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/",
       "status": "pass",
-      "ms": 1020
+      "ms": 1012
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/catalog",
       "status": "pass",
-      "ms": 2570
+      "ms": 2809
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 950
+      "ms": 1087
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 894
+      "ms": 918
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/cart",
       "status": "pass",
-      "ms": 1168
+      "ms": 1156
     },
     {
       "vp": "414",
@@ -1092,189 +1092,189 @@
       "group": "no-h-scroll",
       "name": "/about",
       "status": "pass",
-      "ms": 866
+      "ms": 889
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/buyers",
       "status": "pass",
-      "ms": 865
+      "ms": 861
     },
     {
       "vp": "414",
       "group": "no-h-scroll",
       "name": "/contacts",
       "status": "pass",
-      "ms": 869
+      "ms": 888
     },
     {
       "vp": "414",
-      "group": "no-h-scroll",
-      "name": "/legal/offer",
-      "status": "pass",
-      "ms": 898
-    },
-    {
-      "vp": "414",
-      "group": "no-h-scroll",
-      "name": "/this-page-does-not-exist",
-      "status": "pass",
-      "ms": 884
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/",
-      "status": "pass",
-      "ms": 1037
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/catalog",
-      "status": "pass",
-      "ms": 2760
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/product/anorak",
-      "status": "pass",
-      "ms": 941
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/product/sabo",
-      "status": "pass",
-      "ms": 905
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/cart",
-      "status": "pass",
-      "ms": 1149
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/checkout",
-      "status": "pass",
-      "ms": 1176
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/about",
-      "status": "pass",
-      "ms": 880
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/buyers",
-      "status": "pass",
-      "ms": 858
-    },
-    {
-      "vp": "768",
-      "group": "no-h-scroll",
-      "name": "/contacts",
-      "status": "pass",
-      "ms": 876
-    },
-    {
-      "vp": "768",
       "group": "no-h-scroll",
       "name": "/legal/offer",
       "status": "pass",
       "ms": 885
     },
     {
+      "vp": "414",
+      "group": "no-h-scroll",
+      "name": "/this-page-does-not-exist",
+      "status": "pass",
+      "ms": 887
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/",
+      "status": "pass",
+      "ms": 1017
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/catalog",
+      "status": "pass",
+      "ms": 2971
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/product/anorak",
+      "status": "pass",
+      "ms": 940
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/product/sabo",
+      "status": "pass",
+      "ms": 925
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/cart",
+      "status": "pass",
+      "ms": 1176
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/checkout",
+      "status": "pass",
+      "ms": 1175
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/about",
+      "status": "pass",
+      "ms": 884
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/buyers",
+      "status": "pass",
+      "ms": 886
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/contacts",
+      "status": "pass",
+      "ms": 865
+    },
+    {
+      "vp": "768",
+      "group": "no-h-scroll",
+      "name": "/legal/offer",
+      "status": "pass",
+      "ms": 893
+    },
+    {
       "vp": "768",
       "group": "no-h-scroll",
       "name": "/this-page-does-not-exist",
       "status": "pass",
-      "ms": 898
+      "ms": 902
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/",
       "status": "pass",
-      "ms": 1001
+      "ms": 1007
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/catalog",
       "status": "pass",
-      "ms": 3035
+      "ms": 2884
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/product/anorak",
       "status": "pass",
-      "ms": 963
+      "ms": 1246
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/product/sabo",
       "status": "pass",
-      "ms": 924
+      "ms": 891
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/cart",
       "status": "pass",
-      "ms": 1145
+      "ms": 1175
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/checkout",
       "status": "pass",
-      "ms": 1164
+      "ms": 1174
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/about",
       "status": "pass",
-      "ms": 869
+      "ms": 865
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/buyers",
       "status": "pass",
-      "ms": 866
+      "ms": 886
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/contacts",
       "status": "pass",
-      "ms": 877
+      "ms": 897
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/legal/offer",
       "status": "pass",
-      "ms": 878
+      "ms": 900
     },
     {
       "vp": "1440",
       "group": "no-h-scroll",
       "name": "/this-page-does-not-exist",
       "status": "pass",
-      "ms": 888
+      "ms": 902
     }
   ],
   "warnings": []
