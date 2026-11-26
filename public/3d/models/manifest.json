@@ -61,8 +61,8 @@
  },
  "bottom_joggers_f.glb": {
   "tris": 19527,
-  "bytes": 217196,
-  "hash": "64974d022c",
+  "bytes": 258440,
+  "hash": "c3ce8f57c6",
   "min": [
    -0.233,
    0.049,
@@ -76,8 +76,8 @@
  },
  "bottom_joggers_m.glb": {
   "tris": 19526,
-  "bytes": 220292,
-  "hash": "38af6c50ee",
+  "bytes": 258508,
+  "hash": "455bb11a42",
   "min": [
    -0.261,
    0.051,
@@ -241,8 +241,8 @@
  },
  "top_anorak_f.glb": {
   "tris": 20753,
-  "bytes": 241032,
-  "hash": "1b401c74b0",
+  "bytes": 309220,
+  "hash": "3b68db7121",
   "min": [
    -0.261,
    0.869,
@@ -256,8 +256,8 @@
  },
  "top_anorak_m.glb": {
   "tris": 19751,
-  "bytes": 222544,
-  "hash": "867b9aed68",
+  "bytes": 302452,
+  "hash": "b8bbb6a2f4",
   "min": [
    -0.316,
    0.933,

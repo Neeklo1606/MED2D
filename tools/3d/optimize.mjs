@@ -90,6 +90,7 @@ function namesPattern(names) {
 function textureGroups(j) {
   const big = new Set();
   const all = new Set();
+  const photo = new Set();
   const imgName = (texIdx) => {
     const t = j.textures?.[texIdx];
     const src = t?.source ?? t?.extensions?.EXT_texture_webp?.source;
@@ -102,10 +103,14 @@ function textureGroups(j) {
       const n = imgName(r.index);
       if (!n) continue;
       all.add(n);
-      if (/^(skin|body)(\.\d+)?$/i.test(m.name ?? "")) big.add(n);
+      if (/^photo_/.test(n)) photo.add(n);
+      else if (/^(skin|body)(\.\d+)?$/i.test(m.name ?? "")) big.add(n);
     }
   }
-  return { big: [...big], small: [...all].filter((n) => !big.has(n)), unnamed: (j.images ?? []).some((i) => !i.name) };
+  return {
+    big: [...big], photo: [...photo], small: [...all].filter((n) => !big.has(n) && !photo.has(n)),
+    unnamed: (j.images ?? []).some((i) => !i.name),
+  };
 }
 
 async function cli(...a) {
@@ -128,10 +133,14 @@ async function optimize(file) {
       await cli(a[0], cur, out, ...a.slice(1));
       cur = out;
     };
-    const { big, small, unnamed } = textureGroups(j0);
+    const { big, photo, small, unnamed } = textureGroups(j0);
     if ((j0.images ?? []).length) {
-      // всё ≤ 1024, затем всё, кроме кожи, ≤ 512 (безымянные изображения тоже ≤ 512 — шаблоном их не выбрать)
-      await next("resize", "--width", "1024", "--height", "1024");
+      // фото-атласы ткани (photo_*) ≤ 2048; остальное ≤ 1024, затем всё, кроме кожи, ≤ 512
+      if (photo.length) await next("resize", "--width", "2048", "--height", "2048", "--pattern", namesPattern(photo));
+      const rest = [...big, ...small];
+      if (rest.length || unnamed) {
+        await next("resize", "--width", "1024", "--height", "1024", ...(photo.length && !unnamed ? ["--pattern", namesPattern(rest)] : []));
+      }
       if (small.length) await next("resize", "--width", "512", "--height", "512", "--pattern", namesPattern(small));
       if (unnamed) console.warn(`  ${name}: есть текстуры без имени, оставлены ≤ 1024 px`);
       await next("webp", "--slots", "{baseColorTexture,emissiveTexture,occlusionTexture,metallicRoughnessTexture}",
